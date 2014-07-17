@@ -5,17 +5,19 @@ BLASpy is a python wrapper library for Basic Linear Algebra Subprograms (BLAS).
 For more information on BLAS, please see:
 http://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms
 
-BLASpy makes heavy use of Python's built in ctypes to call the C interface of BLAS functions.
+BLASpy makes heavy use of Python's built in ctypes to call the C interface of BLAS
+functions. BLASpy does not provide any error checking within its wrapper functions,
+and its functions, like BLAS, require many explicit parameters about the matrices
+and vectors on which it operates.
 
-BLASpy does not provide any error checking within its wrapper functions, and its functions, like
-BLAS, require many explicit parameters about the matrices and vectors on which it operates.
+For these reasons, BLASpy is not meant to be used directly to compute linear algebra
+problems. Rather, BLASpy provides the base on top of which a more complete linear
+algebra library can be built.
 
-Therefore, BLASpy is not meant to be used directly to compute linear algebra problems. Rather,
-BLASpy provides the base on top of which a more complete linear algebra library can be built.
-
-**************************************************************************************************
-* BLASpy is currently in a prototype phase and should not be considered to be usable or complete *
-**************************************************************************************************
+*************************************************************************************
+* BLASpy is currently in a prototype phase and should not be considered to be       *
+* usable or complete.                                                               *
+*************************************************************************************
 
 Please read the LICENSE file for information on copying and distributing this software.
 
