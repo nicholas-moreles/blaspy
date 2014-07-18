@@ -1,4 +1,5 @@
 """
+
     Copyright (c) 2014, The University of Texas at Austin
     All rights reserved.
 
@@ -11,7 +12,7 @@
 import blaspy as bp
 import numpy as np
 
-epsilon = 0.00001  # account for round-off error
+epsilon = 0.000001  # account for round-off error
 
 # Test 1 - two row vectors
 n = 100

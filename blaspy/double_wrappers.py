@@ -38,11 +38,38 @@ def ddot(n, x, x_is_col, inc_x, y, y_is_col, inc_y):
         y:          an array representing vector y
         y_is_col:   True if y is a column vector, False if y is a row vector
         inc_y:      stride of y (increment for the elements of y)
+
+    Returns:
+        A float representing rho, the result of the dot product between x and y.
     """
 
     _libblas.cblas_ddot.argtypes = [c_int, POINTER((c_double * 1 * n) if x_is_col
-                                else (c_double * n * 1)), c_int, POINTER((c_double * 1 * n)
-                                if y_is_col else (c_double * n * 1)), c_int]
+                                            else (c_double * n * 1)), c_int,
+                                            POINTER((c_double * 1 * n) if y_is_col
+                                            else (c_double * n * 1)), c_int]
     _libblas.cblas_ddot.restype = c_double
 
     return _libblas.cblas_ddot(n, byref(x), inc_x, byref(y), inc_y)
+
+
+def dscal(n, alpha, x, x_is_col, inc_x):
+    """Wrapper fn, or BLAS dscal.
+    Perform a scaling operation on a vector.
+
+    x := alpha * x
+
+    where alpha is a scalar and x is a row or column vector.
+
+    Args:
+        n:          the number of elements in the vector x
+        alpha:      a float representing scalar alpha
+        x:          an array representing vector x
+        x_is_col:   True if x is a column vector, False if x is a row vector
+        inc_x       stride of x (increment for the elements of x)
+    """
+
+    _libblas.cblas_dscal.argtypes = [c_int, c_double, POINTER((c_double * 1 * n) if x_is_col else
+                                            (c_double * n * 1)), c_int]
+    _libblas.cblas_dscal.restype = None
+
+    _libblas.cblas_dscal(n, alpha, byref(x), inc_x)
