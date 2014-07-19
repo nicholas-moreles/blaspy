@@ -48,7 +48,7 @@ def dasum(n, x, x_is_col, inc_x):
 
 def daxpy(n, alpha, x, x_is_col, inc_x, y, y_is_col, inc_y):
     """ Wrapper for BLAS daxpy.
-    Performs an axpy operation between two vectors:
+    Perform an axpy operation between two vectors.
 
     y := alpha * x + y
 
@@ -74,9 +74,36 @@ def daxpy(n, alpha, x, x_is_col, inc_x, y, y_is_col, inc_y):
     _libblas.cblas_daxpy(n, alpha, byref(x), inc_x, byref(y), inc_y)
 
 
+def dcopy(n, x, x_is_col, inc_x, y, y_is_col, inc_y):
+    """ Wrapper for BLAS dcopy.
+    Copy the numerical contents of one vector to another.
+
+    y := x
+
+    where x and y are both vectors of length n.
+
+    Args:
+        n:          the number of elements in the vectors x and y
+        x:          an array representing vector x
+        x_is_col:   True if x is a column vector, False if x is a row vector
+        inc_x:      stride of x (increment for the elements of x)
+        y:          an array representing vector y
+        y_is_col:   True if y is a column vector, False if y is a row vector
+        inc_y:      stride of y (increment for the elements of y)
+    """
+
+    _libblas.cblas_dcopy.argtypes = [c_int, POINTER((c_double * 1 * n) if x_is_col
+                                            else (c_double * n * 1)), c_int,
+                                            POINTER((c_double * 1 * n) if y_is_col
+                                            else (c_double * n * 1)), c_int]
+    _libblas.cblas_dcopy.restype = None
+
+    _libblas.cblas_dcopy(n, byref(x), inc_x, byref(y), inc_y)
+
+
 def ddot(n, x, x_is_col, inc_x, y, y_is_col, inc_y):
     """Wrapper for BLAS ddot.
-    Performs a dot (inner) product operation between two vectors.
+    Perform a dot (inner) product operation between two vectors.
 
     rho := SUM(chi_i * psi_i) from i=0 to i=n-1
 
