@@ -104,7 +104,7 @@ actual = bp.idamax(n, np.ctypeslib.as_ctypes(mat1), False, 1)
 expected = np.argmax(np.absolute(mat1), 1)
 print(("Passed" if actual == expected else "*FAILED*:") + " test 9")
 
-# test 9 - large column vector with large values
+# test 10 - large column vector with large values
 mat1 = np.random.uniform(-1e6, 1e6, (1e5, 1))
 n = max(mat1.shape[0], mat1.shape[1])
 actual = bp.idamax(n, np.ctypeslib.as_ctypes(mat1), True, 1)

@@ -11,7 +11,7 @@
 
 from ctypes import *
 
-# has to be placed in /usr/lib
+# has to be located in /usr/lib
 _libblas = cdll.LoadLibrary("libopenblasp-r0.2.9-64ref32threads.so")
 
 """
@@ -19,6 +19,32 @@ _libblas = cdll.LoadLibrary("libopenblasp-r0.2.9-64ref32threads.so")
     Level 1 BLAS
 
 """
+
+
+def dasum(n, x, x_is_col, inc_x):
+    """ Wrapper for BLAS dasum.
+    Compute the 1-norm of a vector (i.e. the sum of the magnitudes of the vector elements).
+
+    SUM(|chi_i|) from i=0 to i=n-1
+
+    where chi_i is the ith elements of vector x of length n.
+
+    Args:
+        n:          the number of elements in the vector x
+        x:          an array representing vector x
+        x_is_col:   True if x is a column vector, False if x is a row vector
+        inc_x:      stride of x (increment for the elements of x)
+
+    Returns:
+        A float representing the 1-norm of vector x.
+    """
+
+    _libblas.cblas_dasum.argtypes = [c_int, POINTER((c_double * 1 * n) if x_is_col
+                                            else (c_double * n * 1)), c_int]
+    _libblas.cblas_dasum.restype = c_double
+
+    return _libblas.cblas_dasum(n, byref(x), inc_x)
+
 
 def daxpy(n, alpha, x, x_is_col, inc_x, y, y_is_col, inc_y):
     """ Wrapper for BLAS daxpy.
@@ -80,6 +106,29 @@ def ddot(n, x, x_is_col, inc_x, y, y_is_col, inc_y):
     return _libblas.cblas_ddot(n, byref(x), inc_x, byref(y), inc_y)
 
 
+def dscal(n, alpha, x, x_is_col, inc_x):
+    """Wrapper for BLAS dscal.
+    Perform a scaling operation on a vector.
+
+    x := alpha * x
+
+    where alpha is a scalar and x is a row or column vector.
+
+    Args:
+        n:          the number of elements in the vector x
+        alpha:      a float representing scalar alpha
+        x:          an array representing vector x
+        x_is_col:   True if x is a column vector, False if x is a row vector
+        inc_x       stride of x (increment for the elements of x)
+    """
+
+    _libblas.cblas_dscal.argtypes = [c_int, c_double, POINTER((c_double * 1 * n) if x_is_col else
+                                            (c_double * n * 1)), c_int]
+    _libblas.cblas_dscal.restype = None
+
+    _libblas.cblas_dscal(n, alpha, byref(x), inc_x)
+
+
 def idamax(n, x, x_is_col, inc_x):
     """Wrapper for BLAS idamax.
     Find and return the index of the element which has the maximum absolute value in the vector x.
@@ -102,26 +151,3 @@ def idamax(n, x, x_is_col, inc_x):
     _libblas.cblas_idamax.restype = c_int
 
     return _libblas.cblas_idamax(n, byref(x), inc_x)
-
-
-def dscal(n, alpha, x, x_is_col, inc_x):
-    """Wrapper for BLAS dscal.
-    Perform a scaling operation on a vector.
-
-    x := alpha * x
-
-    where alpha is a scalar and x is a row or column vector.
-
-    Args:
-        n:          the number of elements in the vector x
-        alpha:      a float representing scalar alpha
-        x:          an array representing vector x
-        x_is_col:   True if x is a column vector, False if x is a row vector
-        inc_x       stride of x (increment for the elements of x)
-    """
-
-    _libblas.cblas_dscal.argtypes = [c_int, c_double, POINTER((c_double * 1 * n) if x_is_col else
-                                            (c_double * n * 1)), c_int]
-    _libblas.cblas_dscal.restype = None
-
-    _libblas.cblas_dscal(n, alpha, byref(x), inc_x)
