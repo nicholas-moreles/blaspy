@@ -45,7 +45,7 @@ def daxpy(n, alpha, x, x_is_col, inc_x, y, y_is_col, inc_y):
                                             else (c_double * n * 1)), c_int]
     _libblas.cblas_daxpy.restype = None
 
-    _libblas.cblas_daxpy(n, alpha, x, inc_x, y, inc_y)
+    _libblas.cblas_daxpy(n, alpha, byref(x), inc_x, byref(y), inc_y)
 
 
 def ddot(n, x, x_is_col, inc_x, y, y_is_col, inc_y):
@@ -80,8 +80,32 @@ def ddot(n, x, x_is_col, inc_x, y, y_is_col, inc_y):
     return _libblas.cblas_ddot(n, byref(x), inc_x, byref(y), inc_y)
 
 
+def idamax(n, x, x_is_col, inc_x):
+    """Wrapper for BLAS idamax.
+    Find and return the index of the element which has the maximum absolute value in the vector x.
+    If the maximum absolute value is shared by more than one element, then element whose index is
+    highest is chosen.
+
+    Args:
+        n:          the number of elements in the vector x
+        x:          an array representing vector x
+        x_is_col:   True if x is a column vector, False if x is a row vector
+        inc_x:      stride of x (increment for the elements of x)
+
+    Returns:
+        An int representing the index of the element which has the maximum absolute value in the
+        vector x.
+    """
+
+    _libblas.cblas_idamax.argtypes = [c_int, POINTER((c_double * 1 * n) if x_is_col
+                                            else (c_double * n * 1)), c_int]
+    _libblas.cblas_idamax.restype = c_int
+
+    return _libblas.cblas_idamax(n, byref(x), inc_x)
+
+
 def dscal(n, alpha, x, x_is_col, inc_x):
-    """Wrapper fn, or BLAS dscal.
+    """Wrapper for BLAS dscal.
     Perform a scaling operation on a vector.
 
     x := alpha * x
