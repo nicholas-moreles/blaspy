@@ -12,7 +12,7 @@
 from ctypes import *
 
 # has to be located in /usr/lib
-_libblas = cdll.LoadLibrary("libopenblasp-r0.2.9-64ref32threads.so")
+_libblas = cdll.LoadLibrary("libcblas.so")
 
 """
 
@@ -154,6 +154,38 @@ def dscal(n, alpha, x, x_is_col, inc_x):
     _libblas.cblas_dscal.restype = None
 
     _libblas.cblas_dscal(n, alpha, byref(x), inc_x)
+
+
+# def dsdot(n, x, x_is_col, inc_x, y, y_is_col, inc_y):
+#     """Wrapper for BLAS dsdot. (DOES NOT FUNCTION PROPERLY)
+#     Perform a dot (inner) product operation between two vectors with extended precision.
+#
+#     rho := SUM(chi_i * psi_i) from i=0 to i=n-1
+#
+#     where rho is a scalar, and chi_i and psi_i are the ith elements of vectors x and y,
+#     respectively, where both vectors are of length n. Upon completion, the dot product rho is
+#     returned.
+#
+#     Args:
+#         n:          the number of elements in the vectors x and y
+#         x:          an array representing vector x
+#         x_is_col:   True if x is a column vector, False if x is a row vector
+#         inc_x:      stride of x (increment for the elements of x)
+#         y:          an array representing vector y
+#         y_is_col:   True if y is a column vector, False if y is a row vector
+#         inc_y:      stride of y (increment for the elements of y)
+#
+#     Returns:
+#         A float representing rho, the result of the dot product between x and y.
+#     """
+#
+#     _libblas.cblas_dsdot.argtypes = [c_int, POINTER((c_double * 1 * n) if x_is_col
+#                                             else (c_double * n * 1)), c_int,
+#                                             POINTER((c_double * 1 * n) if y_is_col
+#                                             else (c_double * n * 1)), c_int]
+#     _libblas.cblas_dsdot.restype = c_double
+#
+#     return _libblas.cblas_dsdot(n, byref(x), inc_x, byref(y), inc_y)
 
 
 def idamax(n, x, x_is_col, inc_x):
