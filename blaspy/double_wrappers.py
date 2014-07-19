@@ -20,6 +20,34 @@ _libblas = cdll.LoadLibrary("libopenblasp-r0.2.9-64ref32threads.so")
 
 """
 
+def daxpy(n, alpha, x, x_is_col, inc_x, y, y_is_col, inc_y):
+    """ Wrapper for BLAS daxpy.
+    Performs an axpy operation between two vectors:
+
+    y := alpha * x + y
+
+    where alpha is a scalar, and x and y are either both column vectors or both row vectors.
+
+    Args:
+        n:          the number of elements in the vectors x and y
+        alpha:      an int representing scalar alpha
+        x:          an array representing vector x
+        x_is_col:   True if x is a column vector, False if x is a row vector
+        inc_x:      stride of x (increment for the elements of x)
+        y:          an array representing vector y
+        y_is_col:   True if y is a column vector, False if y is a row vector
+        inc_y:      stride of y (increment for the elements of y)
+    """
+
+    _libblas.cblas_daxpy.argtypes = [c_int, c_double, POINTER((c_double * 1 * n) if x_is_col
+                                            else (c_double * n * 1)), c_int,
+                                            POINTER((c_double * 1 * n) if y_is_col
+                                            else (c_double * n * 1)), c_int]
+    _libblas.cblas_daxpy.restype = None
+
+    _libblas.cblas_daxpy(n, alpha, x, inc_x, y, inc_y)
+
+
 def ddot(n, x, x_is_col, inc_x, y, y_is_col, inc_y):
     """Wrapper for BLAS ddot.
     Performs a dot (inner) product operation between two vectors.
