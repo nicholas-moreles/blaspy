@@ -25,9 +25,9 @@ def dasum(n, x, x_is_col, inc_x):
     """ Wrapper for BLAS dasum.
     Compute the 1-norm of a vector (i.e. the sum of the magnitudes of the vector elements).
 
-    SUM(|chi_i|) from i=0 to i=n-1
+    ||x||_1 := SUM(|chi_i|) from i=0 to i=n-1
 
-    where chi_i is the ith elements of vector x of length n.
+    where chi_i is the ith elements of vector x of length n and ||x||_1 is returned.
 
     Args:
         n:          the number of elements in the vector x
@@ -186,6 +186,31 @@ def dscal(n, alpha, x, x_is_col, inc_x):
 #     _libblas.cblas_dsdot.restype = c_double
 #
 #     return _libblas.cblas_dsdot(n, byref(x), inc_x, byref(y), inc_y)
+
+
+def dnrm2(n, x, x_is_col, inc_x):
+    """Wrapper for BLAS dnrm2.
+    Compute the 2-norm (Euclidean norm) of a vector.
+
+    ||x||_2 = [SUM(|chi_i|^2)]^(1/2) from i=0 to i=n-1
+
+    where chi_i is the ith elements of vector x of length n and ||x||_2 is returned.
+
+    Args:
+        n:          the number of elements in the vector x
+        x:          an array representing vector x
+        x_is_col:   True if x is a column vector, False if x is a row vector
+        inc_x:      stride of x (increment for the elements of x)
+
+    Returns:
+        A float representing the 2-norm of vector x.
+    """
+
+    _libblas.cblas_dnrm2.argtypes = [c_int, POINTER((c_double * 1 * n) if x_is_col
+                                            else (c_double * n * 1)), c_int]
+    _libblas.cblas_dnrm2.restype = c_double
+
+    return _libblas.cblas_dnrm2(n, byref(x), inc_x)
 
 
 def idamax(n, x, x_is_col, inc_x):
