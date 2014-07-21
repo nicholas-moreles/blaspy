@@ -20,25 +20,25 @@ n = random.randint(2, 1e5)
 x = np.random.uniform(-1e5, 1e5, (1, n))
 y = np.zeros((1, n))
 bp.dcopy(n, np.ctypeslib.as_ctypes(x), False, 1, np.ctypeslib.as_ctypes(y), False, 1)
-print(("Passed" if np.allclose(x, y) else "*FAILED*:") + " test 1")
+print(("Passed" if np.allclose(x, y) else "*FAILED*") + " test 1")
 
 # Test 2 - a row vector and a column vector
 n = random.randint(2, 1e5)
 x = np.random.uniform(-1e5, 1e5, (1, n))
 y = np.zeros((n, 1))
 bp.dcopy(n, np.ctypeslib.as_ctypes(x), False, 1, np.ctypeslib.as_ctypes(y), True, 1)
-print(("Passed" if np.allclose(np.transpose(x), y) else "*FAILED*:") + " test 2")
+print(("Passed" if np.allclose(np.transpose(x), y) else "*FAILED*") + " test 2")
 
 # Test 3 - a column vector and a row vector
 n = random.randint(1e4, 1e5)
 x = np.random.uniform(-1e5, 1e5, (n, 1))
 y = np.zeros((1, n))
 bp.dcopy(n, np.ctypeslib.as_ctypes(x), True, 1, np.ctypeslib.as_ctypes(y), False, 1)
-print(("Passed" if np.allclose(np.transpose(x), y) else "*FAILED*:") + " test 3")
+print(("Passed" if np.allclose(np.transpose(x), y) else "*FAILED*") + " test 3")
 
 # Test 4 - two column vectors
 n = random.randint(1e4, 1e5)
 x = np.random.uniform(-1e5, 1e5, (n, 1))
 y = np.zeros((n, 1))
 bp.dcopy(n, np.ctypeslib.as_ctypes(x), True, 1, np.ctypeslib.as_ctypes(y), True, 1)
-print(("Passed" if np.allclose(x, y) else "*FAILED*:") + " test 4")
+print(("Passed" if np.allclose(x, y) else "*FAILED*") + " test 4")

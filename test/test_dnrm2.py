@@ -20,7 +20,7 @@ mat1 = np.array([[-7.29544522, -52.85619672, -61.41985094, -53.34163619,  96.194
 n = max(mat1.shape[0], mat1.shape[1])
 actual = bp.dnrm2(n, np.ctypeslib.as_ctypes(mat1), False, 1)
 expected = np.linalg.norm(mat1)
-print(("Passed" if abs(actual - expected) < epsilon else "*FAILED*:") + " test 1")
+print(("Passed" if abs(actual - expected) < epsilon else "*FAILED*") + " test 1")
 
 # test 2 - typical column vector
 mat1 = np.array([[-19.81752462],
@@ -36,32 +36,32 @@ mat1 = np.array([[-19.81752462],
 n = max(mat1.shape[0], mat1.shape[1])
 actual = bp.dnrm2(n, np.ctypeslib.as_ctypes(mat1), True, 1)
 expected = np.linalg.norm(mat1)
-print(("Passed" if abs(actual - expected) < epsilon else "*FAILED*:") + " test 2")
+print(("Passed" if abs(actual - expected) < epsilon else "*FAILED*") + " test 2")
 
 # test 3 - single element column vector
 mat1 = np.random.uniform(-100, 100, (1,1))
 n = max(mat1.shape[0], mat1.shape[1])
 actual = bp.dnrm2(n, np.ctypeslib.as_ctypes(mat1), True, 1)
 expected = np.linalg.norm(mat1)
-print(("Passed" if abs(actual - expected) < epsilon else "*FAILED*:") + " test 3")
+print(("Passed" if abs(actual - expected) < epsilon else "*FAILED*") + " test 3")
 
 # test 4 - single element row vector
 mat1 = np.random.uniform(-100, 100, (1,1))
 n = max(mat1.shape[0], mat1.shape[1])
 actual = bp.dnrm2(n, np.ctypeslib.as_ctypes(mat1), False, 1)
 expected = np.linalg.norm(mat1)
-print(("Passed" if abs(actual - expected) < epsilon else "*FAILED*:") + " test 4")
+print(("Passed" if abs(actual - expected) < epsilon else "*FAILED*") + " test 4")
 
 # test 5 - large row vector with large values
 mat1 = np.random.uniform(-1e4, 1e4, (1, 1e4))
 n = max(mat1.shape[0], mat1.shape[1])
 actual = bp.dnrm2(n, np.ctypeslib.as_ctypes(mat1), False, 1)
 expected = np.linalg.norm(mat1)
-print(("Passed" if abs(actual - expected) < epsilon else "*FAILED*:") + " test 5")
+print(("Passed" if abs(actual - expected) < epsilon else "*FAILED*") + " test 5")
 
 # test 6 - large column vector with large values
 mat1 = np.random.uniform(-1e4, 1e4, (1e4, 1))
 n = max(mat1.shape[0], mat1.shape[1])
 actual = bp.dnrm2(n, np.ctypeslib.as_ctypes(mat1), True, 1)
 expected = np.linalg.norm(mat1)
-print(("Passed" if abs(actual - expected) < epsilon else "*FAILED*:") + " test 6")
+print(("Passed" if abs(actual - expected) < epsilon else "*FAILED*") + " test 6")
