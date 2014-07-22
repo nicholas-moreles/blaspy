@@ -110,3 +110,11 @@ n = max(mat1.shape[0], mat1.shape[1])
 actual = bp.idamax(n, np.ctypeslib.as_ctypes(mat1), True, 1)
 expected = np.argmax(np.absolute(mat1), 0)
 print(("Passed" if actual == expected else "*FAILED*") + " test 10")
+
+# test 11 - duplicate of max value, ensure first index is returned
+mat1 = np.array([[-7.29544522, -52.85619672, -98.77254851, -53.34163619,  96.1944303, 70.26068289,
+                -59.34631157, -67.28938408, -98.77254851,  16.11719105]])
+n = max(mat1.shape[0], mat1.shape[1])
+actual = bp.idamax(n, np.ctypeslib.as_ctypes(mat1), False, 1)
+expected = 2
+print(("Passed" if actual == expected else "*FAILED*") + " test 11")

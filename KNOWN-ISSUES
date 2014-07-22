@@ -1,11 +1,3 @@
 The following is a list of known issues with BLASpy:
 
-- The following BLAS subroutines are included, but commented out to prevent
-  use, because they do not function properly:
-
-      - dsdot
-
-  It is possible that an attempt will be made to fix their issues upon
-  completion of BLASpy, but it is also possible that these subroutines are
-  hindered by the ctypes interface, and as such, will never be included in
-  BLASpy.
+- BLASpy is not currently complete so it is missing many BLAS routines.
