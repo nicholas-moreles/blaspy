@@ -25,5 +25,6 @@ IN_BLASPY_SUBDIR = True
 # DO NOT EDIT BELOW THIS COMMENT #
 ##################################
 
+# Create the appropriate path to _libblas
 BLAS_PATH = str(os.path.dirname(__file__))[:-6] + "lib/"
 _libblas = c.cdll.LoadLibrary((BLAS_PATH + BLAS_NAME) if IN_BLASPY_SUBDIR else (BLAS_NAME))

@@ -9,10 +9,10 @@
 
 """
 
-from blaspy.config import _libblas
+from ..config import _libblas
 import ctypes as c
 
-def dnrm2(n, x, x_is_col, inc_x):
+def dnrm2(n, x, inc_x, orientation):
     """Wrapper for BLAS dnrm2.
     Compute the 2-norm (Euclidean norm) of a vector.
 
@@ -21,17 +21,17 @@ def dnrm2(n, x, x_is_col, inc_x):
     where chi_i is the ith elements of vector x of length n and ||x||_2 is returned.
 
     Args:
-        n:          the number of elements in the vector x
-        x:          an array of doubles representing vector x
-        x_is_col:   True if x is a column vector, False if x is a row vector
-        inc_x:      stride of x (increment for the elements of x)
+        n:              the number of elements in the vector x
+        x:              an array of doubles representing vector x
+        inc_x:          stride of x (increment for the elements of x)
+        orientation:    blaspy.ROW if x is a row vector, blaspy.COL if x is a column vector
 
     Returns:
         A float representing the 2-norm of vector x.
     """
 
-    _libblas.cblas_dnrm2.argtypes = [c.c_int, c.POINTER((c.c_double * 1 * n) if x_is_col
-                                            else (c.c_double * n * 1)), c.c_int]
+    _libblas.cblas_dnrm2.argtypes = [c.c_int, c.POINTER((c.c_double * n * 1) if orientation & 1
+                                     else (c.c_double * 1 * n)), c.c_int]
     _libblas.cblas_dnrm2.restype = c.c_double
 
     return _libblas.cblas_dnrm2(n, c.byref(x), inc_x)

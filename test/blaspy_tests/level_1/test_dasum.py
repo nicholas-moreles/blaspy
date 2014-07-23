@@ -12,7 +12,8 @@
 import blaspy as bp
 import numpy as np
 
-def test_dnrm2():
+
+def test_dasum():
 
     tests_failed = []
     test_num = 0
@@ -20,11 +21,11 @@ def test_dnrm2():
 
     # test 1 - typical row vector
     test_num += 1
-    mat1 = np.array([[-7.29544522, -52.85619672, -61.41985094, -53.34163619,  96.1944303,
-                      70.26068289, -59.34631157, -67.28938408, -98.77254851,  16.11719105]])
+    mat1 = np.array([[-7.29544522, -52.85619672, -61.41985094, -53.34163619,  96.1944303, 70.26068289,
+                    -59.34631157, -67.28938408, -98.77254851,  16.11719105]])
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = bp.dnrm2(n, np.ctypeslib.as_ctypes(mat1), False, 1)
-    expected = np.linalg.norm(mat1)
+    actual = bp.dasum(n, np.ctypeslib.as_ctypes(mat1), 1, bp.ROW)
+    expected = np.sum(np.absolute(mat1))
     passed = abs(actual - expected) < epsilon
     if not passed: tests_failed.append(test_num)
 
@@ -41,8 +42,8 @@ def test_dnrm2():
                      [  7.11428604],
                      [-76.06536253]])
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = bp.dnrm2(n, np.ctypeslib.as_ctypes(mat1), True, 1)
-    expected = np.linalg.norm(mat1)
+    actual = bp.dasum(n, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    expected = np.sum(np.absolute(mat1))
     passed = abs(actual - expected) < epsilon
     if not passed: tests_failed.append(test_num)
 
@@ -50,8 +51,8 @@ def test_dnrm2():
     test_num += 1
     mat1 = np.random.uniform(-100, 100, (1,1))
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = bp.dnrm2(n, np.ctypeslib.as_ctypes(mat1), True, 1)
-    expected = np.linalg.norm(mat1)
+    actual = bp.dasum(n, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    expected = np.sum(np.absolute(mat1))
     passed = abs(actual - expected) < epsilon
     if not passed: tests_failed.append(test_num)
 
@@ -59,8 +60,8 @@ def test_dnrm2():
     test_num += 1
     mat1 = np.random.uniform(-100, 100, (1,1))
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = bp.dnrm2(n, np.ctypeslib.as_ctypes(mat1), False, 1)
-    expected = np.linalg.norm(mat1)
+    actual = bp.dasum(n, np.ctypeslib.as_ctypes(mat1), 1, bp.ROW)
+    expected = np.sum(np.absolute(mat1))
     passed = abs(actual - expected) < epsilon
     if not passed: tests_failed.append(test_num)
 
@@ -68,8 +69,8 @@ def test_dnrm2():
     test_num += 1
     mat1 = np.random.uniform(-1e4, 1e4, (1, 1e4))
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = bp.dnrm2(n, np.ctypeslib.as_ctypes(mat1), False, 1)
-    expected = np.linalg.norm(mat1)
+    actual = bp.dasum(n, np.ctypeslib.as_ctypes(mat1), 1, bp.ROW)
+    expected = np.sum(np.absolute(mat1))
     passed = abs(actual - expected) < epsilon
     if not passed: tests_failed.append(test_num)
 
@@ -77,8 +78,8 @@ def test_dnrm2():
     test_num += 1
     mat1 = np.random.uniform(-1e4, 1e4, (1e4, 1))
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = bp.dnrm2(n, np.ctypeslib.as_ctypes(mat1), True, 1)
-    expected = np.linalg.norm(mat1)
+    actual = bp.dasum(n, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    expected = np.sum(np.absolute(mat1))
     passed = abs(actual - expected) < epsilon
     if not passed: tests_failed.append(test_num)
 

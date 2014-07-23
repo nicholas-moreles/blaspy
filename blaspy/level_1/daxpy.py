@@ -9,10 +9,10 @@
 
 """
 
-from blaspy.config import _libblas
+from ..config import _libblas
 import ctypes as c
 
-def daxpy(n, alpha, x, x_is_col, inc_x, y, y_is_col, inc_y):
+def daxpy(n, alpha, x, inc_x, y, inc_y, orientation):
     """ Wrapper for BLAS daxpy.
     Perform an axpy operation between two vectors.
 
@@ -21,20 +21,22 @@ def daxpy(n, alpha, x, x_is_col, inc_x, y, y_is_col, inc_y):
     where alpha is a scalar, and x and y are either both column vectors or both row vectors.
 
     Args:
-        n:          the number of elements in the vectors x and y
-        alpha:      a double representing scalar alpha
-        x:          an array of doubles representing vector x
-        x_is_col:   True if x is a column vector, False if x is a row vector
-        inc_x:      stride of x (increment for the elements of x)
-        y:          an array of doubles representing vector y
-        y_is_col:   True if y is a column vector, False if y is a row vector
-        inc_y:      stride of y (increment for the elements of y)
+        n:              the number of elements in the vectors x and y
+        alpha:          a double representing scalar alpha
+        x:              an array of doubles representing vector x
+        inc_x:          stride of x (increment for the elements of x)
+        y:              an array of doubles representing vector y
+        inc_y:          stride of y (increment for the elements of y)
+        orientation:    blaspy.ROW_ROW  if x is a row vector and y is a row vector
+                        blaspy.ROW_COL  if x is a row vector and y is a column vector
+                        blaspy.COL_COL  if x is a column vector and y is a column vector
+                        blaspy.COL_ROW  if x is a column vector and y is a row vector
     """
 
-    _libblas.cblas_daxpy.argtypes = [c.c_int, c.c_double, c.POINTER((c.c_double * 1 * n) if x_is_col
-                                            else (c.c_double * n * 1)), c.c_int,
-                                            c.POINTER((c.c_double * 1 * n) if y_is_col
-                                            else (c.c_double * n * 1)), c.c_int]
+    _libblas.cblas_daxpy.argtypes = [c.c_int, c.c_double, c.POINTER((c.c_double * n * 1)
+                                     if orientation & 1 else (c.c_double * 1 * n)), c.c_int,
+                                     c.POINTER((c.c_double * n * 1) if orientation >> 1 & 1
+                                     else (c.c_double * 1 * n)), c.c_int]
     _libblas.cblas_daxpy.restype = None
 
     _libblas.cblas_daxpy(n, alpha, c.byref(x), inc_x, c.byref(y), inc_y)

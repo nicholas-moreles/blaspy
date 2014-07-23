@@ -26,7 +26,7 @@ def test_dswap():
     y1 = np.random.uniform(-1e5, 1e5, (1, n))
     x2 = np.copy(x1)
     y2 = np.copy(y1)
-    bp.dswap(n, np.ctypeslib.as_ctypes(x2), False, 1, np.ctypeslib.as_ctypes(y2), False, 1)
+    bp.dswap(n, np.ctypeslib.as_ctypes(x2), 1, np.ctypeslib.as_ctypes(y2), 1, bp.ROW_ROW)
     passed = np.allclose(x1, y2) and np.allclose(x2, y1)
     if not passed: tests_failed.append(test_num)
 
@@ -37,7 +37,7 @@ def test_dswap():
     y1 = np.random.uniform(-1e5, 1e5, (n, 1))
     x2 = np.copy(x1)
     y2 = np.copy(y1)
-    bp.dswap(n, np.ctypeslib.as_ctypes(x2), False, 1, np.ctypeslib.as_ctypes(y2), True, 1)
+    bp.dswap(n, np.ctypeslib.as_ctypes(x2), 1, np.ctypeslib.as_ctypes(y2), 1, bp.ROW_COL)
     passed = np.allclose(np.transpose(x1), y2) and np.allclose(np.transpose(x2), y1)
     if not passed: tests_failed.append(test_num)
 
@@ -48,7 +48,7 @@ def test_dswap():
     y1 = np.random.uniform(-1e5, 1e5, (1, n))
     x2 = np.copy(x1)
     y2 = np.copy(y1)
-    bp.dswap(n, np.ctypeslib.as_ctypes(x2), True, 1, np.ctypeslib.as_ctypes(y2), False, 1)
+    bp.dswap(n, np.ctypeslib.as_ctypes(x2), 1, np.ctypeslib.as_ctypes(y2), 1, bp.COL_ROW)
     passed = np.allclose(np.transpose(x1), y2) and np.allclose(np.transpose(x2), y1)
     if not passed: tests_failed.append(test_num)
 
@@ -59,7 +59,7 @@ def test_dswap():
     y1 = np.random.uniform(-1e5, 1e5, (n, 1))
     x2 = np.copy(x1)
     y2 = np.copy(y1)
-    bp.dswap(n, np.ctypeslib.as_ctypes(x2), True, 1, np.ctypeslib.as_ctypes(y2), True, 1)
+    bp.dswap(n, np.ctypeslib.as_ctypes(x2), 1, np.ctypeslib.as_ctypes(y2), 1, bp.COL_COL)
     passed = np.allclose(x1, y2) and np.allclose(x2, y1)
     if not passed: tests_failed.append(test_num)
 

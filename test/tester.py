@@ -9,8 +9,7 @@
 
 """
 
-from level_1 import *
-
+from blaspy_tests import *
 
 def run_test(function):
     result = function()
@@ -69,5 +68,3 @@ total += run_test(test_idamax)
 
 # Give totals
 print("Total tests failed: " + str(total))
-
-

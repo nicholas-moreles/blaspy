@@ -9,5 +9,13 @@
 
 """
 
-from .level_1 import *
-from .constants import *
+
+# Constants for level 1 BLAS
+# least significant bit is 1 if x is a row vectors, 0 if x is a column vector
+# second least significant bit is 1 if y is a row vector, 0 if y is a column vector
+COL = 0  # 00
+ROW = 1  # 01
+COL_COL = 0  # 00
+ROW_COL = 1  # 01
+COL_ROW = 2  # 10
+ROW_ROW = 3  # 11

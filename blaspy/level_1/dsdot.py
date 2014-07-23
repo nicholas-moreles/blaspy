@@ -9,11 +9,11 @@
 
 """
 
-from blaspy.config import _libblas
+from ..config import _libblas
 import ctypes as c
 
-def dsdot(n, x, x_is_col, inc_x, y, y_is_col, inc_y):
-    """Wrapper for BLAS dsdot. (DOES NOT FUNCTION PROPERLY)
+def dsdot(n, x, inc_x, y, inc_y, orientation):
+    """Wrapper for BLAS dsdot.
     Perform a dot (inner) product operation between two vectors with extended precision.
 
     rho := SUM(chi_i * psi_i) from i=0 to i=n-1
@@ -22,25 +22,27 @@ def dsdot(n, x, x_is_col, inc_x, y, y_is_col, inc_y):
     respectively, where both vectors are of length n. Upon completion, the dot product rho is
     returned.
 
-    Note: dsdot requires that x and y contain floats, not doubles.; however, it returns a double.
+    Note: dsdot requires that x and y contain floats, not doubles; however, dsdot returns a double.
 
     Args:
-        n:          the number of elements in the vectors x and y
-        x:          an array of floats representing vector x
-        x_is_col:   True if x is a column vector, False if x is a row vector
-        inc_x:      stride of x (increment for the elements of x)
-        y:          an array of floats representing vector y
-        y_is_col:   True if y is a column vector, False if y is a row vector
-        inc_y:      stride of y (increment for the elements of y)
+        n:              the number of elements in the vectors x and y
+        x:              an array of floats representing vector x
+        inc_x:          stride of x (increment for the elements of x)
+        y:              an array of floats representing vector y
+        inc_y:          stride of y (increment for the elements of y)
+        orientation:    blaspy.ROW_ROW  if x is a row vector and y is a row vector
+                        blaspy.ROW_COL  if x is a row vector and y is a column vector
+                        blaspy.COL_COL  if x is a column vector and y is a column vector
+                        blaspy.COL_ROW  if x is a column vector and y is a row vector
 
     Returns:
         A double representing rho, the result of the dot product between x and y.
     """
 
-    _libblas.cblas_dsdot.argtypes = [c.c_int, c.POINTER((c.c_float * 1 * n) if x_is_col
-                                            else (c.c_float * n * 1)), c.c_int,
-                                            c.POINTER((c.c_float * 1 * n) if y_is_col
-                                            else (c.c_float * n * 1)), c.c_int]
+    _libblas.cblas_dsdot.argtypes = [c.c_int, c.POINTER((c.c_float * n * 1) if orientation & 1
+                                    else (c.c_float * 1 * n)), c.c_int,
+                                    c.POINTER((c.c_float * n * 1) if orientation >> 1 & 1
+                                    else (c.c_float * 1 * n)), c.c_int]
     _libblas.cblas_dsdot.restype = c.c_double
 
     return _libblas.cblas_dsdot(n, c.byref(x), inc_x, c.byref(y), inc_y)
