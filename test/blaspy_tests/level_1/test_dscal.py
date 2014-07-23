@@ -9,7 +9,7 @@
 
 """
 
-import blaspy as bp
+from blaspy import dscal, ROW, COL
 import numpy as np
 import random
 
@@ -25,7 +25,7 @@ def test_dscal():
     alpha = 10
     mat1 = np.random.random((n, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -36,7 +36,7 @@ def test_dscal():
     alpha = -2000
     mat1 = np.random.random((n, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -47,7 +47,7 @@ def test_dscal():
     alpha = 0
     mat1 = np.random.random((n, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -58,7 +58,7 @@ def test_dscal():
     alpha = 5634.3420
     mat1 = np.random.random((n, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -69,7 +69,7 @@ def test_dscal():
     alpha = -0.212358
     mat1 = np.random.random((n, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -80,7 +80,7 @@ def test_dscal():
     alpha = 0.000
     mat1 = np.random.random((n, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -91,7 +91,7 @@ def test_dscal():
     alpha = 123456
     mat1 = np.zeros((n, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -102,7 +102,7 @@ def test_dscal():
     alpha = -1
     mat1 = np.zeros((n, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -113,7 +113,7 @@ def test_dscal():
     alpha = 0
     mat1 = np.zeros((n, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -124,7 +124,7 @@ def test_dscal():
     alpha = 0.00358
     mat1 = np.zeros((n, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -135,7 +135,7 @@ def test_dscal():
     alpha = -988533.22726
     mat1 = np.zeros((n, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -146,7 +146,7 @@ def test_dscal():
     alpha = 0.0
     mat1 = np.zeros((n, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -157,7 +157,7 @@ def test_dscal():
     alpha = 2.5486
     mat1 = np.random.random((n, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.ROW)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, ROW)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -168,7 +168,7 @@ def test_dscal():
     alpha = 123456
     mat1 = np.random.random((n, 1))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -179,7 +179,7 @@ def test_dscal():
     alpha = -450
     mat1 = np.random.random((n, 1))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -190,7 +190,7 @@ def test_dscal():
     alpha = 0
     mat1 = np.random.random((n, 1))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -201,7 +201,7 @@ def test_dscal():
     alpha = 1.000000
     mat1 = np.random.random((n, 1))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -212,7 +212,7 @@ def test_dscal():
     alpha = 5343.2334454
     mat1 = np.random.random((n, 1))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -223,7 +223,7 @@ def test_dscal():
     alpha = -0.0123498
     mat1 = np.random.random((n, 1))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -234,7 +234,7 @@ def test_dscal():
     alpha = 0.0
     mat1 = np.random.random((n, 1))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.COL)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, COL)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -245,7 +245,7 @@ def test_dscal():
     alpha = random.randint(2, 2e6)
     mat1 = np.random.random((1, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.ROW)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, ROW)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -256,7 +256,7 @@ def test_dscal():
     alpha = random.randint(-2e6, -2)
     mat1 = np.random.random((1, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.ROW)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, ROW)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -267,7 +267,7 @@ def test_dscal():
     alpha = 0
     mat1 = np.random.random((1, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.ROW)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, ROW)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -278,7 +278,7 @@ def test_dscal():
     alpha = 1.000000
     mat1 = np.random.random((1, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.ROW)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, ROW)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -289,7 +289,7 @@ def test_dscal():
     alpha = random.uniform(2, 2e6)
     mat1 = np.random.random((1, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.ROW)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, ROW)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -300,7 +300,7 @@ def test_dscal():
     alpha = random.uniform(-2e6, -2)
     mat1 = np.random.random((1, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.ROW)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, ROW)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)
@@ -311,7 +311,7 @@ def test_dscal():
     alpha = 0.0
     mat1 = np.random.random((1, n))
     mat2 = np.copy(mat1)
-    bp.dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, bp.ROW)
+    dscal(n, alpha, np.ctypeslib.as_ctypes(mat1), 1, ROW)
     mat2 *= alpha
     passed = np.allclose(mat1, mat2)
     if not passed: tests_failed.append(test_num)

@@ -9,7 +9,7 @@
 
 """
 
-import blaspy as bp
+from blaspy import dsdot, ROW_ROW, ROW_COL, COL_COL, COL_ROW
 import numpy as np
 import random
 
@@ -28,8 +28,8 @@ def test_dsdot():
     mat2 = np.random.uniform(-1e4, 1e4, (1, n))
     mat3 = np.float32(mat1)
     mat4 = np.float32(mat2)
-    actual = bp.dsdot(n, np.ctypeslib.as_ctypes(mat3), 1, np.ctypeslib.as_ctypes(mat4), 1,
-                      bp.ROW_ROW)
+    actual = dsdot(n, np.ctypeslib.as_ctypes(mat3), 1, np.ctypeslib.as_ctypes(mat4), 1,
+                      ROW_ROW)
     expected = np.dot(mat1, np.transpose(mat2))[0][0]
     passed = abs(actual - expected) / actual < epsilon
     if not passed: tests_failed.append(test_num)
@@ -41,8 +41,8 @@ def test_dsdot():
     mat2 = np.random.uniform(-1e4, 1e4, (n, 1))
     mat3 = np.float32(mat1)
     mat4 = np.float32(mat2)
-    actual = bp.dsdot(n, np.ctypeslib.as_ctypes(mat3), 1, np.ctypeslib.as_ctypes(mat4), 1,
-                      bp.COL_COL)
+    actual = dsdot(n, np.ctypeslib.as_ctypes(mat3), 1, np.ctypeslib.as_ctypes(mat4), 1,
+                      COL_COL)
     expected = np.dot(np.transpose(mat1), mat2)[0][0]
     passed = abs(actual - expected) / actual < epsilon
     if not passed: tests_failed.append(test_num)
@@ -54,8 +54,8 @@ def test_dsdot():
     mat2 = np.random.random((n, 1))
     mat3 = np.float32(mat1)
     mat4 = np.float32(mat2)
-    actual = bp.dsdot(n, np.ctypeslib.as_ctypes(mat3), 1, np.ctypeslib.as_ctypes(mat4), 1,
-                      bp.ROW_COL)
+    actual = dsdot(n, np.ctypeslib.as_ctypes(mat3), 1, np.ctypeslib.as_ctypes(mat4), 1,
+                      ROW_COL)
     expected = np.dot(mat1, mat2)[0][0]
     passed = abs(actual - expected) / actual < epsilon
     if not passed: tests_failed.append(test_num)
@@ -68,8 +68,8 @@ def test_dsdot():
     mat2 = np.random.uniform(-1e4, 1e4, (1, n))
     mat3 = np.float32(mat1)
     mat4 = np.float32(mat2)
-    actual = bp.dsdot(n, np.ctypeslib.as_ctypes(mat3), 1, np.ctypeslib.as_ctypes(mat4), 1,
-                      bp.COL_ROW)
+    actual = dsdot(n, np.ctypeslib.as_ctypes(mat3), 1, np.ctypeslib.as_ctypes(mat4), 1,
+                      COL_ROW)
     expected = np.dot(np.transpose(mat1), np.transpose(mat2))[0][0]
     passed = abs(actual - expected) / actual < epsilon
     if not passed: tests_failed.append(test_num)
@@ -81,8 +81,8 @@ def test_dsdot():
     mat2 = np.random.uniform(-1e4, 1e4, (n, n))
     mat3 = np.float32(mat1)
     mat4 = np.float32(mat2)
-    actual = bp.dsdot(n, np.ctypeslib.as_ctypes(mat3), 1, np.ctypeslib.as_ctypes(mat4), 1,
-                      bp.COL_COL)
+    actual = dsdot(n, np.ctypeslib.as_ctypes(mat3), 1, np.ctypeslib.as_ctypes(mat4), 1,
+                      COL_COL)
     expected = np.dot(mat1, mat2)[0][0]
     passed = abs(actual - expected) / actual < epsilon
     if not passed: tests_failed.append(test_num)
@@ -94,8 +94,8 @@ def test_dsdot():
     mat2 = np.random.uniform(-1e4, 1e4, (n, n))
     mat3 = np.float32(mat1)
     mat4 = np.float32(mat2)
-    actual = bp.dsdot(n, np.ctypeslib.as_ctypes(mat3), 1, np.ctypeslib.as_ctypes(mat4), 1,
-                      bp.ROW_ROW)
+    actual = dsdot(n, np.ctypeslib.as_ctypes(mat3), 1, np.ctypeslib.as_ctypes(mat4), 1,
+                      ROW_ROW)
     expected = np.dot(mat1, mat2)[0][0]
     passed = abs(actual - expected) / actual < epsilon
     if not passed: tests_failed.append(test_num)

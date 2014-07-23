@@ -9,7 +9,7 @@
 
 """
 
-import blaspy as bp
+from blaspy import daxpy, ROW_ROW, ROW_COL, COL_COL, COL_ROW
 import numpy as np
 import random
 
@@ -26,7 +26,7 @@ def test_daxpy():
     x1 = np.random.random((1, n))
     y1 = np.random.random((1, n))
     y2 = np.copy(y1)
-    bp.daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, bp.ROW_ROW)
+    daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, ROW_ROW)
     y2 += alpha * x1
     passed = np.allclose(y1, y2)
     if not passed: tests_failed.append(test_num)
@@ -38,7 +38,7 @@ def test_daxpy():
     x1 = np.random.uniform(-100, 100, (1, n))
     y1 = np.random.uniform(-100, 100, (1, n))
     y2 = np.copy(y1)
-    bp.daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, bp.ROW_ROW)
+    daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, ROW_ROW)
     y2 += alpha * x1
     passed = np.allclose(y1, y2)
     if not passed: tests_failed.append(test_num)
@@ -50,7 +50,7 @@ def test_daxpy():
     x1 = np.random.uniform(-100, 100, (n, 1))
     y1 = np.random.uniform(-100, 100, (n, 1))
     y2 = np.copy(y1)
-    bp.daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, bp.COL_COL)
+    daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, COL_COL)
     y2 += alpha * x1
     passed = np.allclose(y1, y2)
     if not passed: tests_failed.append(test_num)
@@ -62,7 +62,7 @@ def test_daxpy():
     x1 = np.random.uniform(-100, 100, (n, 1))
     y1 = np.random.uniform(-100, 100, (n, 1))
     y2 = np.copy(y1)
-    bp.daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, bp.COL_COL)
+    daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, COL_COL)
     y2 += alpha * x1
     passed = np.allclose(y1, y2)
     if not passed: tests_failed.append(test_num)
@@ -74,7 +74,7 @@ def test_daxpy():
     x1 = np.random.uniform(-100, 100, (1, n))
     y1 = np.random.uniform(-100, 100, (1, n))
     y2 = np.copy(y1)
-    bp.daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, bp.ROW_ROW)
+    daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, ROW_ROW)
     y2 += alpha * x1
     passed = np.allclose(y1, y2)
     if not passed: tests_failed.append(test_num)
@@ -86,7 +86,7 @@ def test_daxpy():
     x1 = np.random.uniform(-100, 100, (n, 1))
     y1 = np.random.uniform(-100, 100, (n, 1))
     y2 = np.copy(y1)
-    bp.daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, bp.COL_COL)
+    daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, COL_COL)
     y2 += alpha * x1
     passed = np.allclose(y1, y2)
     if not passed: tests_failed.append(test_num)
@@ -98,7 +98,7 @@ def test_daxpy():
     x1 = np.random.uniform(-100, 100, (1, n))
     y1 = np.random.uniform(-100, 100, (1, n))
     y2 = np.copy(y1)
-    bp.daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, bp.ROW_ROW)
+    daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, ROW_ROW)
     y2 += x1
     ppassed = np.allclose(y1, y2)
     if not passed: tests_failed.append(test_num)
@@ -110,7 +110,7 @@ def test_daxpy():
     x1 = np.random.uniform(-100, 100, (n, 1))
     y1 = np.random.uniform(-100, 100, (n, 1))
     y2 = np.copy(y1)
-    bp.daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, bp.COL_COL)
+    daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, COL_COL)
     y2 += x1
     passed = np.allclose(y1, y2)
     if not passed: tests_failed.append(test_num)
@@ -122,7 +122,7 @@ def test_daxpy():
     x1 = np.random.random((1, n))
     y1 = np.zeros((1, n))
     y2 = np.copy(y1)
-    bp.daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, bp.ROW_ROW)
+    daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, ROW_ROW)
     y2 += alpha * x1
     passed = np.allclose(y1, y2)
     if not passed: tests_failed.append(test_num)
@@ -134,7 +134,7 @@ def test_daxpy():
     x1 = np.random.random((1, n))
     y1 = np.zeros((1, n))
     y2 = np.copy(y1)
-    bp.daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, bp.ROW_ROW)
+    daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, ROW_ROW)
     y2 += alpha * x1
     passed = np.allclose(y1, y2)
     if not passed: tests_failed.append(test_num)
@@ -146,7 +146,7 @@ def test_daxpy():
     x1 = np.random.random((1, n))
     y1 = np.zeros((1, n))
     y2 = np.copy(y1)
-    bp.daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, bp.ROW_ROW)
+    daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, ROW_ROW)
     y2 += alpha * x1
     passed = np.allclose(y1, y2)
     if not passed: tests_failed.append(test_num)
@@ -158,7 +158,7 @@ def test_daxpy():
     x1 = np.random.random((n, 1))
     y1 = np.zeros((n, 1))
     y2 = np.copy(y1)
-    bp.daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, bp.COL_COL)
+    daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, COL_COL)
     y2 += alpha * x1
     ppassed = np.allclose(y1, y2)
     if not passed: tests_failed.append(test_num)
@@ -170,7 +170,7 @@ def test_daxpy():
     x1 = np.random.random((n, 1))
     y1 = np.zeros((n, 1))
     y2 = np.copy(y1)
-    bp.daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, bp.COL_COL)
+    daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, COL_COL)
     y2 += alpha * x1
     passed = np.allclose(y1, y2)
     if not passed: tests_failed.append(test_num)
@@ -182,7 +182,7 @@ def test_daxpy():
     x1 = np.random.random((n, 1))
     y1 = np.zeros((n, 1))
     y2 = np.copy(y1)
-    bp.daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, bp.COL_COL)
+    daxpy(n, alpha, np.ctypeslib.as_ctypes(x1), 1, np.ctypeslib.as_ctypes(y1), 1, COL_COL)
     y2 += alpha * x1
     passed = np.allclose(y1, y2)
     if not passed: tests_failed.append(test_num)
