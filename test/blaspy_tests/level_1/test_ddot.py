@@ -9,7 +9,7 @@
 
 """
 
-from blaspy import ddot, ROW_ROW, ROW_COL, COL_COL, COL_ROW
+from blaspy import ddot, Vec
 import numpy as np
 import random
 
@@ -27,7 +27,7 @@ def test_ddot():
     mat1 = np.random.uniform(-1e4, 1e4, (1, n))
     mat2 = np.random.uniform(-1e4, 1e4, (1, n))
     actual = ddot(n, np.ctypeslib.as_ctypes(mat1), 1, np.ctypeslib.as_ctypes(mat2), 1,
-                     ROW_ROW)
+                     Vec.ROW_ROW)
     expected = np.dot(mat1, np.transpose(mat2))[0][0]
     passed = abs(actual - expected) < epsilon
     if not passed: tests_failed.append(test_num)
@@ -38,7 +38,7 @@ def test_ddot():
     mat1 = np.random.uniform(-1e4, 1e4, (n, 1))
     mat2 = np.random.uniform(-1e4, 1e4, (n, 1))
     actual = ddot(n, np.ctypeslib.as_ctypes(mat1), 1, np.ctypeslib.as_ctypes(mat2), 1,
-                     COL_COL)
+                     Vec.COL_COL)
     expected = np.dot(np.transpose(mat1), mat2)[0][0]
     passed = abs(actual - expected) < epsilon
     if not passed: tests_failed.append(test_num)
@@ -49,7 +49,7 @@ def test_ddot():
     mat1 = np.random.random((1, n))
     mat2 = np.random.random((n, 1))
     actual = ddot(n, np.ctypeslib.as_ctypes(mat1), 1, np.ctypeslib.as_ctypes(mat2), 1,
-                     ROW_COL)
+                     Vec.ROW_COL)
     expected = np.dot(mat1, mat2)[0][0]
     passed = abs(actual - expected) < epsilon
     if not passed: tests_failed.append(test_num)
@@ -60,7 +60,7 @@ def test_ddot():
     mat1 = np.random.uniform(-1e4, 1e4, (n, 1))
     mat2 = np.random.uniform(-1e4, 1e4, (1, n))
     actual = ddot(n, np.ctypeslib.as_ctypes(mat1), 1, np.ctypeslib.as_ctypes(mat2), 1,
-                     COL_ROW)
+                     Vec.COL_ROW)
     expected = np.dot(np.transpose(mat1), np.transpose(mat2))[0][0]
     passed = abs(actual - expected) < epsilon
     if not passed: tests_failed.append(test_num)
@@ -71,7 +71,7 @@ def test_ddot():
     mat1 = np.random.uniform(-1e4, 1e4, (n, n))
     mat2 = np.random.uniform(-1e4, 1e4, (n, n))
     actual = ddot(n, np.ctypeslib.as_ctypes(mat1), 1, np.ctypeslib.as_ctypes(mat2), 1,
-                     COL_COL)
+                     Vec.COL_COL)
     expected = np.dot(mat1, mat2)[0][0]
     passed = abs(actual - expected) < epsilon
     if not passed: tests_failed.append(test_num)
@@ -82,7 +82,7 @@ def test_ddot():
     mat1 = np.random.uniform(-1e4, 1e4, (n, n))
     mat2 = np.random.uniform(-1e4, 1e4, (n, n))
     actual = ddot(n, np.ctypeslib.as_ctypes(mat1), 1, np.ctypeslib.as_ctypes(mat2), 1,
-                     ROW_ROW)
+                     Vec.ROW_ROW)
     expected = np.dot(mat1, mat2)[0][0]
     passed = abs(actual - expected) < epsilon
     if not passed: tests_failed.append(test_num)

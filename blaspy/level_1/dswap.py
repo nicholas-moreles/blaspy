@@ -10,27 +10,27 @@
 """
 
 from ..config import _libblas
-import ctypes as c
+from ctypes import byref, c_int, c_double, POINTER
 
-def dswap(n, x, inc_x, y, inc_y, orientation):
+def dswap(n, x, inc_x, y, inc_y, vec_orient):
     """ Wrapper BLAS dswap. Swaps the contents of two vectors, x and y.
 
     Args:
-        n:              the number of elements in the vectors x and y
-        x:              an array of doubles representing vector x
+        n:              number of elements in the vectors x and y
+        x:              array of doubles representing vector x
         inc_x:          stride of x (increment for the elements of x)
-        y:              an array of doubles representing vector y
+        y:              array of doubles representing vector y
         inc_y:          stride of y (increment for the elements of y)
-        orientation:    blaspy.ROW_ROW  if x is a row vector and y is a row vector
-                        blaspy.ROW_COL  if x is a row vector and y is a column vector
-                        blaspy.COL_COL  if x is a column vector and y is a column vector
-                        blaspy.COL_ROW  if x is a column vector and y is a row vector
+        vec_orient:     Vec.ROW_ROW  if x is a row vector and y is a row vector
+                        Vec.ROW_COL  if x is a row vector and y is a column vector
+                        Vec.COL_COL  if x is a column vector and y is a column vector
+                        Vec.COL_ROW  if x is a column vector and y is a row vector
     """
 
-    _libblas.cblas_dswap.argtypes = [c.c_int,c.POINTER((c.c_double * n * 1) if orientation & 1
-                                    else (c.c_double * 1 * n)), c.c_int,
-                                    c.POINTER((c.c_double * n * 1) if orientation >> 1 & 1
-                                    else (c.c_double * 1 * n)), c.c_int]
+    _libblas.cblas_dswap.argtypes = [c_int,POINTER((c_double * n * 1) if vec_orient & 1
+                                    else (c_double * 1 * n)), c_int,
+                                    POINTER((c_double * n * 1) if vec_orient >> 1 & 1
+                                    else (c_double * 1 * n)), c_int]
     _libblas.cblas_dswap.restype = None
 
-    return _libblas.cblas_dswap(n, c.byref(x), inc_x, c.byref(y), inc_y)
+    return _libblas.cblas_dswap(n, byref(x), inc_x, byref(y), inc_y)

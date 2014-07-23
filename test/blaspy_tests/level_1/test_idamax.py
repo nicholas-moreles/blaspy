@@ -9,7 +9,7 @@
 
 """
 
-from blaspy import idamax, ROW, COL
+from blaspy import idamax, Vec
 import numpy as np
 
 def test_idamax():
@@ -22,7 +22,7 @@ def test_idamax():
     mat1 = np.array([[-7.29544522, -52.85619672, -61.41985094, -53.34163619,  96.1944303, 70.26068289,
                     -59.34631157, -67.28938408, -98.77254851,  16.11719105]])
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, ROW)
+    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, Vec.ROW)
     expected = np.argmax(np.absolute(mat1), 1)
     passed = actual == expected
     if not passed: tests_failed.append(test_num)
@@ -40,7 +40,7 @@ def test_idamax():
                      [  7.11428604],
                      [-76.06536253]])
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, COL)
+    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, Vec.COL)
     expected = np.argmax(np.absolute(mat1), 0)
     passed = actual == expected
     if not passed: tests_failed.append(test_num)
@@ -50,7 +50,7 @@ def test_idamax():
     mat1 = np.array([[99.32049224, -52.85619672, -61.41985094, -53.34163619,  96.1944303, 70.26068289,
                     -59.34631157, -67.28938408, -98.77254851,  16.11719105]])
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, ROW)
+    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, Vec.ROW)
     expected = np.argmax(np.absolute(mat1), 1)
     passed = actual == expected
     if not passed: tests_failed.append(test_num)
@@ -60,7 +60,7 @@ def test_idamax():
     mat1 = np.array([[-7.29544522, -52.85619672, -61.41985094, -53.34163619,  96.1944303, 70.26068289,
                     -59.34631157, -67.28938408, -98.77254851,  -99.25841845]])
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, ROW)
+    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, Vec.ROW)
     expected = np.argmax(np.absolute(mat1), 1)
     passed = actual == expected
     if not passed: tests_failed.append(test_num)
@@ -78,7 +78,7 @@ def test_idamax():
                      [  7.11428604],
                      [-76.06536253]])
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, COL)
+    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, Vec.COL)
     expected = np.argmax(np.absolute(mat1), 0)
     passed = actual == expected
     if not passed: tests_failed.append(test_num)
@@ -96,7 +96,7 @@ def test_idamax():
                      [  7.11428604],
                      [-98.06536253]])
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, COL)
+    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, Vec.COL)
     expected = np.argmax(np.absolute(mat1), 0)
     passed = actual == expected
     if not passed: tests_failed.append(test_num)
@@ -105,7 +105,7 @@ def test_idamax():
     test_num += 1
     mat1 = np.random.uniform(-100, 100, (1,1))
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, COL)
+    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, Vec.COL)
     expected = 0
     passed = actual == expected
     if not passed: tests_failed.append(test_num)
@@ -114,7 +114,7 @@ def test_idamax():
     test_num += 1
     mat1 = np.random.uniform(-100, 100, (1,1))
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, ROW)
+    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, Vec.ROW)
     expected = 0
     passed = actual == expected
     if not passed: tests_failed.append(test_num)
@@ -123,7 +123,7 @@ def test_idamax():
     test_num += 1
     mat1 = np.random.uniform(-1e6, 1e6, (1, 1e5))
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, ROW)
+    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, Vec.ROW)
     expected = np.argmax(np.absolute(mat1), 1)
     passed = actual == expected
     if not passed: tests_failed.append(test_num)
@@ -132,7 +132,7 @@ def test_idamax():
     test_num += 1
     mat1 = np.random.uniform(-1e6, 1e6, (1e5, 1))
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, COL)
+    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, Vec.COL)
     expected = np.argmax(np.absolute(mat1), 0)
     passed = actual == expected
     if not passed: tests_failed.append(test_num)
@@ -142,7 +142,7 @@ def test_idamax():
     mat1 = np.array([[-7.29544522, -52.85619672, -98.77254851, -53.34163619,  96.1944303, 70.26068289,
                     -59.34631157, -67.28938408, -98.77254851,  16.11719105]])
     n = max(mat1.shape[0], mat1.shape[1])
-    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, ROW)
+    actual = idamax(n, np.ctypeslib.as_ctypes(mat1), 1, Vec.ROW)
     expected = 2
     passed = actual == expected
     if not passed: tests_failed.append(test_num)

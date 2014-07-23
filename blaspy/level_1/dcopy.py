@@ -10,9 +10,9 @@
 """
 
 from ..config import _libblas
-import ctypes as c
+from ctypes import byref, c_int, c_double, POINTER
 
-def dcopy(n, x, inc_x, y, inc_y, orientation):
+def dcopy(n, x, inc_x, y, inc_y, vec_orient):
     """ Wrapper for BLAS dcopy.
     Copy the numerical contents of one vector to another.
 
@@ -21,21 +21,21 @@ def dcopy(n, x, inc_x, y, inc_y, orientation):
     where x and y are both vectors of length n.
 
     Args:
-        n:              the number of elements in the vectors x and y
-        x:              an array of doubles representing vector x
+        n:              number of elements in the vectors x and y
+        x:              array of doubles representing vector x
         inc_x:          stride of x (increment for the elements of x)
-        y:              an array of doubles representing vector y
+        y:              array of doubles representing vector y
         inc_y:          stride of y (increment for the elements of y)
-        orientation:    blaspy.ROW_ROW  if x is a row vector and y is a row vector
-                        blaspy.ROW_COL  if x is a row vector and y is a column vector
-                        blaspy.COL_COL  if x is a column vector and y is a column vector
-                        blaspy.COL_ROW  if x is a column vector and y is a row vector
+        vec_orient:     Vec.ROW_ROW  if x is a row vector and y is a row vector
+                        Vec.ROW_COL  if x is a row vector and y is a column vector
+                        Vec.COL_COL  if x is a column vector and y is a column vector
+                        Vec.COL_ROW  if x is a column vector and y is a row vector
     """
 
-    _libblas.cblas_ddot.argtypes = [c.c_int, c.POINTER((c.c_double * n * 1) if orientation & 1
-                                    else (c.c_double * 1 * n)), c.c_int,
-                                    c.POINTER((c.c_double * n * 1) if orientation >> 1 & 1
-                                    else (c.c_double * 1 * n)), c.c_int]
+    _libblas.cblas_ddot.argtypes = [c_int, POINTER((c_double * n * 1) if vec_orient & 1
+                                    else (c_double * 1 * n)), c_int,
+                                    POINTER((c_double * n * 1) if vec_orient >> 1 & 1
+                                    else (c_double * 1 * n)), c_int]
     _libblas.cblas_dcopy.restype = None
 
-    _libblas.cblas_dcopy(n, c.byref(x), inc_x, c.byref(y), inc_y)
+    _libblas.cblas_dcopy(n, byref(x), inc_x, byref(y), inc_y)

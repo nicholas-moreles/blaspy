@@ -10,9 +10,9 @@
 """
 
 from ..config import _libblas
-import ctypes as c
+from ctypes import byref, c_int, c_double, c_float, POINTER
 
-def dsdot(n, x, inc_x, y, inc_y, orientation):
+def dsdot(n, x, inc_x, y, inc_y, vec_orient):
     """Wrapper for BLAS dsdot.
     Perform a dot (inner) product operation between two vectors with extended precision.
 
@@ -25,24 +25,24 @@ def dsdot(n, x, inc_x, y, inc_y, orientation):
     Note: dsdot requires that x and y contain floats, not doubles; however, dsdot returns a double.
 
     Args:
-        n:              the number of elements in the vectors x and y
-        x:              an array of floats representing vector x
+        n:              number of elements in the vectors x and y
+        x:              array of floats representing vector x
         inc_x:          stride of x (increment for the elements of x)
-        y:              an array of floats representing vector y
+        y:              array of floats representing vector y
         inc_y:          stride of y (increment for the elements of y)
-        orientation:    blaspy.ROW_ROW  if x is a row vector and y is a row vector
-                        blaspy.ROW_COL  if x is a row vector and y is a column vector
-                        blaspy.COL_COL  if x is a column vector and y is a column vector
-                        blaspy.COL_ROW  if x is a column vector and y is a row vector
+        vec_orient:     Vec.ROW_ROW  if x is a row vector and y is a row vector
+                        Vec.ROW_COL  if x is a row vector and y is a column vector
+                        Vec.COL_COL  if x is a column vector and y is a column vector
+                        Vec.COL_ROW  if x is a column vector and y is a row vector
 
     Returns:
         A double representing rho, the result of the dot product between x and y.
     """
 
-    _libblas.cblas_dsdot.argtypes = [c.c_int, c.POINTER((c.c_float * n * 1) if orientation & 1
-                                    else (c.c_float * 1 * n)), c.c_int,
-                                    c.POINTER((c.c_float * n * 1) if orientation >> 1 & 1
-                                    else (c.c_float * 1 * n)), c.c_int]
-    _libblas.cblas_dsdot.restype = c.c_double
+    _libblas.cblas_dsdot.argtypes = [c_int, POINTER((c_float * n * 1) if vec_orient & 1
+                                    else (c_float * 1 * n)), c_int,
+                                    POINTER((c_float * n * 1) if vec_orient >> 1 & 1
+                                    else (c_float * 1 * n)), c_int]
+    _libblas.cblas_dsdot.restype = c_double
 
-    return _libblas.cblas_dsdot(n, c.byref(x), inc_x, c.byref(y), inc_y)
+    return _libblas.cblas_dsdot(n, byref(x), inc_x, byref(y), inc_y)

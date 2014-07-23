@@ -9,7 +9,7 @@
 
 """
 
-from blaspy import dcopy, ROW_ROW, ROW_COL, COL_COL, COL_ROW
+from blaspy import dcopy, Vec
 import numpy as np
 import random
 
@@ -25,7 +25,7 @@ def test_dcopy():
     n = random.randint(2, 1e5)
     x = np.random.uniform(-1e5, 1e5, (1, n))
     y = np.zeros((1, n))
-    dcopy(n, np.ctypeslib.as_ctypes(x), 1, np.ctypeslib.as_ctypes(y), 1, ROW_ROW)
+    dcopy(n, np.ctypeslib.as_ctypes(x), 1, np.ctypeslib.as_ctypes(y), 1, Vec.ROW_ROW)
     passed = np.allclose(x, y)
     if not passed: tests_failed.append(test_num)
 
@@ -34,7 +34,7 @@ def test_dcopy():
     n = random.randint(2, 1e5)
     x = np.random.uniform(-1e5, 1e5, (1, n))
     y = np.zeros((n, 1))
-    dcopy(n, np.ctypeslib.as_ctypes(x), 1, np.ctypeslib.as_ctypes(y), 1, ROW_COL)
+    dcopy(n, np.ctypeslib.as_ctypes(x), 1, np.ctypeslib.as_ctypes(y), 1, Vec.ROW_COL)
     passed = np.allclose(np.transpose(x), y)
     if not passed: tests_failed.append(test_num)
 
@@ -43,7 +43,7 @@ def test_dcopy():
     n = random.randint(1e4, 1e5)
     x = np.random.uniform(-1e5, 1e5, (n, 1))
     y = np.zeros((1, n))
-    dcopy(n, np.ctypeslib.as_ctypes(x), 1, np.ctypeslib.as_ctypes(y), 1, COL_ROW)
+    dcopy(n, np.ctypeslib.as_ctypes(x), 1, np.ctypeslib.as_ctypes(y), 1, Vec.COL_ROW)
     passed = np.allclose(np.transpose(x), y)
     if not passed: tests_failed.append(test_num)
 
@@ -52,7 +52,7 @@ def test_dcopy():
     n = random.randint(1e4, 1e5)
     x = np.random.uniform(-1e5, 1e5, (n, 1))
     y = np.zeros((n, 1))
-    dcopy(n, np.ctypeslib.as_ctypes(x), 1, np.ctypeslib.as_ctypes(y), 1, COL_COL)
+    dcopy(n, np.ctypeslib.as_ctypes(x), 1, np.ctypeslib.as_ctypes(y), 1, Vec.COL_COL)
     passed = np.allclose(x, y)
     if not passed: tests_failed.append(test_num)
 
