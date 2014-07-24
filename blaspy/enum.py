@@ -14,8 +14,8 @@
 # being used with a given function; however, this is in keeping with BLASpy's philosophy of not
 # explicitly error checking to maintain speed.
 #
-# It is recommended that these enums are stored as variables (i.e. COL = Vec.COL) if they are going
-# to be used repeatedly in a loop for fastest performance.
+# It is recommended that these enums are stored as local variables (i.e. COL = Vec.COL) if they are
+# going to be used repeatedly in a loop to ensure the fastest performance.
 
 def enumeration(**named_values):
     return type('enumeration', (), named_values)

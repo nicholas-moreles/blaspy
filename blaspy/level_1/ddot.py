@@ -22,6 +22,8 @@ def ddot(n, x, inc_x, y, inc_y, vec_orient):
     respectively, where both vectors are of length n. Upon completion, the dot product rho is
     returned.
 
+    An inner product is computed regardless of the orientation of x and y.
+
     Args:
         n:              number of elements in the vectors x and y
         x:              array of doubles representing vector x

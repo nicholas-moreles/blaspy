@@ -29,6 +29,8 @@ total = 0
 # Level 1 #
 ###########
 
+print("Testing Level 1 BLAS\n")
+
 # Test dasum
 print("Testing dasum:")
 total += run_test(test_dasum)
@@ -65,6 +67,16 @@ total += run_test(test_dswap)
 print("Testing idamax:")
 total += run_test(test_idamax)
 
+
+###########
+# Level 2 #
+###########
+
+print("Testing Level 2 BLAS\n")
+
+# Test dgemv
+print("Testing dgemv:")
+total += run_test(test_dgemv)
 
 # Give totals
 print("Total tests failed: " + str(total))
