@@ -78,5 +78,10 @@ print("Testing Level 2 BLAS\n")
 print("Testing dgemv:")
 total += run_test(test_dgemv)
 
+# Test dger
+print("Testing dger:")
+total += run_test(test_dger)
+
+
 # Give totals
 print("Total tests failed: " + str(total))

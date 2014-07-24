@@ -14,15 +14,12 @@ from ctypes import byref, c_int, c_double, POINTER
 
 def dgemv(order, trans, m, n, alpha, A, lda, x, inc_x, beta, y, inc_y, vec_orient):
     """Wrapper for BLAS dgemv.
-    Perform a matrix-vector multiplication operation.
+    Perform a general matrix-vector multiplication operation.
 
     y := beta * y + alpha * A * x
 
-    where alpha and beta are scalars, A is a general matrix, and x and y are general vectors. The
-    trans argument allows the computation to proceed as if A were transposed.
-
-    Vectors x and y are treated as column vectors regardless of their actual orientation, though the
-    modified y retains its original orientation as the vectors are not actually transposed.
+    where alpha and beta are scalars, A is a general matrix, and x and y are treated as general
+    column vectors. The trans argument allows the computation to proceed as if A were transposed.
 
     Args:
         order:          Order.ROW_MAJOR  if A is stored in row-major order
