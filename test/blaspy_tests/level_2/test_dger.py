@@ -62,7 +62,7 @@ def test_dger():
     passed = np.allclose(mat, mat2)
     if not passed: tests_failed.append(test_num)
 
-    # Test 4 - matrix, x is a col vector, y is a row vector, no transpose
+    # Test 4 - matrix, x is a col vector, y is a row vector
     test_num += 1
     m = random.randint(1e3, 2e3)
     n = random.randint(1e3, 2e3)

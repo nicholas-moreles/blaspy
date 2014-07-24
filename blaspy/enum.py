@@ -17,15 +17,21 @@
 # It is recommended that these enums are stored as local variables (i.e. COL = Vec.COL) if they are
 # going to be used repeatedly in a loop to ensure the fastest performance.
 
+
 def enumeration(**named_values):
     return type('enumeration', (), named_values)
 
 # Custom enum used by BLASpy for level 1 and level 2 BLAS routines to let ctypes know the
 # orientation of the array to be passed in.
-Vec = enumeration(COL = 0, ROW = 1, COL_COL = 0, ROW_COL = 1, COL_ROW = 2, ROW_ROW = 3)
+#
+# Note: While BLAS wrappers could be written that don't require passing these enums in as
+# parameters to level 1 and level 2 functions, the use of these enums are parameters showed a
+# ~5% performance improvement (over using len(x) and len(x[0]) instead) and was therefore
+# deemed to be worth the cost of adding an extra parameter to our BLAS wrappers.
+Vec = enumeration(COL=0, ROW=1, COL_COL=0, ROW_COL=1, COL_ROW=2, ROW_ROW=3)
 
 # Enum for CBLAS_ORDER
-Order = enumeration(ROW_MAJOR = 101, COL_MAJOR = 102)
+Order = enumeration(ROW_MAJOR=101, COL_MAJOR=102)
 
 # Enum for CBLAS_TRANSPOSE
-Trans = enumeration(NO_TRANS = 111, TRANS = 112, CONJ_TRANS = 113, CONJ_NO_TRANS = 114)
+Trans = enumeration(NO_TRANS=111, TRANS=112, CONJ_TRANS=113, CONJ_NO_TRANS=114)

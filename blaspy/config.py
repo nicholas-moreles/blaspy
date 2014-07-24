@@ -14,7 +14,7 @@ import ctypes as c
 import os
 
 # The name of the BLAS .so file. By default this is the OpenBLAS reference implementation included
-# with BLASPY. Only modify if you wish to use a different version of BLAS you have installed.
+# with BLASpy. Only modify if you wish to use a different version of BLAS you have installed.
 BLAS_NAME = "libopenblasp-r0.2.9-64ref32threads.so"
 
 # True if the BLAS .so file is in the blaspy/lib subdirectory,
@@ -27,4 +27,4 @@ IN_BLASPY_SUBDIR = True
 
 # Create the appropriate path to _libblas
 BLAS_PATH = str(os.path.dirname(__file__))[:-6] + "lib/"
-_libblas = c.cdll.LoadLibrary((BLAS_PATH + BLAS_NAME) if IN_BLASPY_SUBDIR else (BLAS_NAME))
+_libblas = c.cdll.LoadLibrary((BLAS_PATH + BLAS_NAME) if IN_BLASPY_SUBDIR else BLAS_NAME)
