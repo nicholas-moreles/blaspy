@@ -1,6 +1,6 @@
 """
 
-    Copyright (c) 2014, The University of Texas at Austin
+    Copyright (c) 2014, The University of Texas at Austin.
     All rights reserved.
 
     This file is part of BLASpy and is available under the 3-Clause
@@ -11,4 +11,5 @@
 
 from .level_1 import *
 from .level_2 import *
+from .level_3 import *
 from .enum import *

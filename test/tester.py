@@ -1,6 +1,6 @@
 """
 
-    Copyright (c) 2014, The University of Texas at Austin
+    Copyright (c) 2014, The University of Texas at Austin.
     All rights reserved.
 
     This file is part of BLASpy and is available under the 3-Clause
@@ -81,6 +81,17 @@ total += run_test(test_dgemv)
 # Test dger
 print("Testing dger:")
 total += run_test(test_dger)
+
+
+###########
+# Level 3 #
+###########
+
+print("Testing Level 3 BLAS\n")
+
+# Test dgemv
+print("Testing dgemm:")
+total += run_test(test_dgemm)
 
 
 # Give totals

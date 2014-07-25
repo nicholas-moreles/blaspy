@@ -1,6 +1,6 @@
 """
 
-    Copyright (c) 2014, The University of Texas at Austin
+    Copyright (c) 2014, The University of Texas at Austin.
     All rights reserved.
 
     This file is part of BLASpy and is available under the 3-Clause
@@ -22,7 +22,7 @@ def enumeration(**named_values):
     return type('enumeration', (), named_values)
 
 # Custom enum used by BLASpy for level 1 and level 2 BLAS routines to let ctypes know the
-# orientation of the array to be passed in.
+# orientation of the array to be passed in (this is a ctypes requirement/limitation).
 #
 # Note: While BLAS wrappers could be written that don't require passing these enums in as
 # parameters to level 1 and level 2 functions, the use of these enums are parameters showed a
