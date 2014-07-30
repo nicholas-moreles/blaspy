@@ -31,41 +31,14 @@ total = 0
 
 print("Testing Level 1 BLAS\n")
 
-# Test dasum
-print("Testing dasum:")
-total += run_test(test_dasum)
+print("Testing axpy:")
+total += run_test(test_axpy)
 
-# Test daxpy
-print("Testing daxpy:")
-total += run_test(test_daxpy)
+print("Testing dot:")
+total += run_test(test_dot)
 
-# Test dcopy
-print("Testing dcopy:")
-total += run_test(test_dcopy)
-
-# Test ddot
-print("Testing ddot:")
-total += run_test(test_ddot)
-
-# Test dnrm2
-print("Testing dnrm2:")
-total += run_test(test_dnrm2)
-
-# Test dscal
-print("Testing dscal:")
-total += run_test(test_dscal)
-
-# Test dsdot
-print("Testing dsdot:")
-total += run_test(test_dsdot)
-
-# Test dswap
-print("Testing dswap:")
-total += run_test(test_dswap)
-
-# Test idamax
-print("Testing idamax:")
-total += run_test(test_idamax)
+print("Testing scal:")
+total += run_test(test_scal)
 
 
 ###########
@@ -74,24 +47,12 @@ total += run_test(test_idamax)
 
 print("Testing Level 2 BLAS\n")
 
-# Test dgemv
-print("Testing dgemv:")
-total += run_test(test_dgemv)
-
-# Test dger
-print("Testing dger:")
-total += run_test(test_dger)
-
 
 ###########
 # Level 3 #
 ###########
 
 print("Testing Level 3 BLAS\n")
-
-# Test dgemv
-print("Testing dgemm:")
-total += run_test(test_dgemm)
 
 
 # Give totals

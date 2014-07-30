@@ -5,7 +5,11 @@ BLASpy was primarily authored by
 but others contributing input and feedback include
 
     Robert van de Geijn         (The University of Texas at Austin)
+    Field G. Van Zee            (The University of Texas at Austin)
 
+Much of the documentation for BLASpy closely follows the format and
+wording of "libflame: The Complete Reference" by Field G. Van Zee.
+Many thanks for his permission to utilize his work as a guide.
 
 BLASpy is currently maintained by
 

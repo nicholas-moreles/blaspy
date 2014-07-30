@@ -8,6 +8,3 @@
     directory or at http://opensource.org/licenses/BSD-3-Clause
 
 """
-
-from .test_dgemv import test_dgemv
-from .test_dger import test_dger

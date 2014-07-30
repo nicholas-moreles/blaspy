@@ -8,5 +8,3 @@
     directory or at http://opensource.org/licenses/BSD-3-Clause
 
 """
-
-from .dgemm import dgemm
