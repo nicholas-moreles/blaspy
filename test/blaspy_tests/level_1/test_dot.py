@@ -19,62 +19,99 @@ def test_dot():
 
     random.seed()
     tests_failed = []
-    epsilon = 0.0001  # account for round-off/precision error
+    epsilon = 0.001  # account for round-off/precision error
 
-    # run tests of the given type
-    def run_tests(dtype, as_matrix):
-        assert dtype == 'float32' or dtype == 'float64'
+    # run one particular test
+    def passed_test(dtype, x_is_row, y_is_row, n=None, stride=None):
 
-        # run one particular test
-        def passed_test(dtype, x_is_row, y_is_row, n=None):
+        # set random values for n and stride if none are passed in
+        if n is None:
+            n = random.randint(2, 1e6)
+        if stride is None:
+            stride = random.randint(2, 1e5)
 
-            # set random value for n if none is passed in
-            if n is None:
-                n = random.randint(2, 1e6)
+        # create the vectors to test
+        x = random_vector(n, x_is_row, dtype, as_matrix)
+        y = random_vector(n, y_is_row, dtype, as_matrix)
+        assert x.dtype == y.dtype
 
-            # create the vectors to test
-            x = random_vector(n, x_is_row, dtype, as_matrix)
-            y = random_vector(n, y_is_row, dtype, as_matrix)
-            assert x.dtype == y.dtype
-
-            # compare BLASpy result to expected result
+        # get the expected result
+        if stride == 1:
             expected = np_dot(x if x_is_row else transpose(x),
                               transpose(y) if y_is_row else y)[0][0]
-            actual = dot(x, y)
-            return abs(actual - expected) / expected < epsilon
+        else:
+            expected = 0
+            for i in range(0, n, stride):
+                if x_is_row:
+                    if y_is_row:
+                        expected += x[0, i] * y[0, i]
+                    else:
+                        expected += x[0, i] * y[i, 0]
+                else:
+                    if y_is_row:
+                        expected += x[i, 0] * y[0, i]
+                    else:
+                        expected += x[i, 0] * y[i, 0]
+
+        # compare BLASpy result to expected result
+        actual = dot(x, y, stride, stride)
+        return (abs(abs(actual) - abs(expected))) / expected < epsilon
+
+    # run all tests of the given type
+    def run_tests():
 
         # two scalars
-        test_name = dtype + "_matrix" if as_matrix else "_ndarray" + "_scalars"
-        if not passed_test(dtype, ROW, ROW, n=1): tests_failed.append(test_name)
+        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_scalars"
+        if not passed_test(dtype, ROW, ROW, n=1, stride=1): tests_failed.append(test_name)
 
         # two column vectors
-        test_name = dtype + "_matrix" if as_matrix else "_ndarray" + "_col_col"
-        if not passed_test(dtype, COL, COL): tests_failed.append(test_name)
+        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_col"
+        if not passed_test(dtype, COL, COL, stride=1): tests_failed.append(test_name)
 
         # two row vectors
-        test_name = dtype + "_matrix" if as_matrix else "_ndarray" + "_row_row"
-        if not passed_test(dtype, ROW, ROW): tests_failed.append(test_name)
+        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_row"
+        if not passed_test(dtype, ROW, ROW, stride=1): tests_failed.append(test_name)
 
         # column vector and a row vector
-        test_name = dtype + "_matrix" if as_matrix else "_ndarray" + "_col_row"
+        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_row"
+        if not passed_test(dtype, COL, ROW, stride=1): tests_failed.append(test_name)
+
+        # row vector and a column vector
+        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_col"
+        if not passed_test(dtype, ROW, COL, stride=1): tests_failed.append(test_name)
+
+        # two column vectors with the same random stride
+        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_col_rand_stride"
+        if not passed_test(dtype, COL, COL): tests_failed.append(test_name)
+
+        # two row vectors with the same random stride
+        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_row_rand_stride"
+        if not passed_test(dtype, ROW, ROW): tests_failed.append(test_name)
+
+        # column vector and a row vector with the same random stride
+        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_row_rand_stride"
         if not passed_test(dtype, COL, ROW): tests_failed.append(test_name)
 
-        # two row vectors
-        test_name = dtype + "_matrix" if as_matrix else "_ndarray" + "_row_col"
+        # row vector and a column vector with the same random stride
+        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_col_rand_stride"
         if not passed_test(dtype, ROW, COL): tests_failed.append(test_name)
 
     # Test ddot as ndarray
-    run_tests('float64', NDARRAY)
+    dtype = 'float64'
+    as_matrix = NDARRAY
+    run_tests()
 
     # Test ddot as matrix
-    run_tests('float64', MATRIX)
+    as_matrix = MATRIX
+    run_tests()
 
-    #Test sdot as ndarray
-    run_tests('float32', NDARRAY)
+    # Test sdot as ndarray
+    dtype = 'float32'
+    as_matrix = NDARRAY
+    run_tests()
 
-    #Test sdot as matrix
-    run_tests('float32', MATRIX)
-
-    # TODO: Add tests with different strides
+    # Test sdot as matrix
+    as_matrix = MATRIX
+    run_tests()
 
     return tests_failed
