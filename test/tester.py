@@ -11,6 +11,7 @@
 
 from blaspy_tests import *
 
+
 def run_test(function):
     result = function()
     num_tests_failed = len(result)
@@ -30,6 +31,9 @@ total = 0
 ###########
 
 print("Testing Level 1 BLAS\n")
+
+print("Testing asum:")
+total += run_test(test_asum)
 
 print("Testing axpy:")
 total += run_test(test_axpy)

@@ -9,6 +9,7 @@
 
 """
 
+from .asum import asum
 from .axpy import axpy
 from .dot import dot
 from .scal import scal

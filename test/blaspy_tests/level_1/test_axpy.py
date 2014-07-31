@@ -14,13 +14,13 @@ from ..helpers import random_vector, COL, ROW, NDARRAY, MATRIX
 from numpy import allclose, copy, transpose
 import random
 
-def test_axpy():
 
+def test_axpy():
     random.seed()
     tests_failed = []
 
     # run one particular test
-    def passed_test(dtype, x_is_row, y_is_row, n=None, alpha=None, stride=None):
+    def passed_test(x_is_row, y_is_row, n=None, alpha=None, stride=None):
 
         # set random values for n, alpha, and stride if none are passed in
         if n is None:
@@ -37,15 +37,15 @@ def test_axpy():
 
         # get the expected result
         if stride == 1:
-            expected = alpha * (transpose(x) if x_is_row else x)\
-                + (transpose(y) if y_is_row else y)
+            expected = alpha * (transpose(x) if x_is_row else x) \
+                       + (transpose(y) if y_is_row else y)
         else:
             if y_is_row:
                 expected = copy(transpose(y))
             else:
                 expected = copy(y)
             for i in range(0, n, stride):
-                if (x_is_row):
+                if x_is_row:
                     expected[i, 0] += alpha * x[0, i]
                 else:
                     expected[i, 0] += alpha * x[i, 0]
@@ -60,39 +60,48 @@ def test_axpy():
 
         # two scalars
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_scalars"
-        if not passed_test(dtype, ROW, ROW, n=1, stride=1): tests_failed.append(test_name)
+        if not passed_test(ROW, ROW, n=1, stride=1):
+            tests_failed.append(test_name)
 
         # two column vectors
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_col"
-        if not passed_test(dtype, COL, COL, stride=1): tests_failed.append(test_name)
+        if not passed_test(COL, COL, stride=1):
+            tests_failed.append(test_name)
 
         # two row vectors
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_row"
-        if not passed_test(dtype, ROW, ROW, stride=1): tests_failed.append(test_name)
+        if not passed_test(ROW, ROW, stride=1):
+            tests_failed.append(test_name)
 
         # column vector and a row vector
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_row"
-        if not passed_test(dtype, COL, ROW, stride=1): tests_failed.append(test_name)
+        if not passed_test(COL, ROW, stride=1):
+            tests_failed.append(test_name)
 
         # two row vectors
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_col"
-        if not passed_test(dtype, ROW, COL, stride=1): tests_failed.append(test_name)
+        if not passed_test(ROW, COL, stride=1):
+            tests_failed.append(test_name)
 
         # two column vectors with the same random stride
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_col_rand_stride"
-        if not passed_test(dtype, COL, COL): tests_failed.append(test_name)
+        if not passed_test(COL, COL):
+            tests_failed.append(test_name)
 
         # two row vectors with the same random stride
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_row_rand_stride"
-        if not passed_test(dtype, ROW, ROW): tests_failed.append(test_name)
+        if not passed_test(ROW, ROW):
+            tests_failed.append(test_name)
 
         # column vector and a row vector with the same random stride
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_row_rand_stride"
-        if not passed_test(dtype, COL, ROW): tests_failed.append(test_name)
+        if not passed_test(COL, ROW):
+            tests_failed.append(test_name)
 
         # two row vectors with the same random stride
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_col_rand_stride"
-        if not passed_test(dtype, ROW, COL): tests_failed.append(test_name)
+        if not passed_test(ROW, COL):
+            tests_failed.append(test_name)
 
     # Test daxpy as ndarray
     dtype = 'float64'

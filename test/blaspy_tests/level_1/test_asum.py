@@ -9,24 +9,24 @@
 
 """
 
-from blaspy import scal
+from blaspy import asum
 from ..helpers import random_vector, COL, ROW, NDARRAY, MATRIX
-from numpy import allclose, copy
+from numpy import sum as np_sum
+from numpy import absolute
 import random
 
 
-def test_scal():
+def test_asum():
     random.seed()
     tests_failed = []
+    epsilon = 0.0001  # account for round-off/precision error
 
     # run one particular test
-    def passed_test(x_is_row, n=None, alpha=None, stride=None):
+    def passed_test(x_is_row, n=None, stride=None):
 
         # set random values for n, alpha, and stride if none are passed in
         if n is None:
             n = random.randint(2, 1e6)
-        if alpha is None:
-            alpha = random.randint(-100, 100)
         if stride is None:
             stride = random.randint(2, 1e5)
 
@@ -35,53 +35,43 @@ def test_scal():
 
         # get the expected result
         if stride == 1:
-            expected = alpha * x
+            expected = np_sum(absolute(x))
         else:
-            expected = copy(x)
+            expected = 0
             for i in range(0, n, stride):
                 if x_is_row:
-                    expected[0, i] *= alpha
+                    expected += abs(x[0, i])
                 else:
-                    expected[i, 0] *= alpha
+                    expected += abs(x[i, 0])
 
         # compare BLASpy result to expected result
-        scal(alpha, x, stride)
-        return allclose(x, expected)
+        actual = asum(x, stride)
+        return abs(actual - expected) / expected < epsilon
 
     # run all tests of the given type
     def run_tests():
 
-        # Test 1 - scale a scalar
+        # Test 1 - sum a scalar
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_scalar"
         if not passed_test(ROW, n=1, stride=1):
             tests_failed.append(test_name)
 
-        # Test 2 - scale a column vector
+        # Test 2 - sum a column vector
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col"
         if not passed_test(COL, stride=1):
             tests_failed.append(test_name)
 
-        # Test 3 - scale a row vector
+        # Test 3 - sum a row vector
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row"
         if not passed_test(ROW, stride=1):
             tests_failed.append(test_name)
 
-        # Test 4 - scale a column vector by zero
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_zero"
-        if not passed_test(COL, alpha=0, stride=1):
-            tests_failed.append(test_name)
-
-        # Test 5 - scale a row vector by one
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_one"
-        if not passed_test(ROW, alpha=1, stride=1):
-            tests_failed.append(test_name)
-
-        # Test 6 - scale a column vector with a random stride
+        # Test 4 - sum a column vector with a random stride
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_rand_stride"
         if not passed_test(COL):
             tests_failed.append(test_name)
 
-        # Test 7 - scale a row vector with a random stride
+        # Test 5 - sum a row vector with a random stride
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_rand_stride"
         if not passed_test(ROW):
             tests_failed.append(test_name)

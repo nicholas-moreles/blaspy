@@ -15,6 +15,7 @@ from ..helpers import find_length
 from ctypes import c_int, c_double, c_float, POINTER
 
 
+# noinspection PyUnresolvedReferences
 def axpy(alpha, x, y, inc_x=1, inc_y=1):
     """Perform an axpy operation between two vectors.
 
@@ -61,9 +62,9 @@ def axpy(alpha, x, y, inc_x=1, inc_y=1):
         ctype_x = POINTER(data_type * n_x * m_x)
         ctype_y = POINTER(data_type * n_y * m_y)
         blas_func.argtypes = [c_int, data_type, ctype_x, c_int, ctype_y, c_int]
-        blas_func.restype = data_type
-        return blas_func(x_length, alpha, x.ctypes.data_as(ctype_x), inc_x,
-                         y.ctypes.data_as(ctype_y), inc_y)
+        blas_func.restype = None
+        blas_func(x_length, alpha, x.ctypes.data_as(ctype_x), inc_x,
+                  y.ctypes.data_as(ctype_y), inc_y)
 
     except AttributeError:
         raise ValueError("x and y must be of type numpy.ndarray or numpy.matrix")

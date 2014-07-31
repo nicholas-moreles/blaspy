@@ -15,6 +15,7 @@ from ..helpers import find_length
 from ctypes import c_int, c_double, c_float, POINTER
 
 
+# noinspection PyUnresolvedReferences
 def dot(x, y, inc_x=1, inc_y=1):
     """Perform a dot (inner) product operation between two vectors.
 

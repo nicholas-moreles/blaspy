@@ -15,14 +15,14 @@ from numpy import dot as np_dot
 from numpy import transpose
 import random
 
-def test_dot():
 
+def test_dot():
     random.seed()
     tests_failed = []
     epsilon = 0.001  # account for round-off/precision error
 
     # run one particular test
-    def passed_test(dtype, x_is_row, y_is_row, n=None, stride=None):
+    def passed_test(x_is_row, y_is_row, n=None, stride=None):
 
         # set random values for n and stride if none are passed in
         if n is None:
@@ -62,39 +62,48 @@ def test_dot():
 
         # two scalars
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_scalars"
-        if not passed_test(dtype, ROW, ROW, n=1, stride=1): tests_failed.append(test_name)
+        if not passed_test(ROW, ROW, n=1, stride=1):
+            tests_failed.append(test_name)
 
         # two column vectors
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_col"
-        if not passed_test(dtype, COL, COL, stride=1): tests_failed.append(test_name)
+        if not passed_test(COL, COL, stride=1):
+            tests_failed.append(test_name)
 
         # two row vectors
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_row"
-        if not passed_test(dtype, ROW, ROW, stride=1): tests_failed.append(test_name)
+        if not passed_test(ROW, ROW, stride=1):
+            tests_failed.append(test_name)
 
         # column vector and a row vector
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_row"
-        if not passed_test(dtype, COL, ROW, stride=1): tests_failed.append(test_name)
+        if not passed_test(COL, ROW, stride=1):
+            tests_failed.append(test_name)
 
         # row vector and a column vector
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_col"
-        if not passed_test(dtype, ROW, COL, stride=1): tests_failed.append(test_name)
+        if not passed_test(ROW, COL, stride=1):
+            tests_failed.append(test_name)
 
         # two column vectors with the same random stride
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_col_rand_stride"
-        if not passed_test(dtype, COL, COL): tests_failed.append(test_name)
+        if not passed_test(COL, COL):
+            tests_failed.append(test_name)
 
         # two row vectors with the same random stride
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_row_rand_stride"
-        if not passed_test(dtype, ROW, ROW): tests_failed.append(test_name)
+        if not passed_test(ROW, ROW):
+            tests_failed.append(test_name)
 
         # column vector and a row vector with the same random stride
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_row_rand_stride"
-        if not passed_test(dtype, COL, ROW): tests_failed.append(test_name)
+        if not passed_test(COL, ROW):
+            tests_failed.append(test_name)
 
         # row vector and a column vector with the same random stride
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_col_rand_stride"
-        if not passed_test(dtype, ROW, COL): tests_failed.append(test_name)
+        if not passed_test(ROW, COL):
+            tests_failed.append(test_name)
 
     # Test ddot as ndarray
     dtype = 'float64'
