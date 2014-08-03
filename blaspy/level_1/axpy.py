@@ -49,10 +49,10 @@ def axpy(alpha, x, y, inc_x=1, inc_y=1):
             raise ValueError("size mismatch between x and y")
 
         # determine which BLAS routine to call based on data type
-        if x.dtype == 'float64' and y.dtype == 'float64':  # ddot
+        if x.dtype == 'float64' and y.dtype == 'float64':
             blas_func = _libblas.cblas_daxpy
             data_type = c_double
-        elif x.dtype == 'float32' and y.dtype == 'float32':  # sdot
+        elif x.dtype == 'float32' and y.dtype == 'float32':
             blas_func = _libblas.cblas_saxpy
             data_type = c_float
         else:

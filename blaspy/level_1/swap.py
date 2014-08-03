@@ -16,8 +16,8 @@ from ctypes import c_int, c_double, c_float, POINTER
 
 
 # noinspection PyUnresolvedReferences
-def copy(x, y, inc_x=1, inc_y=1):
-    """Copy the numerical contents of vector x to vector y.
+def swap(x, y, inc_x=1, inc_y=1):
+    """Swap the numerical contents of vector x and vector y.
 
     x and y must have identical data types and must be of the same length.
 
@@ -45,10 +45,10 @@ def copy(x, y, inc_x=1, inc_y=1):
 
         # determine which BLAS routine to call based on data type
         if x.dtype == 'float64' and y.dtype == 'float64':
-            blas_func = _libblas.cblas_dcopy
+            blas_func = _libblas.cblas_dswap
             data_type = c_double
         elif x.dtype == 'float32' and y.dtype == 'float32':
-            blas_func = _libblas.cblas_scopy
+            blas_func = _libblas.cblas_sswap
             data_type = c_float
         else:
             raise ValueError("x and y must have the same dtype, either float64 or float32")

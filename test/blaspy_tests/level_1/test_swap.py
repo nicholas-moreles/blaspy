@@ -9,21 +9,21 @@
 
 """
 
-from blaspy import copy
+from blaspy import swap
 from ..helpers import random_vector, COL, ROW, NDARRAY, MATRIX
 from numpy import allclose, transpose
 from numpy import copy as np_copy
 import random
 
 
-def test_copy():
+def test_swap():
     random.seed()
     tests_failed = []
 
     # run one particular test
     def passed_test(x_is_row, y_is_row, n=None, stride=None):
 
-        # set random values for n, and stride if none are passed in
+        # set random values for n and stride if none are passed in
         if n is None:
             n = random.randint(2, 1e6)
         if stride is None:
@@ -36,24 +36,34 @@ def test_copy():
 
         # get the expected result
         if stride == 1:
-            expected = x if x_is_row == y_is_row else transpose(x)
+            if x_is_row == y_is_row:
+                x_2 = np_copy(y)
+                y_2 = np_copy(x)
+            else:
+                x_2 = np_copy(transpose(y))
+                y_2 = np_copy(transpose(x))
         else:
-            expected = np_copy(y)
+            x_2 = np_copy(x)
+            y_2 = np_copy(y)
             for i in range(0, n, stride):
                 if x_is_row:
                     if y_is_row:  # y is row, x is row
-                        expected[0, i] = x[0, i]
+                        x_2[0, i] = y[0, i]
+                        y_2[0, i] = x[0, i]
                     else:  # y is col, x is row
-                        expected[i, 0] = x[0, i]
+                        x_2[0, i] = y[i, 0]
+                        y_2[i, 0] = x[0, i]
                 else:
                     if y_is_row:  # y is row, x is col
-                        expected[0, i] = x[i, 0]
+                        x_2[i, 0] = y[0, i]
+                        y_2[0, i] = x[i, 0]
                     else:  # y is col, x is col
-                        expected[i, 0] = x[i, 0]
+                        x_2[i, 0] = y[i, 0]
+                        y_2[i, 0] = x[i, 0]
 
         # compare the actual result to the expected result
-        copy(x, y, stride, stride)
-        return allclose(y, expected)
+        swap(x, y, stride, stride)
+        return allclose(x, x_2) and allclose(y, y_2)
 
     # run all tests of the given type
     def run_tests():

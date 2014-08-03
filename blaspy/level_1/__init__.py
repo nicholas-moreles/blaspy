@@ -16,3 +16,4 @@ from .dot import dot
 from .nrm2 import nrm2
 from .scal import scal
 from .sdot import sdot
+from .swap import swap

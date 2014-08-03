@@ -53,6 +53,9 @@ total += run_test(test_scal)
 print("Testing sdot:")
 total += run_test(test_sdot)
 
+print("Testing swap:")
+total += run_test(test_swap)
+
 
 ###########
 # Level 2 #

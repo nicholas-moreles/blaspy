@@ -57,7 +57,7 @@ def sdot(x, y, inc_x=1, inc_y=1, output='float64'):
             raise ValueError("x and y must both be of dtype float32")
 
         # determine which BLAS routine to call based on data type, then call BLAS using ctypes
-        if output == 'float64':  # dsdot
+        if output == 'float64':
             blas_func = _libblas.cblas_dsdot
             ctype_x = POINTER(c_float * n_x * m_x)
             ctype_y = POINTER(c_float * n_y * m_y)
@@ -65,7 +65,7 @@ def sdot(x, y, inc_x=1, inc_y=1, output='float64'):
             blas_func.restype = c_double
             return blas_func(x_length, x.ctypes.data_as(ctype_x), inc_x,
                              y.ctypes.data_as(ctype_y), inc_y)
-        elif output == 'float32':  # dsdot
+        elif output == 'float32':
             blas_func = _libblas.cblas_sdsdot
             ctype_x = POINTER(c_float * n_x * m_x)
             ctype_y = POINTER(c_float * n_y * m_y)

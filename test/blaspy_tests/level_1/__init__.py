@@ -16,3 +16,4 @@ from .test_dot import test_dot
 from .test_nrm2 import test_nrm2
 from .test_scal import test_scal
 from .test_sdot import test_sdot
+from .test_swap import test_swap

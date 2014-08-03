@@ -39,10 +39,10 @@ def asum(x, inc_x=1):
             raise ValueError("x must be a vector")
 
         # determine which BLAS routine to call based on data type
-        if x.dtype == 'float64':  # dasum
+        if x.dtype == 'float64':
             blas_func = _libblas.cblas_dasum
             data_type = c_double
-        elif x.dtype == 'float32':  # sasum
+        elif x.dtype == 'float32':
             blas_func = _libblas.cblas_sasum
             data_type = c_float
         else:
