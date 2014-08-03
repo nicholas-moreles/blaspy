@@ -11,5 +11,6 @@
 
 from .asum import asum
 from .axpy import axpy
+from .copy import copy
 from .dot import dot
 from .scal import scal

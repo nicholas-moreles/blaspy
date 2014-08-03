@@ -1,3 +1,8 @@
 The following is a list of known issues with BLASpy:
 
-- BLASpy is not currently complete so it is missing many BLAS routines.
+- Only single-precision (float32) and double-precision (float64) NumPy matrices
+  and ndarrays are currently supported by BLASpy. Work on complex data types
+  will be started only after most BLAS routines are supported for real data types.
+
+- There is currently no system in place to make installation of BLASpy user-friendly.
+  This will be added before work on complex data types begins.

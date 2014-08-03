@@ -17,7 +17,8 @@ from ctypes import c_int, c_double, c_float, POINTER
 
 # noinspection PyUnresolvedReferences
 def asum(x, inc_x=1):
-    """Compute the 1-norm of a vector (i.e. the sum of the magnitudes of the vector elements).
+    """Compute the 1-norm of a vector (i.e. the sum of the magnitudes, or absolute values, of the
+    vector elements).
 
     ||x||_1 := SUM(|chi_i|) from i=0 to i=n-1
 

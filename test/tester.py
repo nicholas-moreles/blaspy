@@ -38,6 +38,9 @@ total += run_test(test_asum)
 print("Testing axpy:")
 total += run_test(test_axpy)
 
+print("Testing copy:")
+total += run_test(test_copy)
+
 print("Testing dot:")
 total += run_test(test_dot)
 
