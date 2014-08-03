@@ -76,21 +76,21 @@ def test_asum():
         if not passed_test(ROW):
             tests_failed.append(test_name)
 
-    # Test dscal as ndarray
+    # Test dasum with ndarray
     dtype = 'float64'
     as_matrix = NDARRAY
     run_tests()
 
-    # Test dscal as matrix
+    # Test dasum with matrix
     as_matrix = MATRIX
     run_tests()
 
-    # Test sscal as ndarray
+    # Test sasum with ndarray
     dtype = 'float32'
     as_matrix = NDARRAY
     run_tests()
 
-    # Test sscal as matrix
+    # Test sasum with matrix
     as_matrix = MATRIX
     run_tests()
 

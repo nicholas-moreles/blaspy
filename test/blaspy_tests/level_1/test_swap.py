@@ -113,21 +113,21 @@ def test_swap():
         if not passed_test(ROW, COL):
             tests_failed.append(test_name)
 
-    # Test daxpy as ndarray
+    # Test dswap with ndarray
     dtype = 'float64'
     as_matrix = NDARRAY
     run_tests()
 
-    # Test daxpy as matrix
+    # Test dswap with matrix
     as_matrix = MATRIX
     run_tests()
 
-    # Test saxpy as ndarray
+    # Test sswap with ndarray
     dtype = 'float32'
     as_matrix = NDARRAY
     run_tests()
 
-    # Test saxpy as matrix
+    # Test sswap with matrix
     as_matrix = MATRIX
     run_tests()
 

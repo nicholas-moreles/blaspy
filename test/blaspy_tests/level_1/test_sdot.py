@@ -106,21 +106,21 @@ def test_sdot():
         if not passed_test(ROW, COL):
             tests_failed.append(test_name)
 
-    # Test ddot as ndarray
+    # Test dsdot with ndarray
     dtype = 'float64'
     as_matrix = NDARRAY
     run_tests()
 
-    # Test ddot as matrix
+    # Test dsdot with matrix
     as_matrix = MATRIX
     run_tests()
 
-    # Test sdot as ndarray
+    # Test sdsdot with ndarray
     dtype = 'float32'
     as_matrix = NDARRAY
     run_tests()
 
-    # Test sdot as matrix
+    # Test sdsdot with matrix
     as_matrix = MATRIX
     run_tests()
 
