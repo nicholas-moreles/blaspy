@@ -44,6 +44,9 @@ total += run_test(test_copy)
 print("Testing dot:")
 total += run_test(test_dot)
 
+print("Testing nrm2:")
+total += run_test(test_nrm2)
+
 print("Testing scal:")
 total += run_test(test_scal)
 
