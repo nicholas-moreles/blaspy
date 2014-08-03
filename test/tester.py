@@ -47,6 +47,9 @@ total += run_test(test_dot)
 print("Testing scal:")
 total += run_test(test_scal)
 
+print("Testing sdot:")
+total += run_test(test_sdot)
+
 
 ###########
 # Level 2 #

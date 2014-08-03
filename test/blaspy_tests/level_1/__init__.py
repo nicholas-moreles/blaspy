@@ -14,4 +14,4 @@ from .test_axpy import test_axpy
 from .test_copy import test_copy
 from .test_dot import test_dot
 from .test_scal import test_scal
-
+from .test_sdot import test_sdot

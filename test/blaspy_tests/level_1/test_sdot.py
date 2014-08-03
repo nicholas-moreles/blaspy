@@ -9,14 +9,14 @@
 
 """
 
-from blaspy import dot
+from blaspy import sdot
 from ..helpers import random_vector, COL, ROW, NDARRAY, MATRIX
 from numpy import dot as np_dot
 from numpy import transpose
 import random
 
 
-def test_dot():
+def test_sdot():
     random.seed()
     tests_failed = []
     epsilon = 0.001  # account for round-off/precision error
@@ -31,8 +31,8 @@ def test_dot():
             stride = random.randint(2, 1e5)
 
         # create the vectors to test
-        x = random_vector(n, x_is_row, dtype, as_matrix)
-        y = random_vector(n, y_is_row, dtype, as_matrix)
+        x = random_vector(n, x_is_row, 'float32', as_matrix)
+        y = random_vector(n, y_is_row, 'float32', as_matrix)
         assert x.dtype == y.dtype
 
         # get the expected result
@@ -54,7 +54,8 @@ def test_dot():
                         expected += x[i, 0] * y[i, 0]
 
         # compare BLASpy result to expected result
-        actual = dot(x, y, stride, stride)
+        assert dtype == 'float64' or dtype == 'float32'
+        actual = sdot(x, y, stride, stride, dtype)
         return (abs(abs(actual) - abs(expected))) / expected < epsilon
 
     # run all tests of the given type

@@ -11,7 +11,7 @@
 
 from blaspy import copy
 from ..helpers import random_vector, COL, ROW, NDARRAY, MATRIX
-from numpy import allclose, transpose, zeros
+from numpy import allclose, transpose
 from numpy import copy as np_copy
 import random
 

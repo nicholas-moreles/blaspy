@@ -14,3 +14,4 @@ from .axpy import axpy
 from .copy import copy
 from .dot import dot
 from .scal import scal
+from .sdot import sdot
