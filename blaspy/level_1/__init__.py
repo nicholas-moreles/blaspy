@@ -9,6 +9,7 @@
 
 """
 
+from .amax import amax
 from .asum import asum
 from .axpy import axpy
 from .copy import copy

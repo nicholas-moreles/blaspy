@@ -27,6 +27,9 @@ def asum(x, inc_x=1):
     Args:
         x:              a 2D numpy matrix or ndarray representing vector x
         inc_x:          stride of x (increment for the elements of x)
+
+    Returns:
+        The 1-norm of vector x.
     """
 
     try:

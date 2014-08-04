@@ -32,6 +32,9 @@ total = 0
 
 print("Testing Level 1 BLAS\n")
 
+print("Testing amax:")
+total += run_test(test_amax)
+
 print("Testing asum:")
 total += run_test(test_asum)
 

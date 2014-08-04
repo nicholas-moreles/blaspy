@@ -16,19 +16,17 @@ from ctypes import c_int, c_double, c_float, POINTER
 
 
 # noinspection PyUnresolvedReferences
-def nrm2(x, inc_x=1):
-    """Compute the 2-norm (Euclidean norm) of a vector.
-
-    ||x||_2 = [SUM(|chi_i|^2)]^(1/2) from i=0 to i=n-1
-
-    where chi_i is the ith element of vector x of length n and ||x||_2 is returned.
+def amax(x, inc_x=1):
+    """Find and return the index of the element which has the maximum absolute value in the vector x.
+    If the maximum absolute value is shared by more than one element, then the element whose index
+    is lowest is chosen.
 
     Args:
         x:              a 2D numpy matrix or ndarray representing vector x
         inc_x:          stride of x (increment for the elements of x)
 
     Returns:
-        The 2-norm of vector x.
+        The index of the element which has the maximum absolute value in the vector x.
     """
 
     try:
@@ -42,10 +40,10 @@ def nrm2(x, inc_x=1):
 
         # determine which BLAS routine to call based on data type
         if x.dtype == 'float64':
-            blas_func = _libblas.cblas_dnrm2
+            blas_func = _libblas.cblas_idamax
             data_type = c_double
         elif x.dtype == 'float32':
-            blas_func = _libblas.cblas_snrm2
+            blas_func = _libblas.cblas_isamax
             data_type = c_float
         else:
             raise ValueError("x must have dtype of either float64 or float32")
@@ -53,7 +51,7 @@ def nrm2(x, inc_x=1):
         # call BLAS using ctypes
         ctype_x = POINTER(data_type * n_x * m_x)
         blas_func.argtypes = [c_int, ctype_x, c_int]
-        blas_func.restype = data_type
+        blas_func.restype = c_int
         return blas_func(x_length, x.ctypes.data_as(ctype_x), inc_x)
 
     except AttributeError:

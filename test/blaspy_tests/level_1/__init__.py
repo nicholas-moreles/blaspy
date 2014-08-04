@@ -9,6 +9,7 @@
 
 """
 
+from .test_amax import test_amax
 from .test_asum import test_asum
 from .test_axpy import test_axpy
 from .test_copy import test_copy
