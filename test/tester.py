@@ -66,6 +66,9 @@ total += run_test(test_swap)
 
 print("Testing Level 2 BLAS\n")
 
+print("Testing gemv:")
+total += run_test(test_gemv)
+
 
 ###########
 # Level 3 #

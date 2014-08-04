@@ -37,8 +37,8 @@ def test_axpy():
 
         # get the expected result
         if stride == 1:
-            expected = alpha * (transpose(x) if x_is_row else x) \
-                       + (transpose(y) if y_is_row else y)
+            expected = \
+                alpha * (transpose(x) if x_is_row else x) + (transpose(y) if y_is_row else y)
         else:
             if y_is_row:
                 expected = copy(transpose(y))

@@ -42,7 +42,7 @@ def test_nrm2():
                     expected += abs(x[0, i]) ** 2
                 else:
                     expected += abs(x[i, 0]) ** 2
-            expected = expected ** 0.5
+            expected **= 0.5
 
         # compare BLASpy result to expected result
         actual = nrm2(x, stride)
