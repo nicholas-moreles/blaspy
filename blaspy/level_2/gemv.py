@@ -23,6 +23,7 @@ TRANS = 112
 CONJ_TRANS = 113
 CONJ_NO_TRANS = 114
 
+
 # noinspection PyUnresolvedReferences
 def gemv(A, x, alpha=1, trans_a='no_trans', y=None, beta=1, lda=None, inc_x=1, inc_y=1):
     """Perform a general matrix-vector multiplication operation.
@@ -32,7 +33,11 @@ def gemv(A, x, alpha=1, trans_a='no_trans', y=None, beta=1, lda=None, inc_x=1, i
     where alpha and beta are scalars, A is a general matrix, and x and y are general column vectors.
 
     The trans argument allows the computation to proceed as if A were transposed.
+
     Vectors x and y can be row or column vectors. If necessary, an implicit transposition occurs.
+
+    Vector y defaults to the zero vector of the appropriate size and type if vector y is not
+    provided; however, the strides of x and y must be one if vector y is not provided.
 
     Args:
         A:        a 2d numpy matrix or ndarray representing matrix A
@@ -50,18 +55,21 @@ def gemv(A, x, alpha=1, trans_a='no_trans', y=None, beta=1, lda=None, inc_x=1, i
     """
 
     try:
-        # if no y is given, create a NumPy ndarray or matrix of zeros depending on type of x
-        if y is None:
-            if type(x) is ndarray:
-                y = zeros(x.shape, dtype=x.dtype)
-            elif type(x) is matrix:
-                y = asmatrix(zeros(x.shape, dtype=x.dtype))
-            else:
-                raise ValueError("x must be of type numpy.ndarray or numpy.matrix")
-
         # get the dimensions of the parameters
         m_A, n_A = A.shape
         m_x, n_x = x.shape
+        # if no vector y is given, create a zero vector of appropriate size with the same dtype and
+        # orientation as x
+        if y is None:
+            if inc_x != 1 or inc_y != 1:
+                raise ValueError("if inc_x is not equal to 1 or inc_y is not equal to one, "
+                                 "vector y must be provided")
+            if m_x == 1:  # x is a row vector
+                y = zeros((1, n_A if trans_a == 'trans' else m_A), dtype=x.dtype)
+            else:
+                y = zeros((n_A if trans_a == 'trans' else m_A, 1), dtype=x.dtype)
+            if type(x) is matrix:
+                y = asmatrix(y)
         m_y, n_y = y.shape
         x_length = find_length(m_x, n_x, inc_x)
         y_length = find_length(m_y, n_y, inc_y)

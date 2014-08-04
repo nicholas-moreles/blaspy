@@ -11,7 +11,7 @@
 
 from blaspy import gemv
 from ..helpers import random_vector, random_matrix, COL, ROW, NDARRAY, MATRIX
-from numpy import allclose, copy, transpose, dot
+from numpy import allclose, copy, transpose, dot, zeros
 import random
 
 
@@ -20,7 +20,8 @@ def test_gemv():
     tests_failed = []
 
     # run one particular test
-    def passed_test(x_is_row, y_is_row, m=None, n=None, alpha=1, beta=1, stride=None):
+    def passed_test(x_is_row, y_is_row, m=None, n=None, alpha=1, beta=1, stride=None,
+                    provide_y=True):
 
         # set random values for m, n, alpha, beta, and stride if none are passed in
         if m is None:
@@ -39,14 +40,24 @@ def test_gemv():
         A = random_matrix(m / stride + (m % stride > 0), n / stride + (n % stride > 0), dtype,
                           as_matrix)
         x = random_vector(m if trans_a == 'trans' else n, x_is_row, dtype, as_matrix)
-        y = random_vector(n if trans_a == 'trans' else m, y_is_row, dtype, as_matrix)
+        if provide_y:
+            y = random_vector(n if trans_a == 'trans' else m, y_is_row, dtype, as_matrix)
+            assert x.dtype == y.dtype
+        else:
+            y = None
         assert A.dtype == x.dtype
-        assert x.dtype == y.dtype
 
         # get the expected result
         if stride == 1:
+            if y is None:
+                if y_is_row:
+                    y_2 = zeros((1, n if trans_a == 'trans' else m))
+                else:
+                    y_2 = zeros((n if trans_a == 'trans' else m, 1))
+            else:
+                y_2 = y
             expected = \
-                beta * (transpose(y) if y_is_row else y) \
+                beta * (transpose(y_2) if y_is_row else y_2) \
                 + alpha * dot((transpose(A) if trans_a == 'trans' else A),
                               (transpose(x) if x_is_row else x))
         else:
@@ -62,8 +73,8 @@ def test_gemv():
                                   else x[:: stride, :])
 
         # compare the actual result to the expected result
-        gemv(A, x, alpha=alpha, trans_a=trans_a, y=y, beta=beta, inc_x=stride, inc_y=stride)
-        return allclose(y, transpose(expected) if y_is_row else expected, rtol=1e-03, atol=1e-05)
+        y = gemv(A, x, alpha=alpha, trans_a=trans_a, y=y, beta=beta, inc_x=stride, inc_y=stride)
+        return allclose(y, transpose(expected) if y_is_row else expected, rtol=5e-02, atol=5e-04)
 
     # run all tests of the given type
     def run_tests():
@@ -86,6 +97,16 @@ def test_gemv():
         # matrix, column vector and a row vector
         test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_row"
         if not passed_test(COL, ROW, stride=1):
+            tests_failed.append(test_name)
+
+        # matrix and two row vectors, y not provided
+        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_row_no_y"
+        if not passed_test(ROW, ROW, stride=1, provide_y=False):
+            tests_failed.append(test_name)
+
+        # matrix and two column vectors, y not provided
+        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_col_no_y"
+        if not passed_test(COL, COL, stride=1, provide_y=False):
             tests_failed.append(test_name)
 
         # matrix and two row vectors
