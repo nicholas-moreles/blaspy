@@ -69,6 +69,9 @@ print("Testing Level 2 BLAS\n")
 print("Testing gemv:")
 total += run_test(test_gemv)
 
+print("Testing ger:")
+total += run_test(test_ger)
+
 
 ###########
 # Level 3 #

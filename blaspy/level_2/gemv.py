@@ -11,17 +11,9 @@
 
 # noinspection PyProtectedMember
 from ..config import _libblas
-from ..helpers import find_length
-from numpy import zeros, ndarray, matrix, asmatrix
+from ..helpers import find_length, ROW_MAJOR, NO_TRANS, TRANS
+from numpy import zeros, matrix, asmatrix
 from ctypes import c_int, c_double, c_float, POINTER
-
-
-ROW_MAJOR = 101
-COL_MAJOR = 102
-NO_TRANS = 111
-TRANS = 112
-CONJ_TRANS = 113
-CONJ_NO_TRANS = 114
 
 
 # noinspection PyUnresolvedReferences
@@ -40,7 +32,7 @@ def gemv(A, x, alpha=1, trans_a='no_trans', y=None, beta=1, lda=None, inc_x=1, i
     provided; however, the strides of x and y must be one if vector y is not provided.
 
     Args:
-        A:        a 2d numpy matrix or ndarray representing matrix A
+        A:        a 2D numpy matrix or ndarray representing matrix A
         x:        a 2D numpy matrix or ndarray representing vector x
         alpha:    scalar alpha
         trans_a:  'no_trans'  if the multiplication is to proceed normally
@@ -51,25 +43,28 @@ def gemv(A, x, alpha=1, trans_a='no_trans', y=None, beta=1, lda=None, inc_x=1, i
         inc_y:    stride of y (increment for the elements of y)
 
     Returns:
-        Vector y, for use in case no vector y was passed into gemv.
+        Vector y, for use in case no vector y was passed into this function.
     """
 
     try:
         # get the dimensions of the parameters
         m_A, n_A = A.shape
         m_x, n_x = x.shape
+
         # if no vector y is given, create a zero vector of appropriate size with the same dtype and
-        # orientation as x
+        # orientation as x; requires increment of x and y are 1
         if y is None:
             if inc_x != 1 or inc_y != 1:
-                raise ValueError("if inc_x is not equal to 1 or inc_y is not equal to one, "
-                                 "vector y must be provided")
+                raise ValueError("vector y must be provided if the increment of vectors x or y "
+                                 "are not equal to one")
             if m_x == 1:  # x is a row vector
                 y = zeros((1, n_A if trans_a == 'trans' else m_A), dtype=x.dtype)
             else:
                 y = zeros((n_A if trans_a == 'trans' else m_A, 1), dtype=x.dtype)
             if type(x) is matrix:
                 y = asmatrix(y)
+
+        # continue getting dimensions of the parameters
         m_y, n_y = y.shape
         x_length = find_length(m_x, n_x, inc_x)
         y_length = find_length(m_y, n_y, inc_y)
@@ -106,7 +101,7 @@ def gemv(A, x, alpha=1, trans_a='no_trans', y=None, beta=1, lda=None, inc_x=1, i
             blas_func = _libblas.cblas_sgemv
             data_type = c_float
         else:
-            raise ValueError("x and y must have the same dtype, either float64 or float32")
+            raise ValueError("A, x, and y must have the same dtype, either float64 or float32")
 
         # call BLAS using ctypes
         ctype_A = POINTER(data_type * n_A * m_A)
@@ -121,4 +116,4 @@ def gemv(A, x, alpha=1, trans_a='no_trans', y=None, beta=1, lda=None, inc_x=1, i
         return y  # in case no vector y was provided
 
     except AttributeError:
-        raise ValueError("x and y must be of type numpy.ndarray or numpy.matrix")
+        raise ValueError("A, x, and y must be of type numpy.ndarray or numpy.matrix")

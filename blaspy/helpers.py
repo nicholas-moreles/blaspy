@@ -9,6 +9,14 @@
 
 """
 
+# CBLAS enum values
+ROW_MAJOR = 101
+COL_MAJOR = 102
+NO_TRANS = 111
+TRANS = 112
+CONJ_TRANS = 113
+CONJ_NO_TRANS = 114
+
 def find_length(m, n, stride):
     """Find the length of a vector to be used for the BLAS parameter "n".
 

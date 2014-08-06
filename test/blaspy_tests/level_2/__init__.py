@@ -10,3 +10,4 @@
 """
 
 from .test_gemv import test_gemv
+from .test_ger import test_ger
