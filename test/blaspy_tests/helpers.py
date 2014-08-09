@@ -36,3 +36,7 @@ def random_matrix(m, n, dtype, as_matrix):
     assert matrix.dtype == dtype
     assert type(matrix) == np_matrix if as_matrix else type(matrix) == ndarray
     return matrix
+
+def random_square_matrix(n, dtype, as_matrix):
+    rand_matrix = random_matrix(n, n, dtype, as_matrix)
+    return (rand_matrix + rand_matrix.T) / 10

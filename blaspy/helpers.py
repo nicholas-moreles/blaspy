@@ -16,6 +16,8 @@ NO_TRANS = 111
 TRANS = 112
 CONJ_TRANS = 113
 CONJ_NO_TRANS = 114
+UPPER = 121
+LOWER = 122
 
 def find_length(m, n, stride):
     """Find the length of a vector to be used for the BLAS parameter "n".
@@ -39,3 +41,24 @@ def find_length(m, n, stride):
     # return the ceiling of the result of float division of the length divided by the stride if
     # the stride is greater than 1, else return the length
     return (length / stride) + (length % stride > 0) if stride > 1 else length
+
+def check_is_vector(name, m, n):
+    if not (m == 1 or n == 1):
+        raise ValueError(str(name) + " must be a vector")
+
+def check_is_square(name, m, n):
+    if m != n:
+        raise ValueError(str(name) + " must be a square matrix")
+
+def check_equal_sizes(name_1, size_1, name_2, size_2):
+    if size_1 != size_2:
+        raise ValueError("size mismatch between " + str(name_1) + " and " + str(name_2))
+
+def convert_uplo(uplo):
+    if uplo == 'u' or uplo == 'U':
+        return UPPER
+    elif uplo == 'l' or uplo == 'L':
+        return LOWER
+    else:
+        raise ValueError("Parameter 'uplo' must equal one of the following: 'u', 'U', 'l', "
+                         "or 'L'. Actual value: " + str(uplo))
