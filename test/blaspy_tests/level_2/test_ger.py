@@ -62,7 +62,7 @@ def test_ger():
 
         # compare the actual result to the expected result
         A = ger(x, y, alpha=alpha, A=A, inc_x=stride_x, inc_y=stride_y)
-        return allclose(A, A_2)
+        return allclose(A, A_2, rtol=5e-03, atol=5e-05)
 
     # run all tests of the given type
     def run_tests():
