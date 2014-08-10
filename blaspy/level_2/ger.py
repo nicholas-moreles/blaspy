@@ -15,7 +15,8 @@ from ctypes import c_int, POINTER
 
 
 def ger(x, y, alpha=1, A=None, lda=None, inc_x=1, inc_y=1):
-    """Perform a general rank-1 update operation.
+    """
+    Perform a general rank-1 update operation.
 
     A := A + alpha * x * y
 
@@ -36,10 +37,6 @@ def ger(x, y, alpha=1, A=None, lda=None, inc_x=1, inc_y=1):
         lda:      leading dimension of A (must be >= # of cols in A)
         inc_x:    stride of x (increment for the elements of x)
         inc_y:    stride of y (increment for the elements of y)
-
-    Constraints:
-        - the number of rows in matrix A must equal the length of vector x
-        - the number of columns in matrix A must equal the length of vector y
 
     Returns:
         Matrix A, for use in case no matrix A was passed into this function.
