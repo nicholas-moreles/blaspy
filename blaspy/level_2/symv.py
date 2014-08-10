@@ -10,8 +10,7 @@
 """
 
 from ..helpers import get_vector_dimensions, get_square_matrix_dimension, get_func_and_data_type, \
-    check_equal_sizes, convert_uplo, ROW_MAJOR
-from numpy import zeros, matrix, asmatrix
+    check_equal_sizes, create_similar_zero_vector, convert_uplo, ROW_MAJOR
 from ctypes import c_int, POINTER
 
 
@@ -62,13 +61,7 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
                 raise ValueError("vector y must be provided if the increment of vectors x or y "
                                  "are not equal to one")
             else:
-                if m_x == 1:
-                    y = zeros((1, dim_A), dtype=x.dtype)
-                else:
-                    y = zeros((dim_A, 1), dtype=x.dtype)
-
-                if type(x) is matrix:
-                    y = asmatrix(y)
+                y = create_similar_zero_vector(x, dim_A)
 
         # continue getting dimensions of the parameters
         m_y, n_y, y_length = get_vector_dimensions('y', y, inc_y)
@@ -82,19 +75,21 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
         check_equal_sizes('A', dim_A, 'y', y_length)
 
         # convert to appropriate CBLAS enum
-        uplo = convert_uplo(uplo)
+        cblas_uplo = convert_uplo(uplo)
 
-        # determine which BLAS routine to call based on data type
-        blas_func, data_type = get_func_and_data_type('symv', A.dtype, x.dtype, y.dtype)
+        # determine which CBLAS routine to call based on parameter dtypes
+        cblas_func, data_type = get_func_and_data_type('symv', A.dtype, x.dtype, y.dtype)
 
-        # call BLAS using ctypes
+        # create ctype POINTER for each matrix
         ctype_A = POINTER(data_type * dim_A * dim_A)
         ctype_x = POINTER(data_type * n_x * m_x)
         ctype_y = POINTER(data_type * n_y * m_y)
-        blas_func.argtypes = [c_int, c_int, c_int, data_type, ctype_A, c_int, ctype_x, c_int,
+
+        # call CBLAS using ctypes
+        cblas_func.argtypes = [c_int, c_int, c_int, data_type, ctype_A, c_int, ctype_x, c_int,
                               data_type, ctype_y, c_int]
-        blas_func.restype = None
-        blas_func(ROW_MAJOR, uplo, dim_A, alpha, A.ctypes.data_as(ctype_A), lda,
+        cblas_func.restype = None
+        cblas_func(ROW_MAJOR, cblas_uplo, dim_A, alpha, A.ctypes.data_as(ctype_A), lda,
                   x.ctypes.data_as(ctype_x), inc_x, beta, y.ctypes.data_as(ctype_y), inc_y)
 
         return y  # y is also overwritten, so only useful if no y was provided

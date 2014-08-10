@@ -39,9 +39,9 @@ def test_gemv():
         # noinspection PyPep8Naming
         A = random_matrix(m / stride + (m % stride > 0), n / stride + (n % stride > 0), dtype,
                           as_matrix)
-        x = random_vector(m if trans_a == 'trans' else n, x_is_row, dtype, as_matrix)
+        x = random_vector(m if trans_a == 't' else n, x_is_row, dtype, as_matrix)
         if provide_y:
-            y = random_vector(n if trans_a == 'trans' else m, y_is_row, dtype, as_matrix)
+            y = random_vector(n if trans_a == 't' else m, y_is_row, dtype, as_matrix)
             assert x.dtype == y.dtype
         else:
             y = None
@@ -51,24 +51,24 @@ def test_gemv():
         if stride == 1:
             if y is None:
                 if y_is_row:
-                    y_2 = zeros((1, n if trans_a == 'trans' else m))
+                    y_2 = zeros((1, n if trans_a == 't' else m))
                 else:
-                    y_2 = zeros((n if trans_a == 'trans' else m, 1))
+                    y_2 = zeros((n if trans_a == 't' else m, 1))
             else:
                 y_2 = y
             expected = \
                 beta * (transpose(y_2) if y_is_row else y_2) \
-                + alpha * dot((transpose(A) if trans_a == 'trans' else A),
+                + alpha * dot((transpose(A) if trans_a == 't' else A),
                               (transpose(x) if x_is_row else x))
         else:
             if y_is_row:
                 expected = copy(transpose(y))
             else:
                 expected = copy(y)
-            for i in range(0, n if trans_a == 'trans' else m, stride):
+            for i in range(0, n if trans_a == 't' else m, stride):
                 expected[i, 0] = \
                     beta * expected[i, 0] \
-                    + alpha * dot(transpose(A[:, i / stride]) if trans_a == 'trans'
+                    + alpha * dot(transpose(A[:, i / stride]) if trans_a == 't'
                                   else A[i / stride, :], transpose(x[:, :: stride]) if x_is_row
                                   else x[:: stride, :])
 
@@ -135,7 +135,7 @@ def test_gemv():
             tests_failed.append(test_name)
 
     # Test dgemv with ndarray (no_trans)
-    trans_a = 'no_trans'
+    trans_a = 'n'
     dtype = 'float64'
     as_matrix = NDARRAY
     run_tests()
@@ -154,7 +154,7 @@ def test_gemv():
     run_tests()
 
     # Test dgemv with ndarray (trans)
-    trans_a = 'trans'
+    trans_a = 't'
     dtype = 'float64'
     as_matrix = NDARRAY
     run_tests()

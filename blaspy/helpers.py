@@ -11,6 +11,8 @@
 
 from .config import _libblas as lib
 from ctypes import c_double, c_float
+from numpy import asmatrix, zeros
+from numpy import matrix as np_matrix
 
 # CBLAS enum values
 ROW_MAJOR = 101
@@ -169,8 +171,55 @@ def check_equal_sizes(name_1, size_1, name_2, size_2):
         name_2:  string to print as the name of the second element
         size_2:  size of the second element
     """
+
     if size_1 != size_2:
         raise ValueError("Size mismatch between %s and %s." % (name_1, name_2))
+
+def create_similar_zero_vector(other_vector, length):
+    """
+    Create and return a zero vector of the given length with the same dtype and orientation as
+    other_vector.
+
+    Args:
+        other_vector:  vector whose dtype and orientation to copy
+        length:        length of the new zero vector
+
+    Returns:
+        A new NumPy ndarray or matrix filled with zeros of specified length with the same
+        characteristics as other_vector.
+    """
+
+    if other_vector.shape[0] == 1:
+        new_vector = zeros((1, length), dtype=other_vector.dtype)
+    else:
+        new_vector = zeros((length, 1), dtype=other_vector.dtype)
+
+    if type(other_vector) is np_matrix:
+        new_vector = asmatrix(new_vector)
+
+    return new_vector
+
+def create_zero_matrix(rows, cols, dtype, matrix_type):
+    """
+    Create and return a zero matrix with the given number of rows and columns, and of the
+    appropriate dtype and matrix type.
+
+    Args:
+        rows:         number of rows in the new matrix
+        cols:         number of columns in the new matrix
+        dtype:        NumPy dtype for the elements of the new matrix
+        matrix_type:  either NumPy ndarray or matrix; the new matrix will be of the same type
+
+    Returns:
+        A new NumPy ndarray or matrix filled with zeros of specified dimensions and dtype.
+    """
+
+    new_matrix = zeros((rows, cols), dtype=dtype)
+
+    if matrix_type == np_matrix:
+        return asmatrix(new_matrix)
+    else:
+        return new_matrix
 
 def convert_uplo(uplo):
     if uplo == 'u' or uplo == 'U':
@@ -179,7 +228,16 @@ def convert_uplo(uplo):
         return LOWER
     else:
         raise ValueError("Parameter 'uplo' must equal one of the following: 'u', 'U', 'l', "
-                         "or 'L'. Actual value: %s" % uplo)
+                         "'L'. Actual value: %s." % uplo)
+
+def convert_trans(trans):
+    if trans == 'n' or trans == 'N':
+        return NO_TRANS
+    elif trans == 't' or trans == 'T':
+        return TRANS
+    else:
+        raise ValueError("Parameter 'trans' must equal one of the following: 'n', 'N', 't', "
+                         "'T'. Actual value: %s." % trans)
 
 
 # TO BE REMOVED - ALL BELOW THIS LINE
