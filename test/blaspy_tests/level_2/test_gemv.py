@@ -73,7 +73,7 @@ def test_gemv():
                                   else x[:: stride, :])
 
         # compare the actual result to the expected result
-        y = gemv(A, x, alpha=alpha, trans_a=trans_a, y=y, beta=beta, inc_x=stride, inc_y=stride)
+        y = gemv(A, x, y=y, trans_a=trans_a, alpha=alpha, beta=beta, inc_x=stride, inc_y=stride)
         return allclose(y, transpose(expected) if y_is_row else expected, rtol=5e-02, atol=5e-04)
 
     # run all tests of the given type

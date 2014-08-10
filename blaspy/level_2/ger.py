@@ -9,7 +9,7 @@
 
 """
 
-from ..helpers import get_vector_dimensions, get_matrix_dimensions, get_func_and_data_type, \
+from ..helpers import get_vector_dimensions, get_matrix_dimensions, get_cblas_info, \
     check_equal_sizes, create_zero_matrix, ROW_MAJOR
 from ctypes import c_int, POINTER
 
@@ -43,6 +43,14 @@ def ger(x, y, alpha=1, A=None, lda=None, inc_x=1, inc_y=1):
 
     Returns:
         Matrix A, for use in case no matrix A was passed into this function.
+
+     Raises:
+        ValueError: if any of the following conditions occur:
+
+                    - A, x, or y is not a 2D NumPy ndarray or NumPy matrix
+                    - A, x, and y do not have the same dtype or that dtype is not supported
+                    - x or y is not a vector
+                    - the effective length of x or y does not conform to the dimensions of A
     """
 
     try:
@@ -58,23 +66,22 @@ def ger(x, y, alpha=1, A=None, lda=None, inc_x=1, inc_y=1):
         # continue getting dimensions of the parameters
         m_A, n_A = get_matrix_dimensions('A', A)
 
-        # if no lda is given, set it equal to n_A (row-major order is assumed):
         if lda is None:
-            lda = n_A
+            lda = n_A  # row-major order is assumed
 
         # ensure the parameters are appropriate for the operation
         check_equal_sizes('A', m_A, 'x', x_length)
         check_equal_sizes('A', n_A, 'y', y_length)
 
-        # determine which CBLAS routine to call based on matrix dtypes
-        cblas_func, data_type = get_func_and_data_type('ger', A.dtype, x.dtype, y.dtype)
+        # determine which CBLAS subroutine to call based on matrix dtypes
+        cblas_func, data_type = get_cblas_info('ger', A.dtype, x.dtype, y.dtype)
 
-        # create ctype POINTER for each matrix
+        # create ctypes POINTER for each matrix
         ctype_A = POINTER(data_type * n_A * m_A)
         ctype_x = POINTER(data_type * n_x * m_x)
         ctype_y = POINTER(data_type * n_y * m_y)
 
-        # call BLAS using ctypes
+        # call CBLAS using ctypes
         cblas_func.argtypes = [c_int, c_int, c_int, data_type, ctype_x, c_int, ctype_y, c_int,
                               ctype_A, c_int]
         cblas_func.restype = None

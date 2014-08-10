@@ -9,13 +9,14 @@
 
 """
 
-from ..helpers import get_vector_dimensions, get_square_matrix_dimension, get_func_and_data_type, \
-    check_equal_sizes, create_similar_zero_vector, convert_uplo, ROW_MAJOR
+from ..helpers import get_square_matrix_dimension, get_vector_dimensions, check_strides_equal_one,\
+    create_similar_zero_vector, check_equal_sizes, convert_uplo, get_cblas_info, ROW_MAJOR
 from ctypes import c_int, POINTER
 
 
 def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
-    """Perform a symmetric matrix-vector multiplication operation.
+    """
+    Perform a symmetric matrix-vector multiplication operation.
 
     y := beta * y + alpha * A * x
 
@@ -38,16 +39,23 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
                   'l'   if the lower triangular part of A is to be used
         alpha:    scalar alpha
         beta:     scalar beta
-        lda:      leading dimension of a (must be >= # of cols in A)
+        lda:      leading dimension of A (must be >= # of cols in A)
         inc_x:    stride of x (increment for the elements of x)
         inc_y:    stride of y (increment for the elements of y)
 
-    Constraints:
-        - A must be a square matrix (number of rows equal to number of columns).
-        - The length of vectors x and y must equal the dimension of A.
-
     Returns:
         Vector y, for use in case no vector y was passed into this function.
+
+    Raises:
+        ValueError: if any of the following conditions occur:
+
+                    - A, x, or y is not a 2D NumPy ndarray or NumPy matrix
+                    - A, x, and y do not have the same dtype or that dtype is not supported
+                    - A is not a square matrix
+                    - x or y is not a vector
+                    - the effective length of x or y do not equal the dimension of A
+                    - y is not provided and the stride of x or y does not equal one
+                    - uplo is not equal to one of the following: 'u', 'U', 'l', 'L'
     """
 
     try:
@@ -57,37 +65,33 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
 
         # if y is not given, create zero vector with same orientation and type as x
         if y is None:
-            if inc_x != 1 or inc_y != 1:
-                raise ValueError("vector y must be provided if the increment of vectors x or y "
-                                 "are not equal to one")
-            else:
-                y = create_similar_zero_vector(x, dim_A)
+            check_strides_equal_one(inc_x, inc_y)
+            y = create_similar_zero_vector(x, dim_A)
 
         # continue getting dimensions of the parameters
         m_y, n_y, y_length = get_vector_dimensions('y', y, inc_y)
 
-        # if no lda is given, set it equal to n_A (row-major order is assumed):
         if lda is None:
-            lda = dim_A
+            lda = dim_A  # row-major order assumed
 
         # ensure the parameters are appropriate for the operation
         check_equal_sizes('A', dim_A, 'x', x_length)
         check_equal_sizes('A', dim_A, 'y', y_length)
 
-        # convert to appropriate CBLAS enum
+        # convert to appropriate CBLAS value
         cblas_uplo = convert_uplo(uplo)
 
-        # determine which CBLAS routine to call based on parameter dtypes
-        cblas_func, data_type = get_func_and_data_type('symv', A.dtype, x.dtype, y.dtype)
+        # determine which CBLAS subroutine to call based on parameter dtypes
+        cblas_func, ctype_dtype = get_cblas_info('symv', A.dtype, x.dtype, y.dtype)
 
-        # create ctype POINTER for each matrix
-        ctype_A = POINTER(data_type * dim_A * dim_A)
-        ctype_x = POINTER(data_type * n_x * m_x)
-        ctype_y = POINTER(data_type * n_y * m_y)
+        # create ctypes POINTER for each matrix
+        ctype_A = POINTER(ctype_dtype * dim_A * dim_A)
+        ctype_x = POINTER(ctype_dtype * n_x * m_x)
+        ctype_y = POINTER(ctype_dtype * n_y * m_y)
 
         # call CBLAS using ctypes
-        cblas_func.argtypes = [c_int, c_int, c_int, data_type, ctype_A, c_int, ctype_x, c_int,
-                              data_type, ctype_y, c_int]
+        cblas_func.argtypes = [c_int, c_int, c_int, ctype_dtype, ctype_A, c_int, ctype_x, c_int,
+                              ctype_dtype, ctype_y, c_int]
         cblas_func.restype = None
         cblas_func(ROW_MAJOR, cblas_uplo, dim_A, alpha, A.ctypes.data_as(ctype_A), lda,
                   x.ctypes.data_as(ctype_x), inc_x, beta, y.ctypes.data_as(ctype_y), inc_y)

@@ -40,9 +40,10 @@ FUNC_MAP = {'amax': (lib.cblas_idamax, lib.cblas_isamax),
             'ger':  (lib.cblas_dger,   lib.cblas_sger),
             'symv': (lib.cblas_dsymv,  lib.cblas_ssymv)}
 
-def get_func_and_data_type(calling_func, *args):
+def get_cblas_info(calling_func, *args):
     """
-    Return the appropriate CBLAS subroutine based on the calling function and dtypes of args.
+    Return the appropriate CBLAS subroutine and ctype data type based on the calling function and
+    dtypes of args.
 
     Args:
         calling_func:  a string representation of the calling function
@@ -55,7 +56,7 @@ def get_func_and_data_type(calling_func, *args):
         - appropriate ctypes data type
 
     Raises:
-        ValueError  if all matrices and/or vectors do not have the same dtype
+        ValueError: if all matrices and/or vectors do not have the same dtype
     """
 
     if all(dtype == 'float64' for dtype in args):
@@ -86,7 +87,7 @@ def get_vector_dimensions(name, vector, stride):
         - length of vector after accounting for stride
 
     Raises:
-        ValueError  if vector is not a vector represented by a 2D NumPy ndarray or matrix
+        ValueError: if vector is not a vector represented by a 2D NumPy ndarray or matrix
     """
 
     try:
@@ -122,7 +123,7 @@ def get_matrix_dimensions(name, matrix):
         - number of columns in matrix
 
     Raises:
-        ValueError  if matrix is not a 2D NumPy ndarray or matrix
+        ValueError: if matrix is not a 2D NumPy ndarray or matrix
     """
 
     try:
@@ -146,7 +147,7 @@ def get_square_matrix_dimension(name, matrix):
         An int representing both the number of rows and number of columns in matrix.
 
     Raises:
-        ValueError  if matrix is not a square 2D NumPy ndarray or matrix
+        ValueError: if matrix is not a square 2D NumPy ndarray or matrix
     """
 
     try:
@@ -174,6 +175,11 @@ def check_equal_sizes(name_1, size_1, name_2, size_2):
 
     if size_1 != size_2:
         raise ValueError("Size mismatch between %s and %s." % (name_1, name_2))
+
+def check_strides_equal_one(*args):
+    if any(stride != 1 for stride in args):
+        raise ValueError("One or more strides are not equal to one. All strides must equal one if "
+                         "the vector y is not provided as a parameter.")
 
 def create_similar_zero_vector(other_vector, length):
     """
@@ -247,12 +253,14 @@ def find_length(m, n, stride):
     Note: Adjusting the length by the value of stride prevents a segfault that would otherwise
     occur by ensuring BLAS does not attempt to operate on memory locations past the end
     of the vector.
+
     Args:
-    m: the number of rows in the vector
-    n: the number of columns in the vector
-    stride: stride of the vector (increment for the elements of the vector)
+        m: the number of rows in the vector
+        n: the number of columns in the vector
+        stride: stride of the vector (increment for the elements of the vector)
+
     Returns:
-    The appropriate length to be passed to BLAS for the vector.
+        The appropriate length to be passed to BLAS for the vector.
     """
 
     # set length to the max of m and n
