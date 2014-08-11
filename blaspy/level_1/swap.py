@@ -9,15 +9,13 @@
 
 """
 
-# noinspection PyProtectedMember
-from ..config import _libblas
-from ..helpers import find_length
-from ctypes import c_int, c_double, c_float, POINTER
+from ..helpers import get_vector_dimensions, check_equal_sizes, get_cblas_info
+from ctypes import c_int, POINTER
 
 
-# noinspection PyUnresolvedReferences
 def swap(x, y, inc_x=1, inc_y=1):
-    """Swap the numerical contents of vector x and vector y.
+    """
+    Swap the numerical contents of vector x and vector y.
 
     x and y must have identical data types and must be of the same length.
 
@@ -30,35 +28,21 @@ def swap(x, y, inc_x=1, inc_y=1):
 
     try:
         # get the dimensions of the parameters
-        m_x, n_x = x.shape
-        m_y, n_y = y.shape
-        x_length = find_length(m_x, n_x, inc_x)
-        y_length = find_length(m_y, n_y, inc_y)
+        m_x, n_x, x_length = get_vector_dimensions('x', x, inc_x)
+        m_y, n_y, y_length = get_vector_dimensions('y', y, inc_y)
 
         # ensure the parameters are appropriate for the operation
-        if not (m_x == 1 or n_x == 1):
-            raise ValueError("x must be a vector")
-        if not (m_y == 1 or n_y == 1):
-            raise ValueError("y must be a vector")
-        if x_length != y_length:
-            raise ValueError("size mismatch between x and y")
+        check_equal_sizes('x', x_length, 'y', y_length)
 
-        # determine which BLAS routine to call based on data type
-        if x.dtype == 'float64' and y.dtype == 'float64':
-            blas_func = _libblas.cblas_dswap
-            data_type = c_double
-        elif x.dtype == 'float32' and y.dtype == 'float32':
-            blas_func = _libblas.cblas_sswap
-            data_type = c_float
-        else:
-            raise ValueError("x and y must have the same dtype, either float64 or float32")
+        # determine which CBLAS subroutine to call and which ctypes data type to use
+        cblas_func, ctype_dtype = get_cblas_info('swap', x.dtype, y.dtype)
 
         # call BLAS using ctypes
-        ctype_x = POINTER(data_type * n_x * m_x)
-        ctype_y = POINTER(data_type * n_y * m_y)
-        blas_func.argtypes = [c_int, ctype_x, c_int, ctype_y, c_int]
-        blas_func.restype = None
-        blas_func(x_length, x.ctypes.data_as(ctype_x), inc_x, y.ctypes.data_as(ctype_y), inc_y)
+        ctype_x = POINTER(ctype_dtype * n_x * m_x)
+        ctype_y = POINTER(ctype_dtype * n_y * m_y)
+        cblas_func.argtypes = [c_int, ctype_x, c_int, ctype_y, c_int]
+        cblas_func.restype = None
+        cblas_func(x_length, x.ctypes.data_as(ctype_x), inc_x, y.ctypes.data_as(ctype_y), inc_y)
 
     except AttributeError:
-        raise ValueError("x and y must be of type numpy.ndarray or numpy.matrix")
+        raise ValueError("Either x or y is not a 2D NumPy ndarray or matrix.")
