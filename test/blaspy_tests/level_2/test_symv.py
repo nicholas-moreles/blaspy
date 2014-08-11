@@ -10,11 +10,15 @@
 """
 
 from ..helpers import random_vector, random_symmetric_matrix
-from .expected_results import expected_symv
 from blaspy import symv
-from numpy import allclose, triu, tril
+from numpy import allclose, copy, dot, triu, tril, zeros
 from itertools import product
 from random import randint, uniform
+
+N_MIN, N_MAX = 2, 1e3           # vector/matrix sizes
+SCAL_MIN, SCAL_MAX = -100, 100  # scalar values
+STRIDE_MAX = 1e2                # max vector stride
+RTOL, ATOL = 5e-02, 5e-04       # margin of error
 
 
 def test_symv():
@@ -24,6 +28,7 @@ def test_symv():
     Returns:
         A list of strings representing the failed tests.
     """
+
     tests_failed = []
 
     # values to test
@@ -38,9 +43,10 @@ def test_symv():
 
         # avoid testing cases where y is not provided and stride != 1
         if provide_y or stride == 1:
-            if not passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, uplo):
 
-                # test has failed, create a string representing its name
+            # if a test fails, create a string representation of its name and append it to the list
+            # of failed tests
+            if not passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, uplo):
                 variable_list = [dtype,
                                  "_matrix" if as_matrix else "_ndarray",
                                  "_row" if x_is_row else "_col",
@@ -49,8 +55,6 @@ def test_symv():
                                  "_" if provide_y else "_no_y_",
                                  uplo]
                 test_name = "".join(variable_list)
-
-                # append that string to the list of failed tests
                 tests_failed.append(test_name)
 
     return tests_failed
@@ -70,22 +74,37 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, uplo):
         uplo:       BLASpy uplo parameter to test
 
     Returns:
-        True if the expected result was within the margin of error of the actual result.
+        True if the expected result was within the margin of error of the actual result,
         False otherwise.
     """
 
-    n = randint(2, 1e3)
-    alpha = uniform(-100, 100)
-    beta = uniform(-100, 100)
-    stride = randint(2, 1e2) if stride is None else stride
+    # generate random sizes for matrix/vector dimensions and vector stride (if necessary)
+    n = randint(N_MIN, N_MAX)
+    stride = randint(N_MIN, STRIDE_MAX) if stride is None else stride
 
-    # create the random matrix and vectors to test
+    # create random scalars, vectors, and matrices to test
     A = random_symmetric_matrix(n / stride + (n % stride > 0), dtype, as_matrix)
     x = random_vector(n, x_is_row, dtype, as_matrix)
     y = random_vector(n, y_is_row, dtype, as_matrix) if provide_y else None
+    alpha = uniform(SCAL_MIN, SCAL_MAX)
+    beta = uniform(SCAL_MIN, SCAL_MAX)
 
-    # get the expected result
-    expected = expected_symv(A, x, x_is_row, y, y_is_row, n, alpha, beta, stride)
+    # create x_2 and y_2 vectors that are column vectors with the same elements as x and y
+    # (column vectors are easier to work with when computing the expected results)
+    x_2 = x.T if x_is_row else x
+    if y is None:
+        y_2 = zeros((1, n))
+    else:
+        y_2 = copy(y.T) if y_is_row else copy(y)
+
+    # compute the expected result
+    if stride == 1:
+        y_2 = beta * y_2 + alpha * dot(A, x_2)
+    else:
+        for i in range(0, y_2.shape[0], stride):
+            A_partition = A[i / stride, :]
+            x_partition = x_2[:: stride, :]
+            y_2[i, 0] = (beta * y_2[i, 0]) + (alpha * dot(A_partition, x_partition))
 
     # get the actual result
     A = triu(A) if uplo == 'u' else tril(A)
@@ -94,8 +113,8 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, uplo):
     # update the orientation of y as it may have changed
     y_is_row = y.shape[0] == 1
 
-    # compare the actual result to the expected result
+    # compare the actual result to the expected result and return result of the test
     if y_is_row:
-        return allclose(y.T, expected, rtol=5e-02, atol=5e-04)
+        return allclose(y.T, y_2, RTOL, ATOL)
     else:
-        return allclose(y, expected, rtol=5e-02, atol=5e-04)
+        return allclose(y, y_2, RTOL, ATOL)
