@@ -9,34 +9,32 @@
 
 """
 
-from numpy import asmatrix, random, ndarray
-from numpy import matrix as np_matrix
+from numpy import asmatrix, random
 
-# constants to clarify what is being tested in the test functions
+# TODO: Remove after removing references in all test files
 COL, ROW = False, True
 NDARRAY, MATRIX = False, True
 
+# min and max values for random matrices and vectors
+MIN = -10
+MAX = 10
+
 def random_vector(length, is_row, dtype, as_matrix):
-    assert dtype == 'float32' or dtype == 'float64'
+    """ Generate a random vector """
     m, n = (1, length) if is_row else (length, 1)
-    vector = random.uniform(-10, 10, (m, n)).astype(dtype)
+    vector = random.uniform(MIN, MAX, (m, n)).astype(dtype)
     if as_matrix:
         vector = asmatrix(vector)
-    assert vector.shape == (1, n) if is_row else (n, 1)
-    assert vector.dtype == dtype
-    assert type(vector) == np_matrix if as_matrix else type(vector) == ndarray
     return vector
 
 def random_matrix(m, n, dtype, as_matrix):
-    assert dtype == 'float32' or dtype == 'float64'
-    matrix = random.uniform(-10, 10, (m, n)).astype(dtype)
+    """ Generate a random matrix """
+    matrix = random.uniform(MIN, MAX, (m, n)).astype(dtype)
     if as_matrix:
         matrix = asmatrix(matrix)
-    assert matrix.shape == (m, n)
-    assert matrix.dtype == dtype
-    assert type(matrix) == np_matrix if as_matrix else type(matrix) == ndarray
     return matrix
 
-def random_square_matrix(n, dtype, as_matrix):
+def random_symmetric_matrix(n, dtype, as_matrix):
+    """ Generate a random symmetric matrix """
     rand_matrix = random_matrix(n, n, dtype, as_matrix)
-    return (rand_matrix + rand_matrix.T) / 10
+    return (rand_matrix + rand_matrix.T) / 2

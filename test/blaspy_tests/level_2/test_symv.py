@@ -9,21 +9,21 @@
 
 """
 
-from ..helpers import random_vector, random_square_matrix
+from ..helpers import random_vector, random_symmetric_matrix
+from .expected_results import expected_symv
 from blaspy import symv
-from numpy import allclose, copy, dot, zeros, triu, tril
+from numpy import allclose, triu, tril
 from itertools import product
-import random
+from random import randint, uniform
 
 
 def test_symv():
     """
-    Extensively test symmetric matrix-vector multiplication.
+    Test symmetric matrix-vector multiplication.
 
     Returns:
         A list of strings representing the failed tests.
     """
-    random.seed()
     tests_failed = []
 
     # values to test
@@ -36,8 +36,8 @@ def test_symv():
     for (dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, uplo) \
             in product(dtypes, bools, bools, bools, bools, strides, uplos):
 
-        # only run tests if y is provided or stride is 1
-        if (provide_y or stride == 1):
+        # avoid testing cases where y is not provided and stride != 1
+        if provide_y or stride == 1:
             if not passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, uplo):
 
                 # test has failed, create a string representing its name
@@ -54,6 +54,7 @@ def test_symv():
                 tests_failed.append(test_name)
 
     return tests_failed
+
 
 def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, uplo):
     """
@@ -73,53 +74,28 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, uplo):
         False otherwise.
     """
 
-    # set random values for n, alpha, beta, and stride if none are passed in
-    n = random.randint(2, 1e3)
-    alpha = random.randint(-100, 100)
-    beta = random.randint(-100, 100)
-    if stride is None:
-        stride = random.randint(2, 1e2)
+    n = randint(2, 1e3)
+    alpha = uniform(-100, 100)
+    beta = uniform(-100, 100)
+    stride = randint(2, 1e2) if stride is None else stride
 
-    # create the matrix and vectors to test
-    A = random_square_matrix(n / stride + (n % stride > 0), dtype, as_matrix)
+    # create the random matrix and vectors to test
+    A = random_symmetric_matrix(n / stride + (n % stride > 0), dtype, as_matrix)
     x = random_vector(n, x_is_row, dtype, as_matrix)
-    if provide_y:
-        y = random_vector(n, y_is_row, dtype, as_matrix)
-        assert x.dtype == y.dtype
-    else:
-        y = None
-    assert A.dtype == x.dtype
+    y = random_vector(n, y_is_row, dtype, as_matrix) if provide_y else None
 
     # get the expected result
-    if stride == 1:
-        if y is None:
-            if y_is_row:
-                y_2 = zeros((1, n))
-            else:
-                y_2 = zeros((n, 1))
-        else:
-            y_2 = y
-        expected = beta * (y_2.T if y_is_row else y_2) + alpha * dot(A, x.T if x_is_row else x)
-    else:
-        if y_is_row:
-            expected = copy(y.T)
-        else:
-            expected = copy(y)
-        for i in range(0, n, stride):
-            expected[i, 0] = beta * expected[i, 0] + alpha * dot(A[i / stride, :],
-                              x[:, :: stride].T if x_is_row else x[:: stride, :])
+    expected = expected_symv(A, x, x_is_row, y, y_is_row, n, alpha, beta, stride)
 
-    # make A upper or lower triangular
-    if uplo == 'u':
-        A = triu(A)
-    else:
-        A = tril(A)
-
-    # get actual result
+    # get the actual result
+    A = triu(A) if uplo == 'u' else tril(A)
     y = symv(A, x, y, uplo, alpha, beta, inc_x=stride, inc_y=stride)
 
+    # update the orientation of y as it may have changed
+    y_is_row = y.shape[0] == 1
+
     # compare the actual result to the expected result
-    if not provide_y:
-        return allclose(y, expected.T if x_is_row else expected, rtol=5e-02, atol=5e-04)
+    if y_is_row:
+        return allclose(y.T, expected, rtol=5e-02, atol=5e-04)
     else:
-        return allclose(y, expected.T if y_is_row else expected, rtol=5e-02, atol=5e-04)
+        return allclose(y, expected, rtol=5e-02, atol=5e-04)
