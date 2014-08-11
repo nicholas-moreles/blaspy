@@ -15,7 +15,7 @@ from numpy import allclose, copy, dot, triu, tril, zeros
 from itertools import product
 from random import randint, uniform
 
-N_MIN, N_MAX = 2, 1e3           # vector/matrix sizes
+N_MIN, N_MAX = 2, 1e3           # matrix/vector sizes
 SCAL_MIN, SCAL_MAX = -100, 100  # scalar values
 STRIDE_MAX = 1e2                # max vector stride
 RTOL, ATOL = 5e-02, 5e-04       # margin of error
@@ -89,8 +89,7 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, uplo):
     alpha = uniform(SCAL_MIN, SCAL_MAX)
     beta = uniform(SCAL_MIN, SCAL_MAX)
 
-    # create x_2 and y_2 vectors that are column vectors with the same elements as x and y
-    # (column vectors are easier to work with when computing the expected results)
+    # create copies/views of x and y that can be used to calculate the expected result
     x_2 = x.T if x_is_row else x
     if y is None:
         y_2 = zeros((1, n))

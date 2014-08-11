@@ -37,8 +37,8 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
         A:        a 2D numpy matrix or ndarray representing matrix A
         x:        a 2D numpy matrix or ndarray representing vector x
         y:        a 2D numpy matrix or ndarray representing vector y
-        uplo:     'u'   if the upper triangular part of A is to be used
-                  'l'   if the lower triangular part of A is to be used
+        uplo:     'u'  if the upper triangular part of A is to be used
+                  'l'  if the lower triangular part of A is to be used
         alpha:    scalar alpha
         beta:     scalar beta
         lda:      leading dimension of A (must be >= # of cols in A)
@@ -84,10 +84,10 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
         # convert to appropriate CBLAS value
         cblas_uplo = convert_uplo(uplo)
 
-        # determine which CBLAS subroutine to call based on parameter dtypes
+        # determine which CBLAS subroutine to call and which ctypes data type to use
         cblas_func, ctype_dtype = get_cblas_info('symv', A.dtype, x.dtype, y.dtype)
 
-        # create ctypes POINTER for each matrix
+        # create a ctypes POINTER for each matrix
         ctype_A = POINTER(ctype_dtype * dim_A * dim_A)
         ctype_x = POINTER(ctype_dtype * n_x * m_x)
         ctype_y = POINTER(ctype_dtype * n_y * m_y)
