@@ -35,7 +35,7 @@ def test_gemv():
     trans_list = ['n', 't']
     dtypes = ['float64', 'float32']
     bools = [True, False]
-    strides = [1, None]
+    strides = [1, None]  # None indicates random stride
 
     # test all combinations of all possible values
     for (dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, trans) \
@@ -64,13 +64,13 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, trans):
     Run one general matrix-vector multiplication test.
 
     Arguments:
-        dtype:      either 'float64' or 'float32', the NumPy dtype to test
-        as_matrix:  True to test a NumPy matrix, False to test a NumPy ndarray
-        x_is_row:   True to test a row vector as parameter x, False to test a column vector
-        y_is_row:   True to test a row vector as parameter y, False to test a column vector
-        provide_y:  True if y is to be provided to the BLASpy function, False otherwise
-        stride:     stride of x and y to test; if None, a random stride is assigned
-        trans:       BLASpy trans parameter to test
+        dtype:        either 'float64' or 'float32', the NumPy dtype to test
+        as_matrix:    True to test a NumPy matrix, False to test a NumPy ndarray
+        x_is_row:     True to test a row vector as parameter x, False to test a column vector
+        y_is_row:     True to test a row vector as parameter y, False to test a column vector
+        provide_y:    True if y is to be provided to the BLASpy function, False otherwise
+        stride:       stride of x and y to test; if None, a random stride is assigned
+        trans:        BLASpy trans parameter to test
 
     Returns:
         True if the expected result was within the margin of error of the actual result,
@@ -85,12 +85,12 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, trans):
     y_length = m if trans == 'n' else n
 
     # create random scalars, vectors, and matrices to test
-    A = random_matrix(m / stride + (m % stride > 0), n / stride + (n % stride > 0), dtype,
-                      as_matrix)
-    x = random_vector(x_length, x_is_row, dtype, as_matrix)
-    y = random_vector(y_length, y_is_row, dtype, as_matrix) if provide_y else None
     alpha = uniform(SCAL_MIN, SCAL_MAX)
     beta = uniform(SCAL_MIN, SCAL_MAX)
+    x = random_vector(x_length, x_is_row, dtype, as_matrix)
+    y = random_vector(y_length, y_is_row, dtype, as_matrix) if provide_y else None
+    A = random_matrix(m / stride + (m % stride > 0), n / stride + (n % stride > 0), dtype,
+                      as_matrix)
 
     # create copies/views of A, x, and y that can be used to calculate the expected result
     A_2 = A if trans == 'n' else A.T

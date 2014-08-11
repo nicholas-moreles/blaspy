@@ -9,145 +9,98 @@
 
 """
 
+from ..helpers import random_vector, random_matrix
 from blaspy import ger
-from ..helpers import random_vector, random_matrix, COL, ROW, NDARRAY, MATRIX
-from numpy import allclose, copy, transpose, dot, zeros
-import random
+from numpy import allclose, copy,  dot, zeros
+from itertools import product
+from random import randint, uniform
+
+N_MIN, N_MAX = 2, 1e3           # matrix/vector sizes
+SCAL_MIN, SCAL_MAX = -100, 100  # scalar values
+STRIDE_MAX = 1e2                # max vector stride
+RTOL, ATOL = 5e-03, 5e-05       # margin of error
 
 
 def test_ger():
-    random.seed()
+    """
+    Test general rank-1 update.
+
+    Returns:
+        A list of strings representing the failed tests.
+    """
+
     tests_failed = []
 
-    # run one particular test
-    # noinspection PyPep8Naming
-    def passed_test(x_is_row, y_is_row, m=None, n=None, alpha=1, stride=None, provide_A=True):
+    # values to test
+    dtypes = ['float64', 'float32']
+    bools = [True, False]
+    strides = [1, None]  # None indicates random stride
 
-        # set random values for m, n, alpha, beta, and stride if none are passed in
-        if m is None:
-            m = random.randint(2, 1e3)
-        if n is None:
-            n = random.randint(2, 1e3)
-        if alpha is None:
-            alpha = random.randint(-100, 100)
-        if stride is None:
-            stride_x = random.randint(2, 1e2)
-            stride_y = random.randint(2, 1e2)
-        else:
-            stride_x = stride
-            stride_y = stride
+    # test all combinations of all possible values
+    for (dtype, as_matrix, x_is_row, y_is_row, provide_A, stride) \
+            in product(dtypes, bools, bools, bools, bools, strides):
 
-        # create the matrix and vectors to test
-        m_A = m / stride_x + (m % stride_x > 0)
-        n_A = n / stride_y + (n % stride_y > 0)
-        if provide_A:
-            A = random_matrix(m_A, n_A, dtype, as_matrix)
-        else:
-            A = None
-        x = random_vector(m, x_is_row, dtype, as_matrix)
-        y = random_vector(n, y_is_row, dtype, as_matrix)
+        # if a test fails, create a string representation of its name and append it to the list
+        # of failed tests
+        if not passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_A, stride):
+            variable_list = [dtype,
+                             "_matrix" if as_matrix else "_ndarray",
+                             "_row" if x_is_row else "_col",
+                             "_row" if y_is_row else "_col",
+                             "_rand_stride" if stride is None else "",
+                             "" if provide_A else "_no_A"]
+            test_name = "".join(variable_list)
+            tests_failed.append(test_name)
 
-        # create variables for use in the expected result
-        A_2 = zeros((m_A, n_A), dtype=dtype) if A is None else copy(A)
-        x_2 = transpose(x) if x_is_row else x
-        y_2 = y if y_is_row else transpose(y)
+    return tests_failed
 
-        # get the expected result
-        if stride == 1:
-            A_2 += alpha * dot(x_2, y_2)
-        else:
-            for i in range(0, m_A):
+
+def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_A, stride):
+    """
+    Run one general rank-1 update test.
+
+    Arguments:
+        dtype:        either 'float64' or 'float32', the NumPy dtype to test
+        as_matrix:    True to test a NumPy matrix, False to test a NumPy ndarray
+        x_is_row:     True to test a row vector as parameter x, False to test a column vector
+        y_is_row:     True to test a row vector as parameter y, False to test a column vector
+        provide_A:    True if A is to be provided to the BLASpy function, False otherwise
+        stride:       stride of x and y to test; if None, a random stride is assigned
+
+    Returns:
+        True if the expected result was within the margin of error of the actual result,
+        False otherwise.
+    """
+
+    # generate random sizes for matrix/vector dimensions and vector stride (if necessary)
+    m = randint(N_MIN, N_MAX)
+    n = randint(N_MIN, N_MAX)
+    stride_x = randint(N_MIN, STRIDE_MAX) if stride is None else stride
+    stride_y = randint(N_MIN, STRIDE_MAX) if stride is None else stride
+    m_A = m / stride_x + (m % stride_x > 0)
+    n_A = n / stride_y + (n % stride_y > 0)
+
+    # create random scalars, vectors, and matrices to test
+    alpha = uniform(SCAL_MIN, SCAL_MAX)
+    x = random_vector(m, x_is_row, dtype, as_matrix)
+    y = random_vector(n, y_is_row, dtype, as_matrix)
+    A = (random_matrix(m_A, n_A, dtype, as_matrix) if provide_A else None)
+
+    # create copies/views of A, x, and y that can be used to calculate the expected result
+    x_2 = x.T if x_is_row else x
+    y_2 = y if y_is_row else y.T
+    A_2 = zeros((m_A, n_A)) if A is None else copy(A)
+
+    # compute the expected result
+    if stride == 1:
+        A_2 += alpha * dot(x_2, y_2)
+    else:
+        for i in range(0, m_A):
                 for j in range(0, n_A):
                     A_2[i, j] += alpha * x_2[i * stride_x, 0] * y_2[0, j * stride_y]
 
-        # compare the actual result to the expected result
-        A = ger(x, y, alpha=alpha, A=A, inc_x=stride_x, inc_y=stride_y)
-        return allclose(A, A_2, rtol=5e-03, atol=5e-05)
+    # get the actual result
+    A = ger(x, y, A, alpha, inc_x=stride_x, inc_y=stride_y)
 
-    # run all tests of the given type
-    def run_tests():
-
-        # three scalars
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_scalars"
-        if not passed_test(ROW, ROW, m=1, n=1, stride=1):
-            tests_failed.append(test_name)
-
-        # matrix and two column vectors
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_col"
-        if not passed_test(COL, COL, stride=1):
-            tests_failed.append(test_name)
-
-        # matrix and two row vectors
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_row"
-        if not passed_test(ROW, ROW, stride=1):
-            tests_failed.append(test_name)
-
-        # matrix, column vector and a row vector
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_row"
-        if not passed_test(COL, ROW, stride=1):
-            tests_failed.append(test_name)
-
-        # matrix and two row vectors, A not provided
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_row_no_A"
-        if not passed_test(ROW, ROW, stride=1, provide_A=False):
-            tests_failed.append(test_name)
-
-        # matrix and two column vectors, y not provided
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_col_no_A"
-        if not passed_test(COL, COL, stride=1, provide_A=False):
-            tests_failed.append(test_name)
-
-        # matrix and two row vectors
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_col"
-        if not passed_test(ROW, COL, stride=1):
-            tests_failed.append(test_name)
-
-        # matrix and two column vectors with independently random strides
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_col_rand_stride"
-        if not passed_test(COL, COL):
-            tests_failed.append(test_name)
-
-        # matrix and two row vectors with independently random strides
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_row_rand_stride"
-        if not passed_test(ROW, ROW):
-            tests_failed.append(test_name)
-
-        # matrix, column vector and a row vector with independently random strides
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_row_rand_stride"
-        if not passed_test(COL, ROW):
-            tests_failed.append(test_name)
-
-        # matrix and two row vectors with independently random strides
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_col_rand_stride"
-        if not passed_test(ROW, COL):
-            tests_failed.append(test_name)
-
-        # matrix, row vector and a column vector with independently random strides, A not provided
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_col_rand_stride_no_A"
-        if not passed_test(ROW, COL, provide_A=False):
-            tests_failed.append(test_name)
-
-        # matrix, column vector and a row vector with independently random strides, A not provided
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_row_rand_stride_no_A"
-        if not passed_test(COL, ROW, provide_A=False):
-            tests_failed.append(test_name)
-
-    # Test dgemv with ndarray
-    dtype = 'float64'
-    as_matrix = NDARRAY
-    run_tests()
-
-    # Test dgemv with matrix
-    as_matrix = MATRIX
-    run_tests()
-
-    # Test sgemv with ndarray
-    dtype = 'float32'
-    as_matrix = NDARRAY
-    run_tests()
-
-    # Test sgemv with matrix
-    as_matrix = MATRIX
-    run_tests()
-
-    return tests_failed
+    # compare the actual result to the expected result and return result of the test
+    return allclose(A, A_2, RTOL, ATOL)

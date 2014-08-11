@@ -55,7 +55,7 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
                     - A, x, and y do not have the same dtype or that dtype is not supported
                     - A is not a square matrix
                     - x or y is not a vector
-                    - the effective length of x or y do not equal the dimension of A
+                    - the effective length of either x or y do not equal the dimension of A
                     - y is not provided and the stride of either x or y does not equal one
                     - uplo is not equal to one of the following: 'u', 'U', 'l', 'L'
     """

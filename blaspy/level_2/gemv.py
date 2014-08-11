@@ -52,7 +52,7 @@ def gemv(A, x, y=None, trans_a='n', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1)
                     - A, x, or y is not a 2D NumPy ndarray or NumPy matrix
                     - A, x, and y do not have the same dtype or that dtype is not supported
                     - x or y is not a vector
-                    - the effective length of x or y does not conform to the dimensions of A
+                    - the effective length of either x or y does not conform to the dimensions of A
                     - y is not provided and the stride of either x or y does not equal one
                     - trans_a is not equal to one of the following: 'n', 'N', 't', 'T'
     """
