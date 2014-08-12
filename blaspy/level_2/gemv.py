@@ -12,6 +12,7 @@
 from ..helpers import (get_matrix_dimensions, get_vector_dimensions, check_strides_equal_one,
                        create_similar_zero_vector, check_equal_sizes, convert_trans,
                        get_cblas_info, ROW_MAJOR)
+from ..errors import raise_not_2d_numpy
 from ctypes import c_int, POINTER
 
 
@@ -32,9 +33,9 @@ def gemv(A, x, y=None, trans_a='n', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1)
     provided; however, the strides of x and y must be one if vector y is not provided.
 
     Args:
-        A:          a 2D numpy matrix or ndarray representing matrix A
-        x:          a 2D numpy matrix or ndarray representing vector x
-        y:          a 2D numpy matrix or ndarray representing vector y (default is zero vector)
+        A:          2D numpy matrix or ndarray representing matrix A
+        x:          2D numpy matrix or ndarray representing vector x
+        y:          2D numpy matrix or ndarray representing vector y (default is zero vector)
         trans_a:    'n'  if the operation is to proceed normally
                     't'  if the operation is to proceed as if A is transposed
         alpha:      scalar alpha
@@ -89,7 +90,7 @@ def gemv(A, x, y=None, trans_a='n', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1)
         cblas_trans_a = convert_trans(trans_a)
 
         # determine which CBLAS subroutine to call and which ctypes data type to use
-        cblas_func, ctype_dtype = get_cblas_info('gemv', A.dtype, x.dtype, y.dtype)
+        cblas_func, ctype_dtype = get_cblas_info('gemv', (A.dtype, x.dtype, y.dtype))
 
         # create a ctypes POINTER for each matrix
         ctype_A = POINTER(ctype_dtype * n_A * m_A)
@@ -106,4 +107,4 @@ def gemv(A, x, y=None, trans_a='n', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1)
         return y  # y is also overwritten, so only useful if no y was provided
 
     except AttributeError:
-        raise ValueError("Either A, x, or y is not a 2D NumPy ndarray or matrix.")
+        raise_not_2d_numpy()

@@ -11,6 +11,7 @@
 
 from ..helpers import (get_vector_dimensions, get_matrix_dimensions, get_cblas_info,
                        check_equal_sizes, create_zero_matrix, ROW_MAJOR)
+from ..errors import raise_not_2d_numpy
 from ctypes import c_int, POINTER
 
 
@@ -31,9 +32,9 @@ def ger(x, y, A=None, alpha=1, lda=None, inc_x=1, inc_y=1):
     newly created matrix A.
 
     Args:
-        x:        a 2D numpy matrix or ndarray representing vector x
-        y:        a 2D numpy matrix or ndarray representing vector y
-        A:        a 2D numpy matrix or ndarray representing matrix A
+        x:        2D numpy matrix or ndarray representing vector x
+        y:        2D numpy matrix or ndarray representing vector y
+        A:        2D numpy matrix or ndarray representing matrix A
         alpha:    scalar alpha
         lda:      leading dimension of A (must be >= # of cols in A)
         inc_x:    stride of x (increment for the elements of x)
@@ -73,7 +74,7 @@ def ger(x, y, A=None, alpha=1, lda=None, inc_x=1, inc_y=1):
         check_equal_sizes('A', n_A, 'y', y_length)
 
         # determine which CBLAS subroutine to call and which ctypes data type to use
-        cblas_func, data_type = get_cblas_info('ger', A.dtype, x.dtype, y.dtype)
+        cblas_func, data_type = get_cblas_info('ger', (A.dtype, x.dtype, y.dtype))
 
         # create ctypes POINTER for each matrix
         ctype_A = POINTER(data_type * n_A * m_A)
@@ -90,4 +91,4 @@ def ger(x, y, A=None, alpha=1, lda=None, inc_x=1, inc_y=1):
         return A  # A is also overwritten, so only useful if no A was provided
 
     except AttributeError:
-        raise ValueError("Either A, x, or y is not a 2D NumPy ndarray or matrix.")
+        raise_not_2d_numpy()

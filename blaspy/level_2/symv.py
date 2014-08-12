@@ -12,6 +12,7 @@
 from ..helpers import (get_square_matrix_dimension, get_vector_dimensions, check_strides_equal_one,
                        create_similar_zero_vector, check_equal_sizes, convert_uplo, get_cblas_info,
                        ROW_MAJOR)
+from ..errors import raise_not_2d_numpy
 from ctypes import c_int, POINTER
 
 
@@ -34,9 +35,9 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
     provided; however, the strides of x and y must be one if vector y is not provided.
 
     Args:
-        A:        a 2D numpy matrix or ndarray representing matrix A
-        x:        a 2D numpy matrix or ndarray representing vector x
-        y:        a 2D numpy matrix or ndarray representing vector y
+        A:        2D numpy matrix or ndarray representing matrix A
+        x:        2D numpy matrix or ndarray representing vector x
+        y:        2D numpy matrix or ndarray representing vector y
         uplo:     'u'  if the upper triangular part of A is to be used
                   'l'  if the lower triangular part of A is to be used
         alpha:    scalar alpha
@@ -85,7 +86,7 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
         cblas_uplo = convert_uplo(uplo)
 
         # determine which CBLAS subroutine to call and which ctypes data type to use
-        cblas_func, ctype_dtype = get_cblas_info('symv', A.dtype, x.dtype, y.dtype)
+        cblas_func, ctype_dtype = get_cblas_info('symv', (A.dtype, x.dtype, y.dtype))
 
         # create a ctypes POINTER for each matrix
         ctype_A = POINTER(ctype_dtype * dim_A * dim_A)
@@ -102,4 +103,4 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
         return y  # y is also overwritten, so only useful if no y was provided
 
     except AttributeError:
-        raise ValueError("Either A, x, or y is not a 2D NumPy ndarray or matrix.")
+        raise_not_2d_numpy()

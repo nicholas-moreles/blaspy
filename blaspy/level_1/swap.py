@@ -10,6 +10,7 @@
 """
 
 from ..helpers import get_vector_dimensions, check_equal_sizes, get_cblas_info
+from ..errors import raise_not_2d_numpy
 from ctypes import c_int, POINTER
 
 
@@ -20,10 +21,10 @@ def swap(x, y, inc_x=1, inc_y=1):
     x and y must have identical data types and must be of the same length.
 
     Args:
-        x:      a 2D numpy matrix or ndarray representing vector x
-        y:      a 2D numpy matrix or ndarray representing vector y
-        inc_x:  stride of x (increment for the elements of x)
-        inc_y:  stride of y (increment for the elements of y)
+        x:        2D numpy matrix or ndarray representing vector x
+        y:        2D numpy matrix or ndarray representing vector y
+        inc_x:    stride of x (increment for the elements of x)
+        inc_y:    stride of y (increment for the elements of y)
     """
 
     try:
@@ -35,7 +36,7 @@ def swap(x, y, inc_x=1, inc_y=1):
         check_equal_sizes('x', x_length, 'y', y_length)
 
         # determine which CBLAS subroutine to call and which ctypes data type to use
-        cblas_func, ctype_dtype = get_cblas_info('swap', x.dtype, y.dtype)
+        cblas_func, ctype_dtype = get_cblas_info('swap', (x.dtype, y.dtype))
 
         # call BLAS using ctypes
         ctype_x = POINTER(ctype_dtype * n_x * m_x)
@@ -45,4 +46,4 @@ def swap(x, y, inc_x=1, inc_y=1):
         cblas_func(x_length, x.ctypes.data_as(ctype_x), inc_x, y.ctypes.data_as(ctype_y), inc_y)
 
     except AttributeError:
-        raise ValueError("Either x or y is not a 2D NumPy ndarray or matrix.")
+        raise_not_2d_numpy()

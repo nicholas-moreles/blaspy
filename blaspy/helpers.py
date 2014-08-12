@@ -10,6 +10,8 @@
 """
 
 from .config import _libblas as lib
+from .errors import (raise_invalid_dtypes, raise_not_vector, raise_not_2d_numpy, raise_not_square,
+                     raise_size_mismatch, raise_strides_not_one, raise_invalid_parameter)
 from ctypes import c_double, c_float
 from numpy import asmatrix, zeros
 from numpy import matrix as np_matrix
@@ -40,14 +42,16 @@ FUNC_MAP = {'amax': (lib.cblas_idamax, lib.cblas_isamax),
             'ger':  (lib.cblas_dger,   lib.cblas_sger),
             'symv': (lib.cblas_dsymv,  lib.cblas_ssymv)}
 
-def get_cblas_info(calling_func, *args):
+
+def get_cblas_info(calling_func, dtypes):
     """
     Return the appropriate CBLAS subroutine and ctype data type based on the calling function and
     dtypes of args.
 
     Args:
-        calling_func:  a string representation of the calling function
-        *args:         the dtypes of all of the matrices or vectors used by the calling function
+        calling_func:    a string representation of the calling function
+        dtypes:          a tuple of the dtypes of all of the matrices or vectors passed into the
+                         calling function
 
     Returns:
         A tuple of two elements where each element is described in order below:
@@ -59,15 +63,15 @@ def get_cblas_info(calling_func, *args):
         ValueError: if all matrices and/or vectors do not have the same dtype
     """
 
-    if all(dtype == 'float64' for dtype in args):
+    if all(dtype == 'float64' for dtype in dtypes):
         return FUNC_MAP[calling_func][0], c_double
 
-    elif all(dtype == 'float32' for dtype in args):
+    elif all(dtype == 'float32' for dtype in dtypes):
         return FUNC_MAP[calling_func][1], c_float
 
     else:
-        raise ValueError("All matrices and/or vectors must have the same dtype: either float64 "
-                         "or float32. Actual dtypes: %s" % (args,))
+        raise_invalid_dtypes(('float64', 'float32'))
+
 
 def get_vector_dimensions(name, vector, stride):
     """
@@ -96,7 +100,7 @@ def get_vector_dimensions(name, vector, stride):
 
         # ensure vector is actually a vector
         if not (rows == 1 or cols == 1):
-            raise ValueError("%s is not a vector. Rows: %i. Columns: %i." % (name, rows, cols))
+            raise_not_vector(name, rows, cols)
 
         # calculate length, accounting for strides > 1
         length = rows if rows > cols else cols
@@ -106,7 +110,8 @@ def get_vector_dimensions(name, vector, stride):
         return rows, cols, length
 
     except AttributeError:
-        raise ValueError("%s is not a 2D NumPy ndarray or matrix." % name)
+        raise_not_2d_numpy()
+
 
 def get_matrix_dimensions(name, matrix):
     """
@@ -133,7 +138,8 @@ def get_matrix_dimensions(name, matrix):
         return rows, cols
 
     except AttributeError:
-        raise ValueError("%s is not a 2D NumPy ndarray or matrix." % name)
+        raise_not_2d_numpy()
+
 
 def get_square_matrix_dimension(name, matrix):
     """
@@ -155,12 +161,13 @@ def get_square_matrix_dimension(name, matrix):
         rows, cols = matrix.shape
 
         if rows != cols:
-            raise ValueError("%s is not a square matrix. Rows: %i. Cols: %i." % (name, rows, cols))
+            raise_not_square(name, rows, cols)
 
         return rows
 
     except AttributeError:
-        raise ValueError("%s is not a 2D NumPy ndarray or matrix." % name)
+        raise_not_2d_numpy()
+
 
 def check_equal_sizes(name_1, size_1, name_2, size_2):
     """
@@ -174,12 +181,13 @@ def check_equal_sizes(name_1, size_1, name_2, size_2):
     """
 
     if size_1 != size_2:
-        raise ValueError("Size mismatch between %s and %s." % (name_1, name_2))
+        raise_size_mismatch(name_1, name_2)
+
 
 def check_strides_equal_one(*args):
     if any(stride != 1 for stride in args):
-        raise ValueError("One or more strides are not equal to one. All strides must equal one if "
-                         "the vector y is not provided as a parameter.")
+        raise_strides_not_one()
+
 
 def create_similar_zero_vector(other_vector, length):
     """
@@ -205,6 +213,7 @@ def create_similar_zero_vector(other_vector, length):
 
     return new_vector
 
+
 def create_zero_matrix(rows, cols, dtype, matrix_type):
     """
     Create and return a zero matrix with the given number of rows and columns, and of the
@@ -227,14 +236,15 @@ def create_zero_matrix(rows, cols, dtype, matrix_type):
     else:
         return new_matrix
 
+
 def convert_uplo(uplo):
     if uplo == 'u' or uplo == 'U':
         return UPPER
     elif uplo == 'l' or uplo == 'L':
         return LOWER
     else:
-        raise ValueError("Parameter 'uplo' must equal one of the following: 'u', 'U', 'l', "
-                         "'L'. Actual value: %s." % uplo)
+        raise_invalid_parameter('uplo', ('u', 'U', 'l', 'L'), uplo)
+
 
 def convert_trans(trans):
     if trans == 'n' or trans == 'N':
@@ -242,8 +252,7 @@ def convert_trans(trans):
     elif trans == 't' or trans == 'T':
         return TRANS
     else:
-        raise ValueError("Parameter 'trans' must equal one of the following: 'n', 'N', 't', "
-                         "'T'. Actual value: %s." % trans)
+        raise_invalid_parameter('trans', ('n', 'N', 't', 'T'), trans)
 
 
 # TO BE REMOVED - ALL BELOW THIS LINE

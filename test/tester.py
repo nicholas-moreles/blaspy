@@ -32,26 +32,26 @@ total = 0
 
 print("Testing Level 1 BLAS\n")
 
-print("Testing amax:")
-total += run_test(test_amax)
-
-print("Testing asum:")
-total += run_test(test_asum)
-
-print("Testing axpy:")
-total += run_test(test_axpy)
-
-print("Testing copy:")
-total += run_test(test_copy)
-
-print("Testing dot:")
-total += run_test(test_dot)
-
-print("Testing nrm2:")
-total += run_test(test_nrm2)
-
-print("Testing scal:")
-total += run_test(test_scal)
+# print("Testing amax:")
+# total += run_test(test_amax)
+#
+# print("Testing asum:")
+# total += run_test(test_asum)
+#
+# print("Testing axpy:")
+# total += run_test(test_axpy)
+#
+# print("Testing copy:")
+# total += run_test(test_copy)
+#
+# print("Testing dot:")
+# total += run_test(test_dot)
+#
+# print("Testing nrm2:")
+# total += run_test(test_nrm2)
+#
+# print("Testing scal:")
+# total += run_test(test_scal)
 
 print("Testing sdot:")
 total += run_test(test_sdot)
