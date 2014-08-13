@@ -32,14 +32,14 @@ def test_gemv():
     tests_failed = []
 
     # values to test
-    trans_list = ['n', 't']
-    dtypes = ['float64', 'float32']
-    bools = [True, False]
-    strides = [1, None]  # None indicates random stride
+    dtypes = ('float64', 'float32')
+    bools = (True, False)
+    strides = (1, None)  # None indicates random stride
+    trans_tuple = ('n', 't')
 
     # test all combinations of all possible values
     for (dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, trans) \
-            in product(dtypes, bools, bools, bools, bools, strides, trans_list):
+            in product(dtypes, bools, bools, bools, bools, strides, trans_tuple):
 
         # avoid testing cases where y is not provided and stride != 1
         if provide_y or stride == 1:
@@ -47,14 +47,14 @@ def test_gemv():
             # if a test fails, create a string representation of its name and append it to the list
             # of failed tests
             if not passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, trans):
-                variable_list = [dtype,
-                                 "_matrix" if as_matrix else "_ndarray",
-                                 "_row" if x_is_row else "_col",
-                                 "_row" if y_is_row else "_col",
-                                 "_rand_stride" if stride is None else "",
-                                 "_" if provide_y else "_no_y_",
-                                 trans]
-                test_name = "".join(variable_list)
+                variables = (dtype,
+                             "_matrix" if as_matrix else "_ndarray",
+                             "_row" if x_is_row else "_col",
+                             "_row" if y_is_row else "_col",
+                             "_rand_stride" if stride is None else "",
+                             "_" if provide_y else "_no_y_",
+                             trans)
+                test_name = "".join(variables)
                 tests_failed.append(test_name)
 
     return tests_failed

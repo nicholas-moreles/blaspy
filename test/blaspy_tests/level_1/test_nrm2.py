@@ -30,10 +30,9 @@ def test_nrm2():
 
     tests_failed = []
 
-    # values to test
-    dtypes = ['float64', 'float32']
-    bools = [True, False]
-    strides = [1, None]  # None indicates random stride
+    dtypes = ('float64', 'float32')
+    bools = (True, False)
+    strides = (1, None)  # None indicates random stride
 
     # test all combinations of all possible values
     for (dtype, as_matrix, x_is_row, stride) in product(dtypes, bools, bools, strides):
@@ -41,11 +40,11 @@ def test_nrm2():
         # if a test fails, create a string representation of its name and append it to the list
         # of failed tests
         if not passed_test(dtype, as_matrix, x_is_row, stride):
-            variable_list = [dtype,
-                             "_matrix" if as_matrix else "_ndarray",
-                             "_row" if x_is_row else "_col",
-                             "_rand_stride" if stride is None else ""]
-            test_name = "".join(variable_list)
+            variables = (dtype,
+                         "_matrix" if as_matrix else "_ndarray",
+                         "_row" if x_is_row else "_col",
+                         "_rand_stride" if stride is None else "")
+            test_name = "".join(variables)
             tests_failed.append(test_name)
 
     return tests_failed

@@ -30,9 +30,9 @@ def test_amax():
     tests_failed = []
 
     # values to test
-    dtypes = ['float64', 'float32']
-    bools = [True, False]
-    strides = [1, None]  # None indicates random stride
+    dtypes = ('float64', 'float32')
+    bools = (True, False)
+    strides = (1, None)  # None indicates random stride
 
     # test all combinations of all possible values
     for (dtype, as_matrix, x_is_row, stride) in product(dtypes, bools, bools, strides):
