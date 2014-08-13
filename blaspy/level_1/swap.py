@@ -38,7 +38,7 @@ def swap(x, y, inc_x=1, inc_y=1):
         # determine which CBLAS subroutine to call and which ctypes data type to use
         cblas_func, ctype_dtype = get_cblas_info('swap', (x.dtype, y.dtype))
 
-        # call BLAS using ctypes
+        # call CBLAS using ctypes
         ctype_x = POINTER(ctype_dtype * n_x * m_x)
         ctype_y = POINTER(ctype_dtype * n_y * m_y)
         cblas_func.argtypes = [c_int, ctype_x, c_int, ctype_y, c_int]

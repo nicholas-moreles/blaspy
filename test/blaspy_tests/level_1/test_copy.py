@@ -9,116 +9,91 @@
 
 """
 
+from ..helpers import random_vector
 from blaspy import copy
-from ..helpers import random_vector, COL, ROW, NDARRAY, MATRIX
-from numpy import allclose, transpose
+from numpy import allclose
 from numpy import copy as np_copy
-import random
+from itertools import product
+from random import randint
+
+N_MIN, N_MAX = 2, 1e6           # matrix/vector sizes
+STRIDE_MAX = 1e5                # max vector stride
 
 
 def test_copy():
-    random.seed()
+    """
+    Test vector copy.
+
+    Returns:
+        A list of strings representing the failed tests.
+    """
+
     tests_failed = []
 
-    # run one particular test
-    def passed_test(x_is_row, y_is_row, n=None, stride=None):
+    # values to test
+    dtypes = ['float64', 'float32']
+    bools = [True, False]
+    strides = [1, None]  # None indicates random stride
 
-        # set random values for n, and stride if none are passed in
-        if n is None:
-            n = random.randint(2, 1e6)
-        if stride is None:
-            stride = random.randint(2, 1e5)
+    # test all combinations of all possible values
+    for (dtype, as_matrix, x_is_row, y_is_row, stride) in product(dtypes, bools, bools, bools,
+                                                                  strides):
 
-        # create the vectors to test
-        x = random_vector(n, x_is_row, dtype, as_matrix)
-        y = random_vector(n, y_is_row, dtype, as_matrix)
-        assert x.dtype == y.dtype
-
-        # get the expected result
-        if stride == 1:
-            expected = x if x_is_row == y_is_row else transpose(x)
-        else:
-            expected = np_copy(y)
-            for i in range(0, n, stride):
-                if x_is_row:
-                    if y_is_row:  # y is row, x is row
-                        expected[0, i] = x[0, i]
-                    else:  # y is col, x is row
-                        expected[i, 0] = x[0, i]
-                else:
-                    if y_is_row:  # y is row, x is col
-                        expected[0, i] = x[i, 0]
-                    else:  # y is col, x is col
-                        expected[i, 0] = x[i, 0]
-
-        # compare the actual result to the expected result
-        copy(x, y, stride, stride)
-        return allclose(y, expected)
-
-    # run all tests of the given type
-    def run_tests():
-
-        # two scalars
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_scalars"
-        if not passed_test(ROW, ROW, n=1, stride=1):
+        # if a test fails, create a string representation of its name and append it to the list
+        # of failed tests
+        if not passed_test(dtype, as_matrix, x_is_row, y_is_row, stride):
+            variable_list = [dtype,
+                             "_matrix" if as_matrix else "_ndarray",
+                             "_row" if x_is_row else "_col",
+                             "_row" if y_is_row else "_col",
+                             "_rand_stride" if stride is None else ""]
+            test_name = "".join(variable_list)
             tests_failed.append(test_name)
-
-        # two column vectors
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_col"
-        if not passed_test(COL, COL, stride=1):
-            tests_failed.append(test_name)
-
-        # two row vectors
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_row"
-        if not passed_test(ROW, ROW, stride=1):
-            tests_failed.append(test_name)
-
-        # column vector and a row vector
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_row"
-        if not passed_test(COL, ROW, stride=1):
-            tests_failed.append(test_name)
-
-        # two row vectors
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_col"
-        if not passed_test(ROW, COL, stride=1):
-            tests_failed.append(test_name)
-
-        # two column vectors with the same random stride
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_col_rand_stride"
-        if not passed_test(COL, COL):
-            tests_failed.append(test_name)
-
-        # two row vectors with the same random stride
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_row_rand_stride"
-        if not passed_test(ROW, ROW):
-            tests_failed.append(test_name)
-
-        # column vector and a row vector with the same random stride
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_row_rand_stride"
-        if not passed_test(COL, ROW):
-            tests_failed.append(test_name)
-
-        # two row vectors with the same random stride
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_col_rand_stride"
-        if not passed_test(ROW, COL):
-            tests_failed.append(test_name)
-
-    # Test dcopy with ndarray
-    dtype = 'float64'
-    as_matrix = NDARRAY
-    run_tests()
-
-    # Test dcopy with matrix
-    as_matrix = MATRIX
-    run_tests()
-
-    # Test scopy with ndarray
-    dtype = 'float32'
-    as_matrix = NDARRAY
-    run_tests()
-
-    # Test scopy with matrix
-    as_matrix = MATRIX
-    run_tests()
 
     return tests_failed
+
+
+def passed_test(dtype, as_matrix, x_is_row, y_is_row, stride):
+    """
+    Run one vector copy test.
+
+    Arguments:
+        dtype:        either 'float64' or 'float32', the NumPy dtype to test
+        as_matrix:    True to test a NumPy matrix, False to test a NumPy ndarray
+        x_is_row:     True to test a row vector as parameter x, False to test a column vector
+        y_is_row:     True to test a row vector as parameter y, False to test a column vector
+        stride:       stride of x and y to test; if None, a random stride is assigned
+
+    Returns:
+        True if the expected result is within the margin of error of the actual result,
+        False otherwise.
+    """
+
+    # generate random sizes for vector dimensions and vector stride (if necessary)
+    length = randint(N_MIN, N_MAX)
+    stride = randint(N_MIN, STRIDE_MAX) if stride is None else stride
+
+    # create random vectors to test
+    x = random_vector(length, x_is_row, dtype, as_matrix)
+    y = random_vector(length, y_is_row, dtype, as_matrix)
+
+    # create view of x that can be used to calculate the expected result
+    x_2 = x.T if x_is_row else x
+
+    # compute the expected result
+    if stride == 1:
+        y_2 = x_2
+    else:
+        y_2 = np_copy(y.T) if y_is_row else np_copy(y)
+        for i in range(0, length, stride):
+            y_2[i, 0] = x_2[i, 0]
+
+    # get the actual result
+    copy(x, y, stride, stride)
+
+    # if y is a row vector, make y_2 a row vector as well
+    if y.shape[0] == 1:
+        y_2 = y_2.T
+
+    # compare the actual result to the expected result and return result of the test
+    return allclose(y, y_2)
