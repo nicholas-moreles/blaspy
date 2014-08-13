@@ -62,7 +62,7 @@ def passed_test(dtype, as_matrix, x_is_row, stride):
         stride:       stride of x and y to test; if None, a random stride is assigned
 
     Returns:
-        True if the expected result was within the margin of error of the actual result,
+        True if the expected result is within the margin of error of the actual result,
         False otherwise.
     """
 

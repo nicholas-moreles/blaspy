@@ -73,7 +73,7 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, trans):
         trans:        BLASpy trans parameter to test
 
     Returns:
-        True if the expected result was within the margin of error of the actual result,
+        True if the expected result is within the margin of error of the actual result,
         False otherwise.
     """
 
