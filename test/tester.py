@@ -75,6 +75,9 @@ total += run_test(test_ger)
 print("Testing symv:")
 total += run_test(test_symv)
 
+print("Testing syr:")
+total += run_test(test_syr)
+
 
 ###########
 # Level 3 #

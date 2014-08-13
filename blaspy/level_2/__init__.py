@@ -12,3 +12,4 @@
 from .gemv import gemv
 from .ger import ger
 from .symv import  symv
+from .syr import syr

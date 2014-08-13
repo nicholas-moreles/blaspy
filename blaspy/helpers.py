@@ -40,7 +40,8 @@ FUNC_MAP = {'amax': (lib.cblas_idamax, lib.cblas_isamax),
             'swap': (lib.cblas_dswap,  lib.cblas_sswap),
             'gemv': (lib.cblas_dgemv,  lib.cblas_sgemv),
             'ger':  (lib.cblas_dger,   lib.cblas_sger),
-            'symv': (lib.cblas_dsymv,  lib.cblas_ssymv)}
+            'symv': (lib.cblas_dsymv,  lib.cblas_ssymv),
+            'syr':  (lib.cblas_dsyr,  lib.cblas_ssyr)}
 
 
 def get_cblas_info(calling_func, dtypes):

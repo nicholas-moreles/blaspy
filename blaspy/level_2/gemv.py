@@ -79,10 +79,7 @@ def gemv(A, x, y=None, trans_a='n', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1)
 
 
         # ensure the parameters are appropriate for the desired operation
-        if trans_a == 'n':
-            x_check, y_check = n_A, m_A
-        else:
-            x_check, y_check = m_A, n_A
+        x_check, y_check = (n_A, m_A) if trans_a == 'n' else (m_A, n_A)
         check_equal_sizes('A', x_check, 'x', x_length)
         check_equal_sizes('A', y_check, 'y', y_length)
 
@@ -92,10 +89,10 @@ def gemv(A, x, y=None, trans_a='n', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1)
         # determine which CBLAS subroutine to call and which ctypes data type to use
         cblas_func, ctype_dtype = get_cblas_info('gemv', (A.dtype, x.dtype, y.dtype))
 
-        # create a ctypes POINTER for each matrix
-        ctype_A = POINTER(ctype_dtype * n_A * m_A)
+        # create a ctypes POINTER for each vector and matrix
         ctype_x = POINTER(ctype_dtype * n_x * m_x)
         ctype_y = POINTER(ctype_dtype * n_y * m_y)
+        ctype_A = POINTER(ctype_dtype * n_A * m_A)
 
         # call CBLAS using ctypes
         cblas_func.argtypes = [c_int, c_int, c_int, c_int, ctype_dtype, ctype_A, c_int,

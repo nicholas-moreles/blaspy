@@ -88,10 +88,10 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
         # determine which CBLAS subroutine to call and which ctypes data type to use
         cblas_func, ctype_dtype = get_cblas_info('symv', (A.dtype, x.dtype, y.dtype))
 
-        # create a ctypes POINTER for each matrix
-        ctype_A = POINTER(ctype_dtype * dim_A * dim_A)
+        # create a ctypes POINTER for each vector and matrix
         ctype_x = POINTER(ctype_dtype * n_x * m_x)
         ctype_y = POINTER(ctype_dtype * n_y * m_y)
+        ctype_A = POINTER(ctype_dtype * dim_A * dim_A)
 
         # call CBLAS using ctypes
         cblas_func.argtypes = [c_int, c_int, c_int, ctype_dtype, ctype_A, c_int, ctype_x, c_int,

@@ -32,10 +32,10 @@ def test_symv():
     tests_failed = []
 
     # values to test
-    uplos = ['u', 'l']
     dtypes = ['float64', 'float32']
     bools = [True, False]
     strides = [1, None]  # None indicates random stride
+    uplos = ['u', 'l']
 
     # test all combinations of all possible values
     for (dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, uplo) \
@@ -81,13 +81,14 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, uplo):
     # generate random sizes for matrix/vector dimensions and vector stride (if necessary)
     n = randint(N_MIN, N_MAX)
     stride = randint(N_MIN, STRIDE_MAX) if stride is None else stride
+    n_A = n / stride + (n % stride > 0)
 
     # create random scalars, vectors, and matrices to test
     alpha = uniform(SCAL_MIN, SCAL_MAX)
     beta = uniform(SCAL_MIN, SCAL_MAX)
     x = random_vector(n, x_is_row, dtype, as_matrix)
     y = random_vector(n, y_is_row, dtype, as_matrix) if provide_y else None
-    A = random_symmetric_matrix(n / stride + (n % stride > 0), dtype, as_matrix)
+    A = random_symmetric_matrix(n_A, dtype, as_matrix)
 
     # create copies/views of x and y that can be used to calculate the expected result
     x_2 = x.T if x_is_row else x
