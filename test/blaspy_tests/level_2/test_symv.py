@@ -78,7 +78,7 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, uplo):
         False otherwise.
     """
 
-    # generate random sizes for matrix/vector dimensions and vector stride
+    # generate random sizes for matrix/vector dimensions and vector stride (if necessary)
     n = randint(N_MIN, N_MAX)
     stride = randint(N_MIN, STRIDE_MAX) if stride is None else stride
 
@@ -110,7 +110,8 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, uplo):
     y = symv(A, x, y, uplo, alpha, beta, inc_x=stride, inc_y=stride)
 
     # if y is a row vector, make y_2 a row vector as well
-    y_2 = y_2.T if y.shape[0] == 1 else y_2
+    if y.shape[0] == 1:
+        y_2 = y_2.T
 
     # compare the actual result to the expected result and return result of the test
     return allclose(y, y_2, RTOL, ATOL)

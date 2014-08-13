@@ -72,7 +72,7 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_A, stride):
         False otherwise.
     """
 
-    # generate random sizes for matrix/vector dimensions and vector stride
+    # generate random sizes for matrix/vector dimensions and vector stride (if necessary)
     m = randint(N_MIN, N_MAX)
     n = randint(N_MIN, N_MAX)
     stride_x = randint(N_MIN, STRIDE_MAX) if stride is None else stride

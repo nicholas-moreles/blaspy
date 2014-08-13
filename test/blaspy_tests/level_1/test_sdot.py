@@ -16,7 +16,6 @@ from itertools import product
 from random import randint
 
 N_MIN, N_MAX = 2, 1e6           # matrix/vector sizes
-SCAL_MIN, SCAL_MAX = -100, 100  # scalar values
 STRIDE_MAX = 1e5                # max vector stride
 EPSILON = 0.001                 # margin of error
 
@@ -70,13 +69,13 @@ def passed_test(output, as_matrix, x_is_row, y_is_row, stride):
         False otherwise.
     """
 
-    # generate random sizes for vector dimensions and vector stride
-    n = randint(N_MIN, N_MAX)
+    # generate random sizes for vector dimensions and vector stride (if necessary)
+    length = randint(N_MIN, N_MAX)
     stride = randint(N_MIN, STRIDE_MAX) if stride is None else stride
 
     # create random vectors to test
-    x = random_vector(n, x_is_row, 'float32', as_matrix)
-    y = random_vector(n, y_is_row, 'float32', as_matrix)
+    x = random_vector(length, x_is_row, 'float32', as_matrix)
+    y = random_vector(length, y_is_row, 'float32', as_matrix)
 
     # create copies/views of x and y that can be used to calculate the expected result
     x_2 = x if x_is_row else x.T
@@ -87,7 +86,7 @@ def passed_test(output, as_matrix, x_is_row, y_is_row, stride):
         expected = dot(x_2, y_2)[0][0]
     else:
         expected = 0
-        for i in range(0, n, stride):
+        for i in range(0, length, stride):
             expected += x_2[0, i] * y_2[i, 0]
 
     # get the actual result

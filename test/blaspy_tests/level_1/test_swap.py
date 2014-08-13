@@ -16,9 +16,7 @@ from itertools import product
 from random import randint, uniform
 
 N_MIN, N_MAX = 2, 1e3           # matrix/vector sizes
-SCAL_MIN, SCAL_MAX = -100, 100  # scalar values
 STRIDE_MAX = 1e2                # max vector stride
-RTOL, ATOL = 5e-03, 5e-05       # margin of error
 
 
 def test_swap():
@@ -70,7 +68,7 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, stride):
         False otherwise.
     """
 
-    # generate random sizes for vector dimensions and vector stride
+    # generate random sizes for vector dimensions and vector stride (if necessary)
     length = randint(N_MIN, N_MAX)
     stride = randint(N_MIN, STRIDE_MAX) if stride is None else stride
 
