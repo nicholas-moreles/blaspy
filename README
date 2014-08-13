@@ -8,14 +8,13 @@ without worrying about data types or overly verbose BLAS function calls.
 For more information on BLAS, please see:
 http://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms
 
-BLASpy operates on the numpy "matrix" and "ndarray" data structures that are already
-in widespread use. Using the BLASpy library in place of numpy's standard linear
+BLASpy operates on the NumPy "matrix" and "ndarray" data structures that are already
+in widespread use. Using the BLASpy library in place of NumPy's standard linear
 algebra library results in significantly improved performance.
 
-*************************************************************************************
-* BLASpy is currently in a development phase and is not yet complete. Many          *
-* functions are not yet in their final form.                                        *
-*************************************************************************************
+***********************************************************************
+* BLASpy is currently in a development phase and is not yet complete. *
+***********************************************************************
 
 Please read the LICENSE file for information on copying and distributing this software.
 
