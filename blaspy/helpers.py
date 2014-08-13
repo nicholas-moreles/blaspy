@@ -103,7 +103,7 @@ def get_vector_dimensions(name, vector, stride):
             raise_not_vector(name, rows, cols)
 
         # calculate length, accounting for strides > 1
-        length = rows if rows > cols else cols
+        length = max(rows, cols)
         if stride > 1:
             length = (length / stride) + (length % stride > 0)
 
