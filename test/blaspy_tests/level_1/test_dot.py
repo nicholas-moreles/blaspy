@@ -58,7 +58,7 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, stride):
     Run one dot (inner) product test.
 
     Arguments:
-        output:       BLASpy 'output' parameter to test
+        dtype:        either 'float64' or 'float32', the NumPy dtype to test
         as_matrix:    True to test a NumPy matrix, False to test a NumPy ndarray
         x_is_row:     True to test a row vector as parameter x, False to test a column vector
         y_is_row:     True to test a row vector as parameter y, False to test a column vector

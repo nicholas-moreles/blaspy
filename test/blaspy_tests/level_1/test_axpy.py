@@ -9,116 +9,93 @@
 
 """
 
+from ..helpers import random_vector
 from blaspy import axpy
-from ..helpers import random_vector, COL, ROW, NDARRAY, MATRIX
-from numpy import allclose, copy, transpose
-import random
+from numpy import allclose, dot
+from itertools import product
+from random import randint, uniform
+
+N_MIN, N_MAX = 2, 1e6           # matrix/vector sizes
+SCAL_MIN, SCAL_MAX = -100, 100  # scalar values
+STRIDE_MAX = 1e5                # max vector stride
+RTOL, ATOL = 1e-03, 1e-05       # margin of error
 
 
 def test_axpy():
-    random.seed()
+    """
+    Test axpy operation.
+
+    Returns:
+        A list of strings representing the failed tests.
+    """
+
     tests_failed = []
 
-    # run one particular test
-    def passed_test(x_is_row, y_is_row, n=None, alpha=None, stride=None):
+    # values to test
+    dtypes = ['float64', 'float32']
+    bools = [True, False]
+    strides = [1, None]  # None indicates random stride
 
-        # set random values for n, alpha, and stride if none are passed in
-        if n is None:
-            n = random.randint(2, 1e6)
-        if alpha is None:
-            alpha = random.randint(-100, 100)
-        if stride is None:
-            stride = random.randint(2, 1e5)
+    # test all combinations of all possible values
+    for (dtype, as_matrix, x_is_row, y_is_row, stride) \
+            in product(dtypes, bools, bools, bools, strides,):
 
-        # create the vectors to test
-        x = random_vector(n, x_is_row, dtype, as_matrix)
-        y = random_vector(n, y_is_row, dtype, as_matrix)
-        assert x.dtype == y.dtype
-
-        # get the expected result
-        if stride == 1:
-            expected = \
-                alpha * (transpose(x) if x_is_row else x) + (transpose(y) if y_is_row else y)
-        else:
-            if y_is_row:
-                expected = copy(transpose(y))
-            else:
-                expected = copy(y)
-            for i in range(0, n, stride):
-                if x_is_row:
-                    expected[i, 0] += alpha * x[0, i]
-                else:
-                    expected[i, 0] += alpha * x[i, 0]
-
-        # compare the actual result to the expected result
-        axpy(alpha, x, y, stride, stride)
-        return allclose(y, transpose(expected) if y_is_row else expected,
-                        rtol=1e-04, atol=1e-06)
-
-    # run all tests of the given type
-    def run_tests():
-
-        # two scalars
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_scalars"
-        if not passed_test(ROW, ROW, n=1, stride=1):
+        # if a test fails, create a string representation of its name and append it to the list
+        # of failed tests
+        if not passed_test(dtype, as_matrix, x_is_row, y_is_row, stride):
+            variable_list = [dtype,
+                             "_matrix" if as_matrix else "_ndarray",
+                             "_row" if x_is_row else "_col",
+                             "_row" if y_is_row else "_col",
+                             "_rand_stride" if stride is None else ""]
+            test_name = "".join(variable_list)
             tests_failed.append(test_name)
-
-        # two column vectors
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_col"
-        if not passed_test(COL, COL, stride=1):
-            tests_failed.append(test_name)
-
-        # two row vectors
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_row"
-        if not passed_test(ROW, ROW, stride=1):
-            tests_failed.append(test_name)
-
-        # column vector and a row vector
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_row"
-        if not passed_test(COL, ROW, stride=1):
-            tests_failed.append(test_name)
-
-        # two row vectors
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_col"
-        if not passed_test(ROW, COL, stride=1):
-            tests_failed.append(test_name)
-
-        # two column vectors with the same random stride
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_col_rand_stride"
-        if not passed_test(COL, COL):
-            tests_failed.append(test_name)
-
-        # two row vectors with the same random stride
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_row_rand_stride"
-        if not passed_test(ROW, ROW):
-            tests_failed.append(test_name)
-
-        # column vector and a row vector with the same random stride
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_col_row_rand_stride"
-        if not passed_test(COL, ROW):
-            tests_failed.append(test_name)
-
-        # two row vectors with the same random stride
-        test_name = dtype + ("_matrix" if as_matrix else "_ndarray") + "_row_col_rand_stride"
-        if not passed_test(ROW, COL):
-            tests_failed.append(test_name)
-
-    # Test daxpy with ndarray
-    dtype = 'float64'
-    as_matrix = NDARRAY
-    run_tests()
-
-    # Test daxpy with matrix
-    as_matrix = MATRIX
-    run_tests()
-
-    # Test saxpy with ndarray
-    dtype = 'float32'
-    as_matrix = NDARRAY
-    run_tests()
-
-    # Test saxpy with matrix
-    as_matrix = MATRIX
-    run_tests()
 
     return tests_failed
+
+
+def passed_test(dtype, as_matrix, x_is_row, y_is_row, stride):
+    """
+    Run one axpy operation test.
+
+    Arguments:
+        dtype:        either 'float64' or 'float32', the NumPy dtype to test
+        as_matrix:    True to test a NumPy matrix, False to test a NumPy ndarray
+        x_is_row:     True to test a row vector as parameter x, False to test a column vector
+        y_is_row:     True to test a row vector as parameter y, False to test a column vector
+        stride:       stride of x and y to test; if None, a random stride is assigned
+
+    Returns:
+        True if the expected result is within the margin of error of the actual result,
+        False otherwise.
+    """
+
+    # generate random sizes for vector dimensions and vector stride (if necessary)
+    length = randint(N_MIN, N_MAX)
+    stride = randint(N_MIN, STRIDE_MAX) if stride is None else stride
+
+    # create random scalar and vectors to test
+    alpha = uniform(SCAL_MIN, SCAL_MAX)
+    x = random_vector(length, x_is_row, dtype, as_matrix)
+    y = random_vector(length, y_is_row, dtype, as_matrix)
+
+    # create views of x and y that can be used to calculate the expected result
+    x_2 = x.T if x_is_row else x
+    y_2 = y.T if y_is_row else y
+
+    # compute the expected result
+    if stride == 1:
+        y_2 += alpha * x_2
+    else:
+        for i in range(0, length, stride):
+            y_2[i, 0] += alpha * x_2[i, 0]
+
+    # get the actual result
+    axpy(alpha, x, y, stride, stride)
+
+    # if y is a row vector, make y_2 a row vector as well
+    if y.shape[0] == 1:
+        y_2 = y_2.T
+
+    # compare the actual result to the expected result and return result of the test
+    return allclose(y, y_2, RTOL, ATOL)

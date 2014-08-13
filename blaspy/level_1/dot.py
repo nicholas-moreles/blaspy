@@ -22,7 +22,7 @@ def dot(x, y, inc_x=1, inc_y=1):
     where rho is a scalar, and chi_i and psi_i are the ith elements of vectors x and y,
     respectively, where x and y are general vectors of length n.
 
-    VVectors x and y can be passed in as either row or column vectors. If necessary, an implicit
+    Vectors x and y can be passed in as either row or column vectors. If necessary, an implicit
     transposition occurs.
 
     Args:
