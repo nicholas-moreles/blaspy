@@ -38,9 +38,11 @@ def swap(x, y, inc_x=1, inc_y=1):
         # determine which CBLAS subroutine to call and which ctypes data type to use
         cblas_func, ctype_dtype = get_cblas_info('swap', (x.dtype, y.dtype))
 
-        # call CBLAS using ctypes
+        # create a ctypes POINTER for each vector
         ctype_x = POINTER(ctype_dtype * n_x * m_x)
         ctype_y = POINTER(ctype_dtype * n_y * m_y)
+
+        # call CBLAS using ctypes
         cblas_func.argtypes = [c_int, ctype_x, c_int, ctype_y, c_int]
         cblas_func.restype = None
         cblas_func(x_length, x.ctypes.data_as(ctype_x), inc_x, y.ctypes.data_as(ctype_y), inc_y)

@@ -36,8 +36,10 @@ def nrm2(x, inc_x=1):
         # determine which CBLAS subroutine to call and which ctypes data type to use
         cblas_func, ctype_dtype = get_cblas_info('nrm2', (x.dtype,))
 
-        # call BLAS using ctypes
+        # create a ctypes POINTER for vector x
         ctype_x = POINTER(ctype_dtype * n_x * m_x)
+
+        # call CBLAS using ctypes
         cblas_func.argtypes = [c_int, ctype_x, c_int]
         cblas_func.restype = ctype_dtype
         return cblas_func(x_length, x.ctypes.data_as(ctype_x), inc_x)
