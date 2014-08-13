@@ -253,36 +253,3 @@ def convert_trans(trans):
         return TRANS
     else:
         raise_invalid_parameter('trans', ('n', 'N', 't', 'T'), trans)
-
-
-# TO BE REMOVED - ALL BELOW THIS LINE
-
-def find_length(m, n, stride):
-    """Find the length of a vector to be used for the BLAS parameter "n".
-    Note: Adjusting the length by the value of stride prevents a segfault that would otherwise
-    occur by ensuring BLAS does not attempt to operate on memory locations past the end
-    of the vector.
-
-    Args:
-        m: the number of rows in the vector
-        n: the number of columns in the vector
-        stride: stride of the vector (increment for the elements of the vector)
-
-    Returns:
-        The appropriate length to be passed to BLAS for the vector.
-    """
-
-    # set length to the max of m and n
-    length = m if m > n else n
-
-    # return the ceiling of the result of float division of the length divided by the stride if
-    # the stride is greater than 1, else return the length
-    return (length / stride) + (length % stride > 0) if stride > 1 else length
-
-def check_is_vector(name, m, n):
-    if not (m == 1 or n == 1):
-        raise ValueError(str(name) + " must be a vector")
-
-def check_is_square(name, m, n):
-    if m != n:
-        raise ValueError(str(name) + " must be a square matrix")

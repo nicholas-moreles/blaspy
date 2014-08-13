@@ -53,7 +53,7 @@ def test_asum():
 
 def passed_test(dtype, as_matrix, x_is_row, stride):
     """
-    Run 1-norm computation test.
+    Run one 1-norm computation test.
 
     Arguments:
         dtype:        either 'float64' or 'float32', the NumPy dtype to test
