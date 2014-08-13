@@ -24,7 +24,7 @@ def scal(alpha, x, inc_x=1):
 
     Args:
         alpha:          scalar alpha
-        x:              a 2D numpy matrix or ndarray representing vector x
+        x:              2D numpy matrix or ndarray representing vector x
         inc_x           stride of x (increment for the elements of x)
     """
 

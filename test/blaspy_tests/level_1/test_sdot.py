@@ -77,7 +77,7 @@ def passed_test(output, as_matrix, x_is_row, y_is_row, stride):
     x = random_vector(length, x_is_row, 'float32', as_matrix)
     y = random_vector(length, y_is_row, 'float32', as_matrix)
 
-    # create copies/views of x and y that can be used to calculate the expected result
+    # create views of x and y that can be used to calculate the expected result
     x_2 = x if x_is_row else x.T
     y_2 = y.T if y_is_row else y
 

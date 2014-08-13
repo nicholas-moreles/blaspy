@@ -18,7 +18,7 @@ from random import randint, uniform
 N_MIN, N_MAX = 2, 1e3           # matrix/vector sizes
 SCAL_MIN, SCAL_MAX = -100, 100  # scalar values
 STRIDE_MAX = 1e2                # max vector stride
-RTOL, ATOL = 1e-02, 1e-03       # margin of error
+RTOL, ATOL = 5e-01, 5e-02       # margin of error
 
 
 def test_symv():
