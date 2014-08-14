@@ -25,24 +25,27 @@ CONJ_TRANS = 113
 CONJ_NO_TRANS = 114
 UPPER = 121
 LOWER = 122
+NON_UNIT = 131
+UNIT = 132
 
 # dictionary of BLASpy functions mapping to CBLAS subroutines
 # - first entry in value pair is for double precision reals
 # - second entry in value pair is for single precision reals
 # - sdot is omitted as a special case
-FUNC_MAP = {'amax': (lib.cblas_idamax, lib.cblas_isamax),
-            'asum': (lib.cblas_dasum,  lib.cblas_sasum),
-            'axpy': (lib.cblas_daxpy,  lib.cblas_saxpy),
-            'copy': (lib.cblas_dcopy,  lib.cblas_scopy),
-            'dot':  (lib.cblas_ddot,   lib.cblas_sdot),
-            'nrm2': (lib.cblas_dnrm2,  lib.cblas_snrm2),
-            'scal': (lib.cblas_dscal,  lib.cblas_sscal),
-            'swap': (lib.cblas_dswap,  lib.cblas_sswap),
-            'gemv': (lib.cblas_dgemv,  lib.cblas_sgemv),
-            'ger':  (lib.cblas_dger,   lib.cblas_sger),
-            'symv': (lib.cblas_dsymv,  lib.cblas_ssymv),
-            'syr':  (lib.cblas_dsyr,   lib.cblas_ssyr),
-            'syr2': (lib.cblas_dsyr2,  lib.cblas_ssyr2)}
+FUNC_DICT = {'amax': (lib.cblas_idamax, lib.cblas_isamax),
+             'asum': (lib.cblas_dasum,  lib.cblas_sasum),
+             'axpy': (lib.cblas_daxpy,  lib.cblas_saxpy),
+             'copy': (lib.cblas_dcopy,  lib.cblas_scopy),
+             'dot':  (lib.cblas_ddot,   lib.cblas_sdot),
+             'nrm2': (lib.cblas_dnrm2,  lib.cblas_snrm2),
+             'scal': (lib.cblas_dscal,  lib.cblas_sscal),
+             'swap': (lib.cblas_dswap,  lib.cblas_sswap),
+             'gemv': (lib.cblas_dgemv,  lib.cblas_sgemv),
+             'ger':  (lib.cblas_dger,   lib.cblas_sger),
+             'symv': (lib.cblas_dsymv,  lib.cblas_ssymv),
+             'syr':  (lib.cblas_dsyr,   lib.cblas_ssyr),
+             'syr2': (lib.cblas_dsyr2,  lib.cblas_ssyr2),
+             'trmv': (lib.cblas_dtrmv,  lib.cblas_strmv)}
 
 
 def get_cblas_info(calling_func, dtypes):
@@ -66,10 +69,10 @@ def get_cblas_info(calling_func, dtypes):
     """
 
     if all(dtype == 'float64' for dtype in dtypes):
-        return FUNC_MAP[calling_func][0], c_double
+        return FUNC_DICT[calling_func][0], c_double
 
     elif all(dtype == 'float32' for dtype in dtypes):
-        return FUNC_MAP[calling_func][1], c_float
+        return FUNC_DICT[calling_func][1], c_float
 
     else:
         raise_invalid_dtypes(('float64', 'float32'))
@@ -255,3 +258,12 @@ def convert_trans(trans):
         return TRANS
     else:
         raise_invalid_parameter('trans', ('n', 'N', 't', 'T'), trans)
+
+
+def convert_diag(diag):
+    if diag == 'n' or diag == 'N':
+        return NON_UNIT
+    elif diag == 'u' or diag == 'U':
+        return UNIT
+    else:
+        raise_invalid_parameter('diag', ('n', 'N', 'u', 'U'), diag)

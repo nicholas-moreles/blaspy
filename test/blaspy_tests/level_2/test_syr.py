@@ -37,7 +37,6 @@ def test_syr():
     strides = (1, None)  # None indicates random stride
     uplos = ('u', 'l')
 
-
     # test all combinations of all possible values
     for (dtype, as_matrix, x_is_row, provide_A, stride, uplo) \
             in product(dtypes, bools, bools, bools, strides, uplos):

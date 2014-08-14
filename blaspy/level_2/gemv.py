@@ -76,8 +76,6 @@ def gemv(A, x, y=None, trans_a='n', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1)
         if lda is None:
             lda = n_A
 
-
-
         # ensure the parameters are appropriate for the desired operation
         x_check, y_check = (n_A, m_A) if trans_a == 'n' else (m_A, n_A)
         check_equal_sizes('A', x_check, 'x', x_length)

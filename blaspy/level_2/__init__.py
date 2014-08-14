@@ -14,3 +14,4 @@ from .ger import ger
 from .symv import  symv
 from .syr import syr
 from .syr2 import syr2
+from .trmv import trmv

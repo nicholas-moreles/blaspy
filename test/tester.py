@@ -81,6 +81,9 @@ total += run_test(test_syr)
 print("Testing syr2:")
 total += run_test(test_syr2)
 
+print("Testing trmv:")
+total += run_test(test_trmv)
+
 
 ###########
 # Level 3 #

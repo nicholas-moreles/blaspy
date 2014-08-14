@@ -9,7 +9,7 @@
 
 """
 
-from numpy import asmatrix, random
+from numpy import asmatrix, fill_diagonal, random, tril, triu
 
 # TODO: Remove after removing references in all test files
 COL, ROW = False, True
@@ -27,6 +27,7 @@ def random_vector(length, is_row, dtype, as_matrix):
         vector = asmatrix(vector)
     return vector
 
+
 def random_matrix(m, n, dtype, as_matrix):
     """ Generate a random matrix """
     matrix = random.uniform(MIN, MAX, (m, n)).astype(dtype)
@@ -34,7 +35,16 @@ def random_matrix(m, n, dtype, as_matrix):
         matrix = asmatrix(matrix)
     return matrix
 
+
 def random_symmetric_matrix(n, dtype, as_matrix):
     """ Generate a random symmetric matrix """
     rand_matrix = random_matrix(n, n, dtype, as_matrix)
     return (rand_matrix + rand_matrix.T) / 2
+
+
+def random_triangular_matrix(n, dtype, as_matrix, uplo, diag):
+    """ Generate a random triangular matrix """
+    rand_matrix = random_matrix(n, n, dtype, as_matrix)
+    if diag == 'u':
+        fill_diagonal(rand_matrix, 1)
+    return triu(rand_matrix) if uplo == 'u' else tril(rand_matrix)

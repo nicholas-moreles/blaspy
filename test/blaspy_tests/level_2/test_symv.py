@@ -53,7 +53,7 @@ def test_symv():
                              "_row" if y_is_row else "_col",
                              "_rand_stride" if stride is None else "",
                              "_" if provide_y else "_no_y_",
-                                 uplo)
+                             uplo)
                 test_name = "".join(variables)
                 tests_failed.append(test_name)
 

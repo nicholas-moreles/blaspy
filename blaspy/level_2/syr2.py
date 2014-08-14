@@ -54,6 +54,7 @@ def syr2(x, y, A=None, uplo='u', alpha=1, lda=None, inc_x=1, inc_y=1):
                     - A and x do not have the same dtype or that dtype is not supported
                     - x is not a vector
                     - the effective length of x does not equal the dimension of A
+                    - uplo is not equal to one of the following: 'u', 'U', 'l', 'L'
     """
 
     try:

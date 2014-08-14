@@ -43,7 +43,7 @@ def ger(x, y, A=None, alpha=1, lda=None, inc_x=1, inc_y=1):
     Returns:
         Matrix A, for use in case no matrix A was passed into this function.
 
-     Raises:
+    Raises:
         ValueError: if any of the following conditions occur:
 
                     - A, x, or y is not a 2D NumPy ndarray or NumPy matrix
