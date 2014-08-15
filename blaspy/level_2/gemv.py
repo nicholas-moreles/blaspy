@@ -12,7 +12,7 @@
 from ..helpers import (get_matrix_dimensions, get_vector_dimensions, check_strides_equal_one,
                        create_similar_zero_vector, check_equal_sizes, convert_trans,
                        get_cblas_info, ROW_MAJOR)
-from ..errors import raise_not_2d_numpy
+from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
 
@@ -101,5 +101,5 @@ def gemv(A, x, y=None, trans_a='n', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1)
 
         return y  # y is also overwritten, so only useful if no y was provided
 
-    except AttributeError:
-        raise_not_2d_numpy()
+    except (AttributeError, TypeError):
+        raise_generic_type_error()

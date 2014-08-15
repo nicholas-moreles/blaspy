@@ -11,7 +11,7 @@
 
 from ..helpers import (get_vector_dimensions, get_square_matrix_dimension, get_cblas_info,
                        check_equal_sizes, convert_uplo, convert_trans, convert_diag, ROW_MAJOR)
-from ..errors import raise_not_2d_numpy
+from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
 
@@ -83,5 +83,5 @@ def trmv(A, x, uplo='u', trans_a='n', diag='n', lda=None, inc_x=1):
         cblas_func(ROW_MAJOR, cblas_uplo, cblas_trans_a, cblas_diag, dim_A,
                    A.ctypes.data_as(ctype_A), lda, x.ctypes.data_as(ctype_x), inc_x)
 
-    except AttributeError:
-        raise_not_2d_numpy()
+    except (AttributeError, TypeError):
+        raise_generic_type_error()

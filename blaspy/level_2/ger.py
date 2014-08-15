@@ -11,7 +11,7 @@
 
 from ..helpers import (get_vector_dimensions, get_matrix_dimensions, get_cblas_info,
                        check_equal_sizes, create_zero_matrix, ROW_MAJOR)
-from ..errors import raise_not_2d_numpy
+from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
 
@@ -90,5 +90,5 @@ def ger(x, y, A=None, alpha=1, lda=None, inc_x=1, inc_y=1):
 
         return A  # A is also overwritten, so only useful if no A was provided
 
-    except AttributeError:
-        raise_not_2d_numpy()
+    except (AttributeError, TypeError):
+        raise_generic_type_error()

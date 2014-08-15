@@ -91,6 +91,8 @@ total += run_test(test_trmv)
 
 print("Testing Level 3 BLAS\n")
 
+print("Testing gemm:")
+total += run_test(test_gemm)
 
 # Give totals
 print("Total tests failed: " + str(total))

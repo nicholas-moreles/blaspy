@@ -85,9 +85,9 @@ def get_vector_dimensions(name, vector, stride):
     the stride of the vector.
 
     Args:
-        name:    string to print as the vector's name if an error occurs
-        vector:  numpy 2D ndarray or matrix representing a vector
-        stride:  stride of the vector (increment for the elements of the vector)
+        name:      string to print as the vector's name if an error occurs
+        vector:    numpy 2D ndarray or matrix representing a vector
+        stride:    stride of the vector (increment for the elements of the vector)
 
     Returns:
         A tuple of three elements where each element is described in order below:
@@ -97,26 +97,23 @@ def get_vector_dimensions(name, vector, stride):
         - length of vector after accounting for stride
 
     Raises:
-        ValueError: if vector is not a vector represented by a 2D NumPy ndarray or matrix
+        TypeError: if vector is not a vector represented by a 2D NumPy ndarray or matrix
     """
 
     try:
-        # will cause AttributeError if vector is not a 2D NumPy ndarray or matrix
         rows, cols = vector.shape
 
-        # ensure vector is actually a vector
         if not (rows == 1 or cols == 1):
             raise_not_vector(name, rows, cols)
 
-        # calculate length, accounting for strides > 1
         length = max(rows, cols)
         if stride > 1:
             length = (length / stride) + (length % stride > 0)
 
         return rows, cols, length
 
-    except AttributeError:
-        raise_not_2d_numpy()
+    except (AttributeError, TypeError):
+        raise_not_2d_numpy(name)
 
 
 def get_matrix_dimensions(name, matrix):
@@ -124,8 +121,8 @@ def get_matrix_dimensions(name, matrix):
     Return the number of rows and number of columns in a matrix.
 
     Args:
-        name:    string to print as the matrix's name if an error occurs
-        vector:  numpy 2D ndarray or matrix representing the matrix
+        name:      string to print as the vector's name if an error occurs
+        vector:    numpy 2D ndarray or matrix representing the matrix
 
     Returns:
         A tuple of two elements where each element is described in order below:
@@ -134,17 +131,16 @@ def get_matrix_dimensions(name, matrix):
         - number of columns in matrix
 
     Raises:
-        ValueError: if matrix is not a 2D NumPy ndarray or matrix
+        TypeError: if matrix is not a 2D NumPy ndarray or matrix
     """
 
     try:
-        # will cause AttributeError if matrix is not a 2D NumPy ndarray or matrix
         rows, cols = matrix.shape
 
         return rows, cols
 
-    except AttributeError:
-        raise_not_2d_numpy()
+    except (AttributeError, TypeError):
+        raise_not_2d_numpy(name)
 
 
 def get_square_matrix_dimension(name, matrix):
@@ -152,18 +148,18 @@ def get_square_matrix_dimension(name, matrix):
     Return the dimension of a square matrix.
 
     Args:
-        name:    string to print as the matrix's name if an error occurs
-        vector:  numpy 2D ndarray or matrix representing a square matrix
+        name:      string to print as the matrix's name if an error occurs
+        vector:    numpy 2D ndarray or matrix representing a square matrix
 
     Returns:
         An int representing both the number of rows and number of columns in matrix.
 
     Raises:
-        ValueError: if matrix is not a square 2D NumPy ndarray or matrix
+        TypeError:  if matrix is not a 2D NumPy ndarray or matrix
+        ValueError: if matrix is not square
     """
 
     try:
-        # will cause AttributeError if matrix is not a 2D NumPy ndarray or matrix
         rows, cols = matrix.shape
 
         if rows != cols:
@@ -171,8 +167,8 @@ def get_square_matrix_dimension(name, matrix):
 
         return rows
 
-    except AttributeError:
-        raise_not_2d_numpy()
+    except (AttributeError, TypeError):
+        raise_not_2d_numpy(name)
 
 
 def check_equal_sizes(name_1, size_1, name_2, size_2):
@@ -180,10 +176,13 @@ def check_equal_sizes(name_1, size_1, name_2, size_2):
     Check that size_1 and size_2 are equal.
 
     Args:
-        name_1:  string to print as the name of the first element
-        size_1:  size of the first element
-        name_2:  string to print as the name of the second element
-        size_2:  size of the second element
+        name_1:    string to print as the name of the first element
+        size_1:    size of the first element
+        name_2:    string to print as the name of the second element
+        size_2:    size of the second element
+
+    Raises:
+        ValueError: if size_1 != size_2
     """
 
     if size_1 != size_2:
@@ -201,8 +200,8 @@ def create_similar_zero_vector(other_vector, length):
     other_vector.
 
     Args:
-        other_vector:  vector whose dtype and orientation to copy
-        length:        length of the new zero vector
+        other_vector:    vector whose dtype and orientation to copy
+        length:          length of the new zero vector
 
     Returns:
         A new NumPy ndarray or matrix filled with zeros of specified length with the same

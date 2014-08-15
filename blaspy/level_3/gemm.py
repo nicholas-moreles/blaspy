@@ -11,7 +11,7 @@
 
 from ..helpers import (get_matrix_dimensions, create_zero_matrix, check_equal_sizes, convert_trans,
                        get_cblas_info, ROW_MAJOR)
-from ..errors import raise_not_2d_numpy
+from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
 
@@ -62,7 +62,7 @@ def gemm(A, B, C=None, trans_a='n', trans_b='n', alpha=1, beta=1, lda=None, ldb=
         m_A, n_A = get_matrix_dimensions('A', A)
         m_B, n_B = get_matrix_dimensions('B', B)
         m, k_A = (m_A, n_A) if trans_a == 'n' else (n_A, m_A)
-        n, k_B = (n_B, n_A) if trans_b == 'n' else (m_A, n_A)
+        n, k_B = (n_B, m_B) if trans_b == 'n' else (m_B, n_B)
 
         # if C is not given, create zero matrix with same type as A
         if C is None:
@@ -77,7 +77,7 @@ def gemm(A, B, C=None, trans_a='n', trans_b='n', alpha=1, beta=1, lda=None, ldb=
             lda = n_A
         if ldb is None:
             ldb = n_B
-        if lda is None:
+        if ldc is None:
             ldc = n_C
 
         # convert to appropriate CBLAS value
@@ -97,6 +97,8 @@ def gemm(A, B, C=None, trans_a='n', trans_b='n', alpha=1, beta=1, lda=None, ldb=
         ctype_B = POINTER(ctype_dtype * n_B * m_B)
         ctype_C = POINTER(ctype_dtype * n_C * m_C)
 
+
+
         # call CBLAS using ctypes
         cblas_func.argtypes = [c_int, c_int, c_int, c_int, c_int, c_int, ctype_dtype,
                                ctype_A, c_int, ctype_B, c_int, ctype_dtype, ctype_C, c_int]
@@ -107,5 +109,5 @@ def gemm(A, B, C=None, trans_a='n', trans_b='n', alpha=1, beta=1, lda=None, ldb=
 
         return C  # C is also overwritten, so only useful if no C was provided
 
-    except AttributeError:
-        raise_not_2d_numpy()
+    except (AttributeError, TypeError):
+        raise_generic_type_error()

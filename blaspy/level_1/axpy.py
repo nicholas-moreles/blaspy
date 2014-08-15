@@ -10,7 +10,7 @@
 """
 
 from ..helpers import get_vector_dimensions, get_cblas_info, check_equal_sizes
-from ..errors import raise_not_2d_numpy
+from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
 
@@ -54,5 +54,5 @@ def axpy(alpha, x, y, inc_x=1, inc_y=1):
         cblas_func(x_length, alpha, x.ctypes.data_as(ctype_x), inc_x,
                   y.ctypes.data_as(ctype_y), inc_y)
 
-    except AttributeError:
-        raise_not_2d_numpy()
+    except (AttributeError, TypeError):
+        raise_generic_type_error()

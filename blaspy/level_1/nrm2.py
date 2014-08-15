@@ -10,7 +10,7 @@
 """
 
 from ..helpers import get_vector_dimensions, get_cblas_info
-from ..errors import raise_not_2d_numpy
+from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
 
@@ -44,5 +44,5 @@ def nrm2(x, inc_x=1):
         cblas_func.restype = ctype_dtype
         return cblas_func(x_length, x.ctypes.data_as(ctype_x), inc_x)
 
-    except AttributeError:
-        raise_not_2d_numpy()
+    except (AttributeError, TypeError):
+        raise_generic_type_error()

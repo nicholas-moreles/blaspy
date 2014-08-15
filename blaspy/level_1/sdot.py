@@ -11,7 +11,7 @@
 
 from ..config import _libblas
 from ..helpers import get_vector_dimensions, check_equal_sizes
-from ..errors import raise_not_2d_numpy, raise_invalid_dtypes, raise_invalid_parameter
+from ..errors import raise_generic_type_error, raise_invalid_dtypes, raise_invalid_parameter
 from ctypes import c_int, c_double, c_float, POINTER
 
 
@@ -74,5 +74,5 @@ def sdot(x, y, inc_x=1, inc_y=1, output='float64'):
         else:
             raise_invalid_parameter('output', ('float32', 'float64'), output)
 
-    except AttributeError:
-        raise_not_2d_numpy()
+    except (AttributeError, TypeError):
+        raise_generic_type_error()

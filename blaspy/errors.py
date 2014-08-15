@@ -9,11 +9,16 @@
 
 """
 
+def raise_generic_type_error():
+    raise TypeError("An unexpected error occurred, likely due to a matrix or vector not being a "
+                    "NumPy ndarray or matrix. Another possibility is an error caused by the "
+                    "CBLAS library not being linked properly. Please check both possibilities.")
 
-def raise_not_2d_numpy():
-    raise ValueError("All matrix and vector parameters should be two-dimensional and of NumPy type "
-                     "ndarray or matrix. BLASpy expects vectors to be two-dimensional, so ensure "
-                     "you are not trying to pass in a one-dimensional ndarray as a vector.")
+
+def raise_not_2d_numpy(name):
+    raise TypeError("'%s' should be two-dimensional and of NumPy type ndarray or matrix. BLASpy "
+                    "expects vectors to be two-dimensional, so ensure you are not trying to pass "
+                    "in a one-dimensional ndarray as a vector." % name)
 
 
 def raise_not_vector(name, rows, cols):

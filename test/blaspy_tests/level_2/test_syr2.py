@@ -15,9 +15,9 @@ from numpy import allclose, copy,  dot, zeros, triu, tril
 from itertools import product
 from random import randint, uniform
 
-N_MIN, N_MAX = 2, 1e3           # matrix/vector sizes
+N_MIN, N_MAX = 2, 5e2           # matrix/vector sizes
 SCAL_MIN, SCAL_MAX = -100, 100  # scalar values
-STRIDE_MAX = 1e2                # max vector stride
+STRIDE_MAX = 5e1                # max vector stride
 RTOL, ATOL = 5e-02, 5e-04       # margin of error
 
 
