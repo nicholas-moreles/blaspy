@@ -37,7 +37,7 @@ if BLAS_NAME_OVERRIDE == "":
         if calcsize("P") == 8:  # 64-bit
             BLAS_NAME = "libopenblasp-r0.2.9-64ref32threads.so"
         else:  # 32-bit
-            BLAS_NAME = "NOT_IMPLEMENTED.dll"
+            BLAS_NAME = "NOT_IMPLEMENTED.so"
 
 # Create the appropriate path to _libblas
 BLAS_PATH = str(path.dirname(__file__))[:-6] + "lib/"
