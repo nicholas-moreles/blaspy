@@ -9,17 +9,19 @@
 
 """
 
+from .errors import raise_blas_os_error
 from ctypes import cdll
 from os import path
 from platform import system
 from struct import calcsize
 
 # The name of the BLAS .so or .dll file. By default this is the OpenBLAS reference
-# implementation bundled with BLASpy. Only modify if you wish to use a different version of BLAS.
+# implementation bundled with BLASpy. Only modify if you wish to use a different version of BLAS
+# or if your operating system is not supported by BLASpy out of the box.
 BLAS_NAME_OVERRIDE = ""  # default is ""
 
 # True if the BLAS .so or .dll file is in the blaspy/lib subdirectory,
-# False if Python should search for it in /usr/lib
+# False if Python should search for it.
 IN_BLASPY_SUBDIR = True  # default is True
 
 ##################################
@@ -30,14 +32,18 @@ IN_BLASPY_SUBDIR = True  # default is True
 if BLAS_NAME_OVERRIDE == "":
     if system() == "Windows":
         if calcsize("P") == 8:  # 64-bit
-            BLAS_NAME = "NOT_IMPLEMENTED.dll"
+            BLAS_NAME = "libopenblas-0.2.10-win64-int32.dll"
         else:  # 32-bit
-            BLAS_NAME = "NOT_IMPLEMENTED.dll"
-    else:  # Linux
+            BLAS_NAME = "libopenblas-0.2.10-win32.dll"
+    elif system() == "Linux":
         if calcsize("P") == 8:  # 64-bit
-            BLAS_NAME = "libopenblasp-r0.2.9-64ref32threads.so"
+            BLAS_NAME = "libopenblas-0.2.10-linux64.so"
         else:  # 32-bit
-            BLAS_NAME = "NOT_IMPLEMENTED.so"
+            raise_blas_os_error()  # TODO: Add BLAS implementation
+    else:  # no appropriate BLAS implementation included, BLAS_NAME_OVERRIDE must be used
+        raise_blas_os_error()
+else:
+    BLAS_NAME = BLAS_NAME_OVERRIDE
 
 # Create the appropriate path to _libblas
 BLAS_PATH = str(path.dirname(__file__))[:-6] + "lib/"
