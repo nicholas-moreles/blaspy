@@ -39,7 +39,7 @@ if BLAS_NAME_OVERRIDE == "":
         if calcsize("P") == 8:  # 64-bit
             BLAS_NAME = "libopenblas-0.2.10-linux64.so"
         else:  # 32-bit
-            raise_blas_os_error()  # TODO: Add BLAS implementation
+            BLAS_NAME = "libopenblas-0.2.10-linux32.so"
     else:  # no appropriate BLAS implementation included, BLAS_NAME_OVERRIDE must be used
         raise_blas_os_error()
 else:
