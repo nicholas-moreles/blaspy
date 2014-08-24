@@ -16,17 +16,27 @@ from ctypes import c_double, c_float
 from numpy import asmatrix, zeros
 from numpy import matrix as np_matrix
 
-# CBLAS enum values
+# CBLAS_ORDER
 ROW_MAJOR = 101
 COL_MAJOR = 102
+
+# CBLAS_TRANSPOSE
 NO_TRANS = 111
 TRANS = 112
 CONJ_TRANS = 113
 CONJ_NO_TRANS = 114
+
+# CBLAS_UPLO
 UPPER = 121
 LOWER = 122
+
+# CBLAS_DIAG
 NON_UNIT = 131
 UNIT = 132
+
+# CBLAS_SIDE
+LEFT = 141
+RIGHT = 142
 
 # dictionary of BLASpy functions mapping to CBLAS subroutines
 # - first entry in value pair is for double precision reals
@@ -46,7 +56,8 @@ FUNC_DICT = {'amax': (lib.cblas_idamax, lib.cblas_isamax),  # level 1
              'syr':  (lib.cblas_dsyr,   lib.cblas_ssyr),
              'syr2': (lib.cblas_dsyr2,  lib.cblas_ssyr2),
              'trmv': (lib.cblas_dtrmv,  lib.cblas_strmv),
-             'gemm': (lib.cblas_dgemm,  lib.cblas_sgemm)}   # level 3
+             'gemm': (lib.cblas_dgemm,  lib.cblas_sgemm),   # level 3
+             'symm': (lib.cblas_dsymm,  lib.cblas_ssymm)}
 
 
 def get_cblas_info(calling_func, dtypes):
@@ -267,3 +278,12 @@ def convert_diag(diag):
         return UNIT
     else:
         raise_invalid_parameter('diag', ('n', 'N', 'u', 'U'), diag)
+
+
+def convert_side(side):
+    if side == 'l' or side == 'L':
+        return LEFT
+    elif side == 'r' or side == 'R':
+        return RIGHT
+    else:
+        raise_invalid_parameter('side', ('l', 'L', 'r', 'R'), side)

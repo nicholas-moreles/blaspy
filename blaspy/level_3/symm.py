@@ -9,40 +9,43 @@
 
 """
 
-from ..helpers import (get_matrix_dimensions, create_zero_matrix, check_equal_sizes, convert_trans,
-                       get_cblas_info, ROW_MAJOR)
+from ..helpers import (get_matrix_dimensions, get_square_matrix_dimension, create_zero_matrix,
+                       check_equal_sizes, convert_uplo, convert_side, get_cblas_info, ROW_MAJOR)
 from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
 
-def gemm(A, B, C=None, trans_a='n', trans_b='n', alpha=1, beta=1, lda=None, ldb=None, ldc=None):
+def symm(A, B, C=None, side='l', uplo='u', alpha=1, beta=1, lda=None, ldb=None, ldc=None):
     """
     Perform a general matrix-vector multiplication operation.
 
     C := beta * C + alpha * A * B
+    or
+    C := beta * C + alpha * B * A
 
-    where alpha and beta are scalars and A, B, and C are general matrices.
+    where alpha and beta are scalars, A is a symmetric matrix, and B and C are general matrices.
 
-    The 'trans_a' and 'trans_b' arguments allow the computation to proceed as if A and/or B is
-    transposed.
+    The 'uplo' argument indicates whether the lower or upper triangle of A is to be referenced by
+    the operation. The 'side' argument indicates whether the symmetric matrix A is multiplied on
+    the left or the right side of B.
 
     If matrix C is not provided, a zero matrix of the appropriate size and type is created
     and returned. In such a case, 'ldc' is automatically set to the number of columns in the
     newly created matrix C.
 
     Args:
-        A:          2D numpy matrix or ndarray representing matrix A
-        B:          2D numpy matrix or ndarray representing matrix A
-        C:          2D numpy matrix or ndarray representing matrix C (default is zero matrix)
-        trans_a:    'n'  if the operation is to proceed as if A is not transposed
-                    't'  if the operation is to proceed as if A is transposed
-        trans_b:    'n'  if the operation is to proceed as if A is not transposed
-                    't'  if the operation is to proceed as if b is transposed
-        alpha:      scalar alpha
-        beta:       scalar beta
-        lda:        leading dimension of A (must be >= # of cols in A)
-        ldb:        leading dimension of B (must be >= # of cols in B)
-        ldc:        leading dimension of C (must be >= # of cols in C)
+        A:       2D numpy matrix or ndarray representing matrix A
+        B:       2D numpy matrix or ndarray representing matrix A
+        C:       2D numpy matrix or ndarray representing matrix C (default is zero matrix)
+        uplo:    'u'  if the upper triangular part of A is to be used
+                 'l'  if the lower triangular part of A is to be used
+        side:    'l'  if the operation is to proceed as if A is not transposed
+                 'r'  if the operation is to proceed as if b is transposed
+        alpha:   scalar alpha
+        beta:    scalar beta
+        lda:     leading dimension of A (must be >= # of cols in A)
+        ldb:     leading dimension of B (must be >= # of cols in B)
+        ldc:     leading dimension of C (must be >= # of cols in C)
 
     Returns:
         Matrix C, for use in case no matrix C was passed into this function.
@@ -52,17 +55,22 @@ def gemm(A, B, C=None, trans_a='n', trans_b='n', alpha=1, beta=1, lda=None, ldb=
 
         ValueError: if any of the following conditions occur:
                     - A, B, and C do not have the same dtype or that dtype is not supported
+                    - A is not a square matrix
                     - The dimensions of A, B, and C do not conform
-                    - Either 'trans_a' or 'trans_b' is not equal to one of the following: 'n', 'N',
-                      't', 'T'
+                    - 'uplo' is not equal to one of the following: 'u', 'U', 'l', 'L'
+                    - 'side' is not equal to one of the following: 'l', 'L', 'r', 'R'
     """
 
     try:
+        # convert to appropriate CBLAS value
+        cblas_uplo = convert_uplo(uplo)
+        cblas_side = convert_side(side)
+        side_is_left = side == 'l' or side == 'L'
+
         # get the dimensions of the parameters
-        m_A, n_A = get_matrix_dimensions('A', A)
+        dim_A = get_square_matrix_dimension('A', A)
         m_B, n_B = get_matrix_dimensions('B', B)
-        m, k_A = (m_A, n_A) if (trans_a == 'n' or trans_a == 'N') else (n_A, m_A)
-        n, k_B = (n_B, m_B) if (trans_b == 'n' or trans_b == 'N') else (m_B, n_B)
+        m, n, k = (dim_A, n_B, m_B) if side_is_left else (m_B, dim_A, n_B)
 
         # if C is not given, create zero matrix with same type as A
         if C is None:
@@ -74,36 +82,30 @@ def gemm(A, B, C=None, trans_a='n', trans_b='n', alpha=1, beta=1, lda=None, ldb=
 
         # assign a default value to lda, ldb, and ldc if necessary (assumes row-major order)
         if lda is None:
-            lda = n_A
+            lda = dim_A
         if ldb is None:
             ldb = n_B
         if ldc is None:
             ldc = n_C
 
-        # convert to appropriate CBLAS value
-        cblas_trans_a = convert_trans(trans_a)
-        cblas_trans_b = convert_trans(trans_b)
-
         # ensure the matrix dimensions conform for the desired operation
-        check_equal_sizes('A', k_A, 'B', k_B)
-        check_equal_sizes('A', m, 'C', m_C)
-        check_equal_sizes('B', n, 'C', n_C)
+        check_equal_sizes('A', dim_A, 'B', k)
+        check_equal_sizes('A' if side_is_left else 'B', m, 'C', m_C)
+        check_equal_sizes('B' if side_is_left else 'A', n, 'C', n_C)
 
         # determine which CBLAS subroutine to call and which ctypes data type to use
-        cblas_func, ctype_dtype = get_cblas_info('gemm', (A.dtype, B.dtype, C.dtype))
+        cblas_func, ctype_dtype = get_cblas_info('symm', (A.dtype, B.dtype, C.dtype))
 
         # create a ctypes POINTER for each matrix
-        ctype_A = POINTER(ctype_dtype * n_A * m_A)
+        ctype_A = POINTER(ctype_dtype * dim_A * dim_A)
         ctype_B = POINTER(ctype_dtype * n_B * m_B)
         ctype_C = POINTER(ctype_dtype * n_C * m_C)
 
-
-
         # call CBLAS using ctypes
-        cblas_func.argtypes = [c_int, c_int, c_int, c_int, c_int, c_int, ctype_dtype,
+        cblas_func.argtypes = [c_int, c_int, c_int, c_int, c_int, ctype_dtype,
                                ctype_A, c_int, ctype_B, c_int, ctype_dtype, ctype_C, c_int]
         cblas_func.restype = None
-        cblas_func(ROW_MAJOR, cblas_trans_a, cblas_trans_b, m, n, k_A, alpha,
+        cblas_func(ROW_MAJOR, cblas_side, cblas_uplo, m, n, alpha,
                    A.ctypes.data_as(ctype_A), lda, B.ctypes.data_as(ctype_B), ldb, beta,
                    C.ctypes.data_as(ctype_C), ldc)
 

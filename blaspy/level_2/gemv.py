@@ -59,6 +59,10 @@ def gemv(A, x, y=None, trans_a='n', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1)
     """
 
     try:
+        # convert to appropriate CBLAS value
+        cblas_trans_a = convert_trans(trans_a)
+        transpose_A = trans_a == 't' or trans_a == 'T'
+
         # get the dimensions of the parameters
         m_A, n_A = get_matrix_dimensions('A', A)
         m_x, n_x, x_length = get_vector_dimensions('x', x, inc_x)
@@ -66,7 +70,7 @@ def gemv(A, x, y=None, trans_a='n', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1)
         # if y is not given, create zero vector with same orientation and type as x
         if y is None:
             check_strides_equal_one(inc_x, inc_y)
-            length = n_A if trans_a == 't' else m_A
+            length = n_A if transpose_A else m_A
             y = create_similar_zero_vector(x, length)
 
         # continue getting dimensions of the parameters
@@ -77,12 +81,9 @@ def gemv(A, x, y=None, trans_a='n', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1)
             lda = n_A
 
         # ensure the parameters are appropriate for the desired operation
-        x_check, y_check = (n_A, m_A) if trans_a == 'n' else (m_A, n_A)
+        x_check, y_check = (n_A, m_A) if not transpose_A else (m_A, n_A)
         check_equal_sizes('A', x_check, 'x', x_length)
         check_equal_sizes('A', y_check, 'y', y_length)
-
-        # convert to appropriate CBLAS value
-        cblas_trans_a = convert_trans(trans_a)
 
         # determine which CBLAS subroutine to call and which ctypes data type to use
         cblas_func, ctype_dtype = get_cblas_info('gemv', (A.dtype, x.dtype, y.dtype))

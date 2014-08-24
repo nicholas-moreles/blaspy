@@ -10,3 +10,4 @@
 """
 
 from .gemm import gemm
+from .symm import symm

@@ -25,7 +25,7 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
     where alpha and beta are scalars, A is a symmetric matrix, and x and y are general column
     vectors.
 
-    The uplo argument indicates whether the lower or upper triangle of A is to be referenced by
+    The 'uplo' argument indicates whether the lower or upper triangle of A is to be referenced by
     the operation.
 
     Vectors x and y can be passed in as either row or column vectors. If necessary, an implicit
@@ -50,9 +50,9 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
         Vector y, for use in case no vector y was passed into this function.
 
     Raises:
-        ValueError: if any of the following conditions occur:
+        TypeError:  if A, x, or y is not a 2D NumPy ndarray or NumPy matrix
 
-                    - A, x, or y is not a 2D NumPy ndarray or NumPy matrix
+        ValueError: if any of the following conditions occur:
                     - A, x, and y do not have the same dtype or that dtype is not supported
                     - A is not a square matrix
                     - x or y is not a vector
