@@ -9,8 +9,8 @@
 
 """
 
-from ..helpers import random_matrix, random_symmetric_matrix
-from blaspy import symm
+from ..helpers import random_matrix, random_triangular_matrix
+from blaspy import trmm
 from numpy import allclose, copy, dot, zeros
 from itertools import product
 from random import randint, uniform
@@ -21,9 +21,9 @@ STRIDE_MAX = 1e2                # max vector stride
 RTOL, ATOL = 5e-01, 5e-02       # margin of error
 
 
-def test_symm():
+def test_trmm():
     """
-    Test symmetric matrix-matrix multiplication.
+    Test triangular matrix-matrix multiplication.
 
     Returns:
         A list of strings representing the failed tests.
@@ -36,34 +36,39 @@ def test_symm():
     bools = (True, False)
     uplos = ('u', 'l')
     sides = ('l', 'r')
+    trans_tuple = ('n', 't')
+    diags = ('n', 'u')
+
 
     # test all combinations of all possible values
-    for (dtype, as_matrix, provide_C, uplo, side) \
-            in product(dtypes, bools, bools, uplos, sides):
+    for (dtype, as_matrix, uplo, side, trans_a, diag) \
+            in product(dtypes, bools, uplos, sides, trans_tuple, diags):
 
         # if a test fails, create a string representation of its name and append it to the list
         # of failed tests
-        if not passed_test(dtype, as_matrix, provide_C, uplo, side):
+        if not passed_test(dtype, as_matrix, uplo, side, trans_a, diag):
             variables = (dtype,
-                         "_matrix" if as_matrix else "_ndarray",
-                         "_" if provide_C else "_no_C_",
+                         "_matrix_" if as_matrix else "_ndarray_",
                          uplo, "_",
-                         side)
+                         side, "_",
+                         trans_a, "_",
+                         diag)
             test_name = "".join(variables)
             tests_failed.append(test_name)
 
     return tests_failed
 
-def passed_test(dtype, as_matrix, provide_C, uplo, side):
+def passed_test(dtype, as_matrix, uplo, side, trans_a, diag):
     """
     Run one symmetric matrix-matrix multiplication test.
 
     Arguments:
         dtype:        either 'float64' or 'float32', the NumPy dtype to test
         as_matrix:    True to test a NumPy matrix, False to test a NumPy ndarray
-        provide_C:    True if C is to be provided to the BLASpy function, False otherwise
         uplo:         BLASpy 'uplo' parameter to test
         side:         BLASpy 'side' parameter to test
+        trans_a:      BLASpy 'trans_a' parameter to test
+        diag:         BLASpy 'diag' parameter to test
 
     Returns:
         True if the expected result is within the margin of error of the actual result,
@@ -71,6 +76,7 @@ def passed_test(dtype, as_matrix, provide_C, uplo, side):
     """
 
     side_is_left = side == 'l' or side == 'L'
+    transpose = trans_a == 't' or trans_a == 'T'
 
     # generate random sizes for matrix dimensions
     m = randint(N_MIN, N_MAX)
@@ -79,19 +85,14 @@ def passed_test(dtype, as_matrix, provide_C, uplo, side):
 
     # create random scalars and matrices to test
     alpha = uniform(SCAL_MIN, SCAL_MAX)
-    beta = uniform(SCAL_MIN, SCAL_MAX)
-    A = random_symmetric_matrix(k, dtype, as_matrix)
+    A = random_triangular_matrix(k, dtype, as_matrix, uplo, diag, trans_a)
     B = random_matrix((k if side_is_left else m), (n if side_is_left else k), dtype, as_matrix)
-    C = random_matrix(m, n, dtype, as_matrix) if provide_C else None
-
-    # create copies/views of A, B, and C that can be used to calculate the expected result
-    C_2 = copy(C) if C is not None else zeros((m, n))
 
     # compute the expected result
-    C_2 = beta * C_2 + alpha * (dot(A, B) if side_is_left else dot(B, A))
+    B_2 = alpha * (dot(A, B) if side_is_left else dot(B, A))
 
     # get the actual result
-    C = symm(A, B, C, side, uplo, alpha, beta)
+    trmm(A, B, side, uplo, trans_a, diag, alpha)
 
     # compare the actual result to the expected result and return result of the test
-    return allclose(C, C_2, RTOL, ATOL)
+    return allclose(B, B_2, RTOL, ATOL)

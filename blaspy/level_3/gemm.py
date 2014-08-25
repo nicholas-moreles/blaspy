@@ -17,7 +17,7 @@ from ctypes import c_int, POINTER
 
 def gemm(A, B, C=None, trans_a='n', trans_b='n', alpha=1, beta=1, lda=None, ldb=None, ldc=None):
     """
-    Perform a general matrix-vector multiplication operation.
+    Perform a general matrix-matrix multiplication operation.
 
     C := beta * C + alpha * A * B
 

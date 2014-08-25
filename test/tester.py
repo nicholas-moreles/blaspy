@@ -11,6 +11,25 @@
 
 from blaspy_tests import *
 
+TEST_DICT = {'amax': test_amax,  # level 1
+             'asum': test_asum,
+             'axpy': test_axpy,
+             'copy': test_copy,
+             'dot':  test_dot,
+             'nrm2': test_nrm2,
+             'scal': test_scal,
+             'sdot': test_sdot,
+             'swap': test_swap,
+             'gemv': test_gemv,   # level 2
+             'ger':  test_ger,
+             'symv': test_symv,
+             'syr':  test_syr,
+             'syr2': test_syr2,
+             'trmv': test_trmv,
+             'gemm': test_gemm,   # level 3
+             'symm': test_symm,
+             'trmm': test_trmm}
+
 
 def run_test(function):
     result = function()
@@ -26,76 +45,12 @@ def run_test(function):
 
 total = 0
 
-###########
-# Level 1 #
-###########
-
-print("Testing Level 1 BLAS\n")
-
-print("Testing amax:")
-total += run_test(test_amax)
-
-print("Testing asum:")
-total += run_test(test_asum)
-
-print("Testing axpy:")
-total += run_test(test_axpy)
-
-print("Testing copy:")
-total += run_test(test_copy)
-
-print("Testing dot:")
-total += run_test(test_dot)
-
-print("Testing nrm2:")
-total += run_test(test_nrm2)
-
-print("Testing scal:")
-total += run_test(test_scal)
-
-print("Testing sdot:")
-total += run_test(test_sdot)
-
-print("Testing swap:")
-total += run_test(test_swap)
-
-
-###########
-# Level 2 #
-###########
-
-print("Testing Level 2 BLAS\n")
-
-print("Testing gemv:")
-total += run_test(test_gemv)
-
-print("Testing ger:")
-total += run_test(test_ger)
-
-print("Testing symv:")
-total += run_test(test_symv)
-
-print("Testing syr:")
-total += run_test(test_syr)
-
-print("Testing syr2:")
-total += run_test(test_syr2)
-
-print("Testing trmv:")
-total += run_test(test_trmv)
-
-
-###########
-# Level 3 #
-###########
-
-print("Testing Level 3 BLAS\n")
-
-print("Testing gemm:")
-total += run_test(test_gemm)
-
-print("Testing symm:")
-total += run_test(test_symm)
+for name, function in sorted(TEST_DICT.iteritems()):
+    print("Testing " + name)
+    total += run_test(function)
 
 # Give totals
-print("Total tests failed: " + str(total))
+if total == 0:
+    print("No tests failed!")
+else:
+    print("Total tests failed: " + str(total))

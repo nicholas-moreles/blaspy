@@ -57,7 +57,8 @@ FUNC_DICT = {'amax': (lib.cblas_idamax, lib.cblas_isamax),  # level 1
              'syr2': (lib.cblas_dsyr2,  lib.cblas_ssyr2),
              'trmv': (lib.cblas_dtrmv,  lib.cblas_strmv),
              'gemm': (lib.cblas_dgemm,  lib.cblas_sgemm),   # level 3
-             'symm': (lib.cblas_dsymm,  lib.cblas_ssymm)}
+             'symm': (lib.cblas_dsymm,  lib.cblas_ssymm),
+             'trmm': (lib.cblas_dtrmm,  lib.cblas_strmm)}
 
 
 def get_cblas_info(calling_func, dtypes):

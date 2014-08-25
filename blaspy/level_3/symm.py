@@ -17,7 +17,7 @@ from ctypes import c_int, POINTER
 
 def symm(A, B, C=None, side='l', uplo='u', alpha=1, beta=1, lda=None, ldb=None, ldc=None):
     """
-    Perform a general matrix-vector multiplication operation.
+    Perform a general matrix-matrix multiplication operation.
 
     C := beta * C + alpha * A * B
     or
@@ -25,9 +25,9 @@ def symm(A, B, C=None, side='l', uplo='u', alpha=1, beta=1, lda=None, ldb=None, 
 
     where alpha and beta are scalars, A is a symmetric matrix, and B and C are general matrices.
 
-    The 'uplo' argument indicates whether the lower or upper triangle of A is to be referenced by
-    the operation. The 'side' argument indicates whether the symmetric matrix A is multiplied on
-    the left or the right side of B.
+    The 'side' argument indicates whether the symmetric matrix A is multiplied on the left or the
+    right side of B. The 'uplo' argument indicates whether the lower or upper triangle of A is to be
+    referenced by the operation.
 
     If matrix C is not provided, a zero matrix of the appropriate size and type is created
     and returned. In such a case, 'ldc' is automatically set to the number of columns in the
@@ -37,10 +37,10 @@ def symm(A, B, C=None, side='l', uplo='u', alpha=1, beta=1, lda=None, ldb=None, 
         A:       2D numpy matrix or ndarray representing matrix A
         B:       2D numpy matrix or ndarray representing matrix A
         C:       2D numpy matrix or ndarray representing matrix C (default is zero matrix)
+        side:    'l'  if the operation is to proceed as if A is to the left of B
+                 'r'  if the operation is to proceed as if A is to the right of B
         uplo:    'u'  if the upper triangular part of A is to be used
                  'l'  if the lower triangular part of A is to be used
-        side:    'l'  if the operation is to proceed as if A is not transposed
-                 'r'  if the operation is to proceed as if b is transposed
         alpha:   scalar alpha
         beta:    scalar beta
         lda:     leading dimension of A (must be >= # of cols in A)
