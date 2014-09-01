@@ -15,3 +15,4 @@ from .test_symv import test_symv
 from .test_syr import test_syr
 from .test_syr2 import test_syr2
 from .test_trmv import test_trmv
+from .test_trsv import test_trsv

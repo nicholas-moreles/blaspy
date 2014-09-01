@@ -9,10 +9,11 @@
 
 """
 
-from .gemv import gemv
-from .ger import ger
-from .symv import  symv
-from .syr import syr
-from .syr2 import syr2
-from .trmv import trmv
-from .trsv import trsv
+from bp_timing import timing_gemm
+
+TEST_DICT = {'gemm': timing_gemm}
+
+
+for name, function in sorted(TEST_DICT.iteritems()):
+    print("Testing " + name)
+    function()

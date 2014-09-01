@@ -16,9 +16,9 @@ def raise_generic_type_error():
 
 
 def raise_not_2d_numpy(name):
-    raise TypeError("'%s' should be two-dimensional and of NumPy type ndarray or matrix. BLASpy "
-                    "expects vectors to be two-dimensional, so ensure you are not trying to pass "
-                    "in a one-dimensional ndarray as a vector." % name)
+    raise ValueError("'%s' should be two-dimensional and of NumPy type ndarray or matrix. BLASpy "
+                     "expects vectors to be two-dimensional, so ensure you are not trying to pass "
+                     "in a one-dimensional ndarray as a vector." % name)
 
 
 def raise_not_vector(name, rows, cols):
@@ -47,12 +47,12 @@ def raise_invalid_dtypes(allowed):
                      "should be in the following list of allowed dtypes (which may change from "
                      "one BLASpy function to another): %s. This error can be fixed calling "
                      ".astype('dtype') on the problem ndarray or matrix before calling a BLASpy "
-                     "function with that ndarray or matrix as a parameter." % allowed)
+                     "function with that ndarray or matrix as a parameter." % (allowed,))
 
 
 def raise_invalid_parameter(name, allowed, actual):
     raise ValueError("Parameter '%s' should equal one of the following values: %s. Actual value: "
-                     "%s" % (name, allowed, actual))
+                     "%s" % (name, (allowed,), actual))
 
 
 def raise_blas_os_error():

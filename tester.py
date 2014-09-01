@@ -9,26 +9,27 @@
 
 """
 
-from blaspy_tests import *
+from bp_tests import *
 
 TEST_DICT = {'amax': test_amax,  # level 1
-             'asum': test_asum,
-             'axpy': test_axpy,
-             'copy': test_copy,
-             'dot':  test_dot,
-             'nrm2': test_nrm2,
-             'scal': test_scal,
-             'sdot': test_sdot,
-             'swap': test_swap,
-             'gemv': test_gemv,   # level 2
-             'ger':  test_ger,
-             'symv': test_symv,
-             'syr':  test_syr,
-             'syr2': test_syr2,
-             'trmv': test_trmv,
-             'gemm': test_gemm,   # level 3
-             'symm': test_symm,
-             'trmm': test_trmm}
+             # 'asum': test_asum,
+             # 'axpy': test_axpy,
+             # 'copy': test_copy,
+             # 'dot':  test_dot,
+             # 'nrm2': test_nrm2,
+             # 'scal': test_scal,
+             # 'sdot': test_sdot,
+             # 'swap': test_swap,
+             # 'gemv': test_gemv,   # level 2
+             # 'ger':  test_ger,
+             # 'symv': test_symv,
+             # 'syr':  test_syr,
+             # 'syr2': test_syr2,
+             # 'trmv': test_trmv,
+             'trsv': test_trsv}
+             # 'gemm': test_gemm,   # level 3
+             # 'symm': test_symm,
+             # 'trmm': test_trmm}
 
 
 def run_test(function):

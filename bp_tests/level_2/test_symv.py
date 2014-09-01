@@ -107,7 +107,7 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride, uplo):
             y_2[i, 0] = (beta * y_2[i, 0]) + (alpha * dot(A_partition, x_partition))
 
     # get the actual result
-    A = triu(A) if uplo == 'u' else tril(A)
+    A = (triu(A) if uplo == 'u' else tril(A)).astype(dtype)
     y = symv(A, x, y, uplo, alpha, beta, inc_x=stride, inc_y=stride)
 
     # if y is a row vector, make y_2 a row vector as well

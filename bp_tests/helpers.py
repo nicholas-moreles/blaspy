@@ -44,4 +44,4 @@ def random_triangular_matrix(n, dtype, as_matrix, uplo, diag, trans='n'):
     if diag == 'u' or diag == 'U':
         fill_diagonal(rand_matrix, 1)
     rand_matrix = triu(rand_matrix) if (uplo == 'u' or uplo == 'U') else tril(rand_matrix)
-    return rand_matrix if (trans == 'n' or trans == 'N') else rand_matrix.T
+    return (rand_matrix if (trans == 'n' or trans == 'N') else rand_matrix.T).astype(dtype)
