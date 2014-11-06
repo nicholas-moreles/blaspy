@@ -11,14 +11,13 @@
 
 from ..helpers import random_vector, random_triangular_matrix
 from blaspy import trsv
-from numpy import allclose, copy, dot, fill_diagonal
+from numpy import allclose, copy, dot, fill_diagonal, triu, tril, zeros
 from itertools import product
 from random import randint
 
-N_MIN, N_MAX = 2, 100           # matrix/vector sizes
-OFFSET = 100                    # avoid singularity
-STRIDE_MAX = 10                 # max vector stride
-RTOL, ATOL = 5e-01, 5e-02       # margin of error
+N_MIN, N_MAX = 2, 10         # matrix/vector sizes, small to prevent ill-conditioned problems
+#STRIDE_MAX = 5              # max vector stride
+RTOL, ATOL = 5e-01, 5e-02    # margin of error
 
 
 def test_trsv():
@@ -37,7 +36,7 @@ def test_trsv():
     strides = (1,)  # TODO: Test random strides
     uplos = ('l', 'u')
     trans_tuple = ('t', 'n')
-    diags = ('n',) # TODO: Discover why unit triangular matrices fail
+    diags = ('n', 'u')
 
     # test all combinations of all possible values
     for (dtype, as_matrix, b_is_row, stride, uplo, trans, diag) \
@@ -58,6 +57,7 @@ def test_trsv():
 
     return tests_failed
 
+
 def passed_test(dtype, as_matrix, b_is_row, stride, uplo, trans_a, diag):
     """
     Run one triangular solve test.
@@ -76,17 +76,25 @@ def passed_test(dtype, as_matrix, b_is_row, stride, uplo, trans_a, diag):
         False otherwise.
     """
 
+    b_is_row=False
+
     # generate random sizes for matrix/vector dimensions and vector stride (if necessary)
     n = randint(N_MIN, N_MAX)
-    stride = randint(N_MIN, STRIDE_MAX) if stride is None else stride
+    #stride = randint(N_MIN, STRIDE_MAX) if stride is None else stride
     n_A = n / stride + (n % stride > 0)
 
     # create random vectors and matrices to test
     x = random_vector(n, False, dtype, as_matrix)
-    x += OFFSET
     A = random_triangular_matrix(n_A, dtype, as_matrix, uplo, diag)
     if diag == 'n':
-        fill_diagonal(A, A.diagonal() + OFFSET)
+        fill_diagonal(A, A.diagonal())
+    else:
+        if uplo =='u' or uplo == 'U':
+            A += triu(zeros((n_A, n_A), dtype=dtype))
+        else:
+            A += tril(zeros((n_A, n_A), dtype=dtype))
+        fill_diagonal(A, 1)
+
     A_2 = A.T if trans_a == 't' or trans_a == 'T' else A
     b = dot(A_2, x).T if b_is_row else dot(A_2, x)
     b_2 = copy(b.T) if b_is_row else copy(b)
@@ -95,4 +103,4 @@ def passed_test(dtype, as_matrix, b_is_row, stride, uplo, trans_a, diag):
     b = b.T if b_is_row else b
 
     # compare the actual result to the expected result and return result of the test
-    return allclose(dot(A, b), b_2, RTOL, ATOL)
+    return allclose(dot(A_2, b), b_2, RTOL, ATOL)
