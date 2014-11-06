@@ -85,7 +85,6 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
         # convert to appropriate CBLAS value
         cblas_uplo = convert_uplo(uplo)
 
-        print("types: "  + str(A.dtype) + " " + str(x.dtype) + " " + str(y.dtype))
         # determine which CBLAS subroutine to call and which ctypes data type to use
         cblas_func, ctype_dtype = get_cblas_info('symv', (A.dtype, x.dtype, y.dtype))
 
