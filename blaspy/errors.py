@@ -57,6 +57,6 @@ def raise_invalid_parameter(name, allowed, actual):
 
 def raise_blas_os_error():
     raise RuntimeError("BLASpy does not have a bundled BLAS implementation appropriate for "
-                        "your operating system. Please download and compile one, "
-                        "such as OpenBLAS, then modify config.py to point to that BLAS "
-                        "implementation.")
+                       "your operating system. Please download and compile one, "
+                       "such as OpenBLAS, then modify config.py to point to that BLAS "
+                       "implementation.")
