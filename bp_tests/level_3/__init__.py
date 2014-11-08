@@ -11,4 +11,5 @@
 
 from .test_gemm import test_gemm
 from .test_symm import test_symm
+from .test_syrk import test_syrk
 from .test_trmm import test_trmm

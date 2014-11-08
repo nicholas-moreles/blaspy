@@ -25,6 +25,7 @@ TEST_DICT = {'amax': test_amax,  # level 1
              'symv': test_symv,
              'syr':  test_syr,
              'syr2': test_syr2,
+             'syrk': test_syrk,
              'trmv': test_trmv,
              'trsv': test_trsv,
              'gemm': test_gemm,   # level 3
