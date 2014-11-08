@@ -15,7 +15,7 @@ from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
 
-def syrk(A, C=None, uplo='u', trans_a='n', alpha=1, beta=1, lda=None, ldc=None):
+def syrk(A, C=None, uplo='u', trans='n', alpha=1, beta=1, lda=None, ldc=None):
     """
     Perform a symmetric rank-k update operation.
 
@@ -25,7 +25,7 @@ def syrk(A, C=None, uplo='u', trans_a='n', alpha=1, beta=1, lda=None, ldc=None):
 
     where alpha and beta are scalars, A is a general matrix, and C is a symmetric matrix.
 
-    The 'trans_a' argument allows the computation to proceed as if A is transposed, resulting in the
+    The 'trans' argument allows the computation to proceed as if A is transposed, resulting in the
     alternate rank-k product (second computation listed above). The 'uplo' argument indicates
     whether the lower or upper triangle of C is to be referenced and updated by the operation.
 
@@ -40,7 +40,7 @@ def syrk(A, C=None, uplo='u', trans_a='n', alpha=1, beta=1, lda=None, ldc=None):
         C:       2D numpy matrix or ndarray representing matrix C (default is zero matrix)
         uplo:    'u'  if the upper triangular part of C is to be used/overwritten
                  'l'  if the lower triangular part of C is to be used/overwritten
-        trans_a: 'n'  if the operation is to proceed as if A is not transposed
+        trans:   'n'  if the operation is to proceed as if A is not transposed
                  't'  if the operation is to proceed as if A is transposed
         alpha:   scalar alpha
         beta:    scalar beta
@@ -58,14 +58,14 @@ def syrk(A, C=None, uplo='u', trans_a='n', alpha=1, beta=1, lda=None, ldc=None):
                     - C is not a square matrix
                     - The dimensions of A and C do not conform
                     - 'uplo' is not equal to one of the following: 'u', 'U', 'l', 'L'
-                    - 'trans_a' is not equal to one of the following: 'n', 'N', 't', 'T'
+                    - 'trans' is not equal to one of the following: 'n', 'N', 't', 'T'
     """
 
     try:
         # convert to appropriate CBLAS value
         cblas_uplo = convert_uplo(uplo)
-        cblas_trans_a = convert_trans(trans_a)
-        transpose_a = trans_a == 't' or trans_a == 'T'
+        cblas_trans_a = convert_trans(trans)
+        transpose_a = trans == 't' or trans == 'T'
 
         # get the dimensions of the parameters
         m_A, n_A = get_matrix_dimensions('A', A)
