@@ -38,23 +38,23 @@ def test_syrk():
     trans_tuple = ('n', 't')
 
     # test all combinations of all possible values
-    for (dtype, as_matrix, provide_C, uplo, trans_a) \
+    for (dtype, as_matrix, provide_C, uplo, trans) \
             in product(dtypes, bools, bools, uplos, trans_tuple):
 
         # if a test fails, create a string representation of its name and append it to the list
         # of failed tests
-        if not passed_test(dtype, as_matrix, provide_C, uplo, trans_a):
+        if not passed_test(dtype, as_matrix, provide_C, uplo, trans):
             variables = (dtype,
                          "_matrix" if as_matrix else "_ndarray",
                          "_" if provide_C else "_no_C_",
                          uplo, "_",
-                         trans_a)
+                         trans)
             test_name = "".join(variables)
             tests_failed.append(test_name)
 
     return tests_failed
 
-def passed_test(dtype, as_matrix, provide_C, uplo, trans_a):
+def passed_test(dtype, as_matrix, provide_C, uplo, trans):
     """
     Run one symmetric rank-k update test.
 
@@ -63,14 +63,14 @@ def passed_test(dtype, as_matrix, provide_C, uplo, trans_a):
         as_matrix:    True to test a NumPy matrix, False to test a NumPy ndarray
         provide_C:    True if C is to be provided to the BLASpy function, False otherwise
         uplo:         BLASpy 'uplo' parameter to test
-        trans_a:      BLASpy 'trans_a' parameter to test
+        trans:        BLASpy 'trans_a' parameter to test
 
     Returns:
         True if the expected result is within the margin of error of the actual result,
         False otherwise.
     """
 
-    transpose_a = trans_a == 't' or trans_a == 'T'
+    transpose_a = trans == 't' or trans == 'T'
     upper = uplo == 'u' or uplo == 'U'
 
     # generate random sizes for matrix dimensions
@@ -101,7 +101,7 @@ def passed_test(dtype, as_matrix, provide_C, uplo, trans_a):
             C = tril(C)
 
     # get the actual result
-    C = syrk(A, C, uplo, trans_a, alpha, beta)
+    C = syrk(A, C, uplo, trans, alpha, beta)
 
     # compare the actual result to the expected result and return result of the test
     return allclose(C, C_2, RTOL, ATOL)
