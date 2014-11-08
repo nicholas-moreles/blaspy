@@ -11,4 +11,5 @@
 
 from .gemm import gemm
 from .symm import symm
+from .syrk import syrk
 from .trmm import trmm
