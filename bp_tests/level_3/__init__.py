@@ -9,7 +9,8 @@
 
 """
 
-from .test_gemm import test_gemm
-from .test_symm import test_symm
-from .test_syrk import test_syrk
-from .test_trmm import test_trmm
+from .test_gemm  import test_gemm
+from .test_symm  import test_symm
+from .test_syrk  import test_syrk
+from .test_syr2k import test_syr2k
+from .test_trmm  import test_trmm
