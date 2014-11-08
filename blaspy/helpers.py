@@ -42,25 +42,27 @@ RIGHT = 142
 # - first entry in value pair is for double precision reals
 # - second entry in value pair is for single precision reals
 # - sdot is omitted as a special case
-FUNC_DICT = {'amax': (lib.cblas_idamax, lib.cblas_isamax),  # level 1
-             'asum': (lib.cblas_dasum,  lib.cblas_sasum),
-             'axpy': (lib.cblas_daxpy,  lib.cblas_saxpy),
-             'copy': (lib.cblas_dcopy,  lib.cblas_scopy),
-             'dot':  (lib.cblas_ddot,   lib.cblas_sdot),
-             'nrm2': (lib.cblas_dnrm2,  lib.cblas_snrm2),
-             'scal': (lib.cblas_dscal,  lib.cblas_sscal),
-             'swap': (lib.cblas_dswap,  lib.cblas_sswap),
-             'gemv': (lib.cblas_dgemv,  lib.cblas_sgemv),   # level 2
-             'ger':  (lib.cblas_dger,   lib.cblas_sger),
-             'symv': (lib.cblas_dsymv,  lib.cblas_ssymv),
-             'syr':  (lib.cblas_dsyr,   lib.cblas_ssyr),
-             'syr2': (lib.cblas_dsyr2,  lib.cblas_ssyr2),
-             'syrk': (lib.cblas_dsyrk,  lib.cblas_ssyrk),
-             'trmv': (lib.cblas_dtrmv,  lib.cblas_strmv),
-             'trsv': (lib.cblas_dtrsv,  lib.cblas_strsv),
-             'gemm': (lib.cblas_dgemm,  lib.cblas_sgemm),   # level 3
-             'symm': (lib.cblas_dsymm,  lib.cblas_ssymm),
-             'trmm': (lib.cblas_dtrmm,  lib.cblas_strmm)}
+FUNC_DICT = {'amax':  (lib.cblas_idamax, lib.cblas_isamax),  # level 1
+             'asum':  (lib.cblas_dasum,  lib.cblas_sasum),
+             'axpy':  (lib.cblas_daxpy,  lib.cblas_saxpy),
+             'copy':  (lib.cblas_dcopy,  lib.cblas_scopy),
+             'dot':   (lib.cblas_ddot,   lib.cblas_sdot),
+             'nrm2':  (lib.cblas_dnrm2,  lib.cblas_snrm2),
+             'scal':  (lib.cblas_dscal,  lib.cblas_sscal),
+             'swap':  (lib.cblas_dswap,  lib.cblas_sswap),
+             'gemv':  (lib.cblas_dgemv,  lib.cblas_sgemv),   # level 2
+             'ger':   (lib.cblas_dger,   lib.cblas_sger),
+             'symv':  (lib.cblas_dsymv,  lib.cblas_ssymv),
+             'syr':   (lib.cblas_dsyr,   lib.cblas_ssyr),
+             'syr2':  (lib.cblas_dsyr2,  lib.cblas_ssyr2),
+             'trmv':  (lib.cblas_dtrmv,  lib.cblas_strmv),
+             'trsv':  (lib.cblas_dtrsv,  lib.cblas_strsv),
+             'gemm':  (lib.cblas_dgemm,  lib.cblas_sgemm),   # level 3
+             'symm':  (lib.cblas_dsymm,  lib.cblas_ssymm),
+             'syrk':  (lib.cblas_dsyrk,  lib.cblas_ssyrk),
+             'syr2k': (lib.cblas_dsyr2k, lib.cblas_ssyr2k),
+             'trmm':  (lib.cblas_dtrmm,  lib.cblas_strmm)
+            }
 
 
 def get_cblas_info(calling_func, dtypes):
