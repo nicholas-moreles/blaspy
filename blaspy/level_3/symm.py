@@ -17,7 +17,7 @@ from ctypes import c_int, POINTER
 
 def symm(A, B, C=None, side='l', uplo='u', alpha=1, beta=1, lda=None, ldb=None, ldc=None):
     """
-    Perform a general matrix-matrix multiplication operation.
+    Perform a symmertric matrix-matrix multiplication operation.
 
     C := beta * C + alpha * A * B
     or
