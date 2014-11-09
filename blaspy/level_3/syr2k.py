@@ -76,6 +76,10 @@ def syr2k(A, B, C=None, uplo='u', trans='n', alpha=1, beta=1, lda=None, ldb=None
         m_B, n_B = get_matrix_dimensions('B', B)
         n, k = (m_A, n_A) if not transpose else (n_A, m_A)
 
+        # ensure the matrix dimensions conform for the desired operation
+        check_equal_sizes('A', m_A, 'B', m_B) # both m and n must match for A and B regardless
+        check_equal_sizes('A', n_A, 'B', n_B) # of whether the matrices are being transposed
+
         # if C is not given, create zero matrix with same type as A
         if C is None:
             C = create_zero_matrix(n, n, A.dtype, type(A))
@@ -93,8 +97,6 @@ def syr2k(A, B, C=None, uplo='u', trans='n', alpha=1, beta=1, lda=None, ldb=None
             ldc = dim_C
 
         # ensure the matrix dimensions conform for the desired operation
-        check_equal_sizes('A', m_A, 'B', m_B) # both m and n must match for A and B regardless
-        check_equal_sizes('A', n_A, 'B', n_B) # of whether the matrices are being transposed
         check_equal_sizes('A', n, 'C', dim_C)
 
         # determine which CBLAS subroutine to call and which ctypes data type to use
