@@ -30,9 +30,6 @@ def trmv(A, x, uplo='u', trans_a='n', diag='n', lda=None, inc_x=1):
     Vector x can be passed in as either row or column vector. If necessary, an implicit
     transposition occurs.
 
-    IMPORTANT: This function does not test for singularity or near-singularity.
-    Such tests should be performed prior to calling this function.
-
     Args:
         x:          2D numpy matrix or ndarray representing vector x
         A:          2D numpy matrix or ndarray representing matrix A
