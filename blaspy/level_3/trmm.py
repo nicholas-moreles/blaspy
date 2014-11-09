@@ -11,7 +11,7 @@
 
 from ..helpers import (get_matrix_dimensions, get_square_matrix_dimension, check_equal_sizes,
                        convert_uplo, convert_side, convert_trans, convert_diag, get_cblas_info,
-                       ROW_MAJOR)
+                       ROW_MAJOR, LEFT)
 from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
@@ -65,7 +65,7 @@ def trmm(A, B, side='l', uplo='u', trans_a='n', diag='n', alpha=1, lda=None, ldb
         cblas_side = convert_side(side)
         cblas_trans_a = convert_trans(trans_a)
         cblas_diag = convert_diag(diag)
-        side_is_left = side == 'l' or side == 'L'
+        side_is_left = cblas_side == LEFT
 
         # get the dimensions of the parameters
         dim_A = get_square_matrix_dimension('A', A)

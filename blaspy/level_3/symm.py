@@ -10,7 +10,8 @@
 """
 
 from ..helpers import (get_matrix_dimensions, get_square_matrix_dimension, create_zero_matrix,
-                       check_equal_sizes, convert_uplo, convert_side, get_cblas_info, ROW_MAJOR)
+                       check_equal_sizes, convert_uplo, convert_side, get_cblas_info, ROW_MAJOR,
+                       LEFT)
 from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
@@ -65,7 +66,7 @@ def symm(A, B, C=None, side='l', uplo='u', alpha=1, beta=1, lda=None, ldb=None, 
         # convert to appropriate CBLAS value
         cblas_uplo = convert_uplo(uplo)
         cblas_side = convert_side(side)
-        side_is_left = side == 'l' or side == 'L'
+        side_is_left = cblas_side == LEFT
 
         # get the dimensions of the parameters
         dim_A = get_square_matrix_dimension('A', A)

@@ -10,7 +10,8 @@
 """
 
 from ..helpers import (get_matrix_dimensions, get_square_matrix_dimension, create_zero_matrix,
-                       check_equal_sizes, convert_uplo, convert_trans, get_cblas_info, ROW_MAJOR)
+                       check_equal_sizes, convert_uplo, convert_trans, get_cblas_info, ROW_MAJOR,
+                       TRANS)
 from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
@@ -64,8 +65,8 @@ def syrk(A, C=None, uplo='u', trans='n', alpha=1, beta=1, lda=None, ldc=None):
     try:
         # convert to appropriate CBLAS value
         cblas_uplo = convert_uplo(uplo)
-        cblas_trans_a = convert_trans(trans)
-        transpose_a = trans == 't' or trans == 'T'
+        cblas_trans = convert_trans(trans)
+        transpose_a = cblas_trans == TRANS
 
         # get the dimensions of the parameters
         m_A, n_A = get_matrix_dimensions('A', A)
@@ -99,7 +100,7 @@ def syrk(A, C=None, uplo='u', trans='n', alpha=1, beta=1, lda=None, ldc=None):
         cblas_func.argtypes = [c_int, c_int, c_int, c_int, c_int, ctype_dtype,
                                ctype_A, c_int, ctype_dtype, ctype_C, c_int]
         cblas_func.restype = None
-        cblas_func(ROW_MAJOR, cblas_uplo, cblas_trans_a, n, k, alpha,
+        cblas_func(ROW_MAJOR, cblas_uplo, cblas_trans, n, k, alpha,
                    A.ctypes.data_as(ctype_A), lda, beta, C.ctypes.data_as(ctype_C), ldc)
 
         return C  # C is also overwritten

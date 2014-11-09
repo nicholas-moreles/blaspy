@@ -10,7 +10,7 @@
 """
 
 from ..helpers import (get_matrix_dimensions, create_zero_matrix, check_equal_sizes, convert_trans,
-                       get_cblas_info, ROW_MAJOR)
+                       get_cblas_info, ROW_MAJOR, TRANS)
 from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
@@ -58,11 +58,17 @@ def gemm(A, B, C=None, trans_a='n', trans_b='n', alpha=1, beta=1, lda=None, ldb=
     """
 
     try:
+        # convert to appropriate CBLAS value
+        cblas_trans_a = convert_trans(trans_a)
+        cblas_trans_b = convert_trans(trans_b)
+        transpose_a = cblas_trans_a == TRANS
+        transpose_b = cblas_trans_b == TRANS
+
         # get the dimensions of the parameters
         m_A, n_A = get_matrix_dimensions('A', A)
         m_B, n_B = get_matrix_dimensions('B', B)
-        m, k_A = (m_A, n_A) if (trans_a == 'n' or trans_a == 'N') else (n_A, m_A)
-        n, k_B = (n_B, m_B) if (trans_b == 'n' or trans_b == 'N') else (m_B, n_B)
+        m, k_A = (m_A, n_A) if transpose_a else (n_A, m_A)
+        n, k_B = (n_B, m_B) if transpose_b else (m_B, n_B)
 
         # if C is not given, create zero matrix with same type as A
         if C is None:
@@ -79,10 +85,6 @@ def gemm(A, B, C=None, trans_a='n', trans_b='n', alpha=1, beta=1, lda=None, ldb=
             ldb = n_B
         if ldc is None:
             ldc = n_C
-
-        # convert to appropriate CBLAS value
-        cblas_trans_a = convert_trans(trans_a)
-        cblas_trans_b = convert_trans(trans_b)
 
         # ensure the matrix dimensions conform for the desired operation
         check_equal_sizes('A', k_A, 'B', k_B)
