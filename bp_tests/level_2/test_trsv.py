@@ -86,13 +86,7 @@ def passed_test(dtype, as_matrix, b_is_row, stride, uplo, trans_a, diag):
     # create random vectors and matrices to test
     x = random_vector(n, False, dtype, as_matrix)
     A = random_triangular_matrix(n_A, dtype, as_matrix, uplo, diag)
-    if diag == 'n':
-        fill_diagonal(A, A.diagonal())
-    else:
-        if uplo =='u' or uplo == 'U':
-            A += triu(zeros((n_A, n_A), dtype=dtype))
-        else:
-            A += tril(zeros((n_A, n_A), dtype=dtype))
+    if diag == 'u':
         fill_diagonal(A, 1)
 
     A_2 = A.T if trans_a == 't' or trans_a == 'T' else A
