@@ -61,7 +61,8 @@ FUNC_DICT = {'amax':  (lib.cblas_idamax, lib.cblas_isamax),  # level 1
              'symm':  (lib.cblas_dsymm,  lib.cblas_ssymm),
              'syrk':  (lib.cblas_dsyrk,  lib.cblas_ssyrk),
              'syr2k': (lib.cblas_dsyr2k, lib.cblas_ssyr2k),
-             'trmm':  (lib.cblas_dtrmm,  lib.cblas_strmm)
+             'trmm':  (lib.cblas_dtrmm,  lib.cblas_strmm),
+             'trsm':  (lib.cblas_dtrsm,  lib.cblas_strsm)
             }
 
 
