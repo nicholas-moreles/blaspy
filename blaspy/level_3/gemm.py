@@ -67,8 +67,8 @@ def gemm(A, B, C=None, trans_a='n', trans_b='n', alpha=1, beta=1, lda=None, ldb=
         # get the dimensions of the parameters
         m_A, n_A = get_matrix_dimensions('A', A)
         m_B, n_B = get_matrix_dimensions('B', B)
-        m, k_A = (m_A, n_A) if transpose_a else (n_A, m_A)
-        n, k_B = (n_B, m_B) if transpose_b else (m_B, n_B)
+        m, k_A = (m_A, n_A) if not transpose_a else (n_A, m_A)
+        n, k_B = (n_B, m_B) if not transpose_b else (m_B, n_B)
 
         # if C is not given, create zero matrix with same type as A
         if C is None:
