@@ -63,7 +63,7 @@ def passed_test(dtype, as_matrix, provide_C, uplo, trans):
         as_matrix:    True to test a NumPy matrix, False to test a NumPy ndarray
         provide_C:    True if C is to be provided to the BLASpy function, False otherwise
         uplo:         BLASpy 'uplo' parameter to test
-        trans:        BLASpy 'trans_a' parameter to test
+        trans:        BLASpy 'trans' parameter to test
 
     Returns:
         True if the expected result is within the margin of error of the actual result,
