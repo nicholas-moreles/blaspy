@@ -31,7 +31,8 @@ TEST_DICT = {'amax':  test_amax,  # level 1
              'symm':  test_symm,
              'syrk':  test_syrk,
              'syr2k': test_syr2k,
-             'trmm':  test_trmm}
+             'trmm':  test_trmm,
+             'trsm':  test_trsm}
 
 
 def run_test(function):
