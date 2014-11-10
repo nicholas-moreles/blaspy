@@ -12,8 +12,8 @@
 from numpy import asmatrix, fill_diagonal, random, tril, triu
 
 # min and max values for elements of random matrices and vectors
-MIN = -10
-MAX = 10
+MIN = -1
+MAX = 1
 
 def random_vector(length, is_row, dtype, as_matrix):
     """ Generate a random vector """
