@@ -68,7 +68,6 @@ def trsv(A, b, uplo='u', trans_a='n', diag='n', lda=None, inc_b=1):
         cblas_uplo = convert_uplo(uplo)
         cblas_trans_a = convert_trans(trans_a)
         cblas_diag = convert_diag(diag)
-        transpose_A = trans_a == 't' or trans_a == 'T'
 
         # get the dimensions of the parameters
         m_b, n_b, b_length = get_vector_dimensions('b', b, inc_b)
