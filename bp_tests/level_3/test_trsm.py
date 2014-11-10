@@ -10,14 +10,14 @@
 """
 
 from ..helpers import random_matrix, random_triangular_matrix
-from blaspy import trsm
-from numpy import allclose, copy, dot
+from blaspy import trsm, trmm
+from numpy import allclose, fill_diagonal
 from itertools import product
 from random import randint, uniform
 
-N_MIN, N_MAX = 2, 10            # matrix/vector sizes
-SCAL_MIN, SCAL_MAX = -10, 10    # scalar values
-RTOL, ATOL = 5e-01, 5e-02       # margin of error
+N_MIN, N_MAX = 2, 3000       # matrix/vector sizes
+SCAL_MIN, SCAL_MAX = 1, 2    # scalar values
+RTOL, ATOL = 5e-01, 5e-02    # margin of error
 
 
 def test_trsm():
@@ -74,7 +74,7 @@ def passed_test(dtype, as_matrix, side, uplo, trans_a, diag):
     """
 
     side_is_left = side == 'l' or side == 'L'
-    transpose_a = trans_a == 't' or trans_a == 'T'
+    a_is_unit = diag == 'u' or diag == 'U'
 
     # generate random sizes for matrix dimensions
     m = randint(N_MIN, N_MAX)
@@ -83,34 +83,27 @@ def passed_test(dtype, as_matrix, side, uplo, trans_a, diag):
 
     # create random scalars and matrices to test
     alpha = uniform(SCAL_MIN, SCAL_MAX)
-    A = random_triangular_matrix(dim_A, dtype, as_matrix, uplo, diag)
-    X = random_matrix(m, n, dtype, as_matrix)
+    A = random_triangular_matrix(dim_A, dtype, as_matrix, uplo, diag='n')
+    B = random_matrix(m, n, dtype, as_matrix)
+
+    # scale off-diagonals to avoid numerical issues
+    A /= dim_A
+    B /= dim_A
+
+    # fill diagonal with 1 if unit-triangular, else fill diagonal with values between 1 and 2
+    if a_is_unit:
+        fill_diagonal(A, 1)
+    else:
+        for i in range(dim_A):
+            A[i, i] = uniform(1, 2)
 
     # compute the expected result
-    if side_is_left:
-        if transpose_a:
-            B = dot(A.T, X)
-        else:
-            B = dot(A, X)
-    else:
-        if transpose_a:
-            B = dot(X, A.T)
-        else:
-            B = dot(X, A)
-    expected = alpha * copy(B)
+    expected = alpha * B
 
     #compute the actual result
     trsm(A, B, side, uplo, trans_a, diag, alpha)
-    if side_is_left:
-        if transpose_a:
-            actual = dot(A.T, B)
-        else:
-            actual = dot(A, B)
-    else:
-        if transpose_a:
-            actual = dot(B, A.T)
-        else:
-            actual = dot(B, A)
+    trmm(A, B, side, uplo, trans_a, diag)
+    actual = B
 
     # compare the actual result to the expected result and return result of the test
     return allclose(actual, expected, RTOL, ATOL)
