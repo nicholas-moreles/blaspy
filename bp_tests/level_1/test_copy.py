@@ -36,24 +36,27 @@ def test_copy():
     strides = (1, None)  # None indicates random stride
 
     # test all combinations of all possible values
-    for (dtype, as_matrix, x_is_row, y_is_row, stride) in product(dtypes, bools, bools, bools,
-                                                                  strides):
+    for (dtype, as_matrix, x_is_row, y_is_row, provide_y, stride) in product(dtypes, bools, bools,
+                                                                             bools, bools, strides):
 
-        # if a test fails, create a string representation of its name and append it to the list
-        # of failed tests
-        if not passed_test(dtype, as_matrix, x_is_row, y_is_row, stride):
-            variables = (dtype,
-                         "_matrix" if as_matrix else "_ndarray",
-                         "_row" if x_is_row else "_col",
-                         "_row" if y_is_row else "_col",
-                         "_rand_stride" if stride is None else "")
-            test_name = "".join(variables)
-            tests_failed.append(test_name)
+        # avoid testing cases where y is not provided and stride != 1
+        if provide_y or stride == 1:
+
+            # if a test fails, create a string representation of its name and append it to the list
+            # of failed tests
+            if not passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride):
+                variables = (dtype,
+                             "_matrix" if as_matrix else "_ndarray",
+                             "_row" if x_is_row else "_col",
+                             "_row" if y_is_row else "_col",
+                             "_rand_stride" if stride is None else "")
+                test_name = "".join(variables)
+                tests_failed.append(test_name)
 
     return tests_failed
 
 
-def passed_test(dtype, as_matrix, x_is_row, y_is_row, stride):
+def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride):
     """
     Run one vector copy test.
 
@@ -62,6 +65,7 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, stride):
         as_matrix:    True to test a NumPy matrix, False to test a NumPy ndarray
         x_is_row:     True to test a row vector as parameter x, False to test a column vector
         y_is_row:     True to test a row vector as parameter y, False to test a column vector
+        provide_y:    True if y is to be provided to the BLASpy function, False otherwise
         stride:       stride of x and y to test; if None, a random stride is assigned
 
     Returns:
@@ -75,7 +79,7 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, stride):
 
     # create random vectors to test
     x = random_vector(length, x_is_row, dtype, as_matrix)
-    y = random_vector(length, y_is_row, dtype, as_matrix)
+    y = random_vector(length, y_is_row, dtype, as_matrix) if provide_y else None
 
     # create view of x that can be used to calculate the expected result
     x_2 = x.T if x_is_row else x
@@ -83,13 +87,14 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, stride):
     # compute the expected result
     if stride == 1:
         y_2 = x_2
-    else:
-        y_2 = np_copy(y.T) if y_is_row else np_copy(y)
+    else: # y is provided
+        if provide_y:
+            y_2 = np_copy(y.T) if y_is_row else np_copy(y)
         for i in range(0, length, stride):
             y_2[i, 0] = x_2[i, 0]
 
     # get the actual result
-    copy(x, y, stride, stride)
+    y = copy(x, y, stride, stride)
 
     # if y is a row vector, make y_2 a row vector as well
     if y.shape[0] == 1:
