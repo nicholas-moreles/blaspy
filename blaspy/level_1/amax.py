@@ -26,7 +26,7 @@ def amax(x, inc_x=1):
         --optional arguments--
 
         inc_x:          stride of x (increment for the elements of x)
-                            - defaults to 1
+                            < default is 1 >
 
     Returns:
         The index of the element which has the maximum absolute value in the vector x.
@@ -34,7 +34,7 @@ def amax(x, inc_x=1):
     Raises:
         TypeError:  if x is not a 2D NumPy matrix or ndarray
         ValueError: if any of the following conditions occur:
-                        - if x has a dtype that is not supported
+                        - x has a dtype that is not supported
                         - x is not a vector
     """
 

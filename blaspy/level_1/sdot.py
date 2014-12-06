@@ -34,11 +34,11 @@ def sdot(x, y, inc_x=1, inc_y=1, output='float64'):
         --optional arguments--
 
         inc_x:     stride of x (increment for the elements of x)
-                        - defaults to 1
+                        < default is 1 >
         inc_y:     stride of y (increment for the elements of y)
-                        - defaults to 1
+                        < default is 1 >
         output:    precision of the returned value rho, either 'float64' or 'float32'
-                        - defaults to 'float64'
+                        (default is 'float64')
 
     Returns:
         rho, the result of the dot product between x and y.
