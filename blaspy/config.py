@@ -32,9 +32,9 @@ IN_BLASPY_SUBDIR = True  # default is True
 if BLAS_NAME_OVERRIDE == "":
     if system() == "Windows":
         if calcsize("P") == 8:  # 64-bit
-            BLAS_NAME = "libopenblas-0.2.10-win64-int32.dll"
+            BLAS_NAME = "libopenblas-0.2.13-win64-int32.dll"
         else:  # 32-bit
-            BLAS_NAME = "libopenblas-0.2.10-win32.dll"
+            BLAS_NAME = "libopenblas-0.2.13-win32.dll"
     elif system() == "Linux":
         if calcsize("P") == 8:  # 64-bit
             BLAS_NAME = "libopenblas-0.2.10-linux64.so"
