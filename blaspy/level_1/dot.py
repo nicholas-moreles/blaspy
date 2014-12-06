@@ -26,13 +26,19 @@ def dot(x, y, inc_x=1, inc_y=1):
     transposition occurs.
 
     Args:
-        x:      2D numpy matrix or ndarray representing vector x
-        y:      2D numpy matrix or ndarray representing vector y
+        x:      2D NumPy matrix or ndarray representing vector x
+        y:      2D NumPy matrix or ndarray representing vector y
         inc_x:  stride of x (increment for the elements of x)
         inc_y:  stride of y (increment for the elements of y)
 
     Returns:
         rho, the result of the dot product between x and y.
+
+    Raises:
+        TypeError:  if x  or y is not a 2D NumPy matrix or ndarray
+        ValueError: if any of the following conditions occur:
+                    - x or y do not have the same dtype or that dtype is not supported
+                    - x and y do not have the same length
     """
 
     try:

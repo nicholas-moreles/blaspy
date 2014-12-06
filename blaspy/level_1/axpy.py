@@ -16,21 +16,27 @@ from ctypes import c_int, POINTER
 
 def axpy(alpha, x, y, inc_x=1, inc_y=1):
     """
-    Perform an axpy operation between two vectors.
+    Perform an axpy operation with two vectors.
 
     y := y + alpha * x
 
-    where alpha is a scalar, and x and y are general vectors of the same length and orientation.
+    where alpha is a scalar, and x and y are general vectors of the same length.
 
     Vectors x and y can be passed in as either row or column vectors. If necessary, an implicit
     transposition occurs.
 
     Args:
         alpha:  scalar alpha
-        x:      2D numpy matrix or ndarray representing vector x
-        y:      2D numpy matrix or ndarray representing vector y
+        x:      2D NumPy matrix or ndarray representing vector x
+        y:      2D NumPy matrix or ndarray representing vector y
         inc_x:  stride of x (increment for the elements of x)
         inc_y:  stride of y (increment for the elements of y)
+
+    Raises:
+        TypeError:  if x  or y is not a 2D NumPy matrix or ndarray
+        ValueError: if any of the following conditions occur:
+                    - x or y do not have the same dtype or that dtype is not supported
+                    - x and y do not have the same length
     """
 
     try:

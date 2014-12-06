@@ -21,11 +21,15 @@ def amax(x, inc_x=1):
     is lowest is chosen.
 
     Args:
-        x:              2D numpy matrix or ndarray representing vector x
+        x:              2D NumPy matrix or ndarray representing vector x
         inc_x:          stride of x (increment for the elements of x)
 
     Returns:
         The index of the element which has the maximum absolute value in the vector x.
+
+    Raises:
+        TypeError:  if x is not a 2D NumPy matrix or ndarray
+        ValueError: if x does not have a dtype that is not supported
     """
 
     try:

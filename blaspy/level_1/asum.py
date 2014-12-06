@@ -24,11 +24,15 @@ def asum(x, inc_x=1):
     where chi_i is the ith elements of general vector x of length n and ||x||_1 is returned.
 
     Args:
-        x:              2D numpy matrix or ndarray representing vector x
+        x:              2D NumPy matrix or ndarray representing vector x
         inc_x:          stride of x (increment for the elements of x)
 
     Returns:
         The 1-norm of vector x.
+
+    Raises:
+        TypeError:  if x is not a 2D NumPy matrix or ndarray
+        ValueError: if x does not have a dtype that is not supported
     """
 
     try:

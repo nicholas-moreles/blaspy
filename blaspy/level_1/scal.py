@@ -24,8 +24,12 @@ def scal(alpha, x, inc_x=1):
 
     Args:
         alpha:          scalar alpha
-        x:              2D numpy matrix or ndarray representing vector x
+        x:              2D NumPy matrix or ndarray representing vector x
         inc_x           stride of x (increment for the elements of x)
+
+    Raises:
+        TypeError:  if x is not a 2D NumPy matrix or ndarray
+        ValueError: if x does not have a dtype that is not supported
     """
 
     try:

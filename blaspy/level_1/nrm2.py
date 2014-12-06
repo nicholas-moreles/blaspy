@@ -15,18 +15,22 @@ from ctypes import c_int, POINTER
 
 
 def nrm2(x, inc_x=1):
-    """Compute the 2-norm (Euclidean norm) of a vector.
+    """Compute the 2-norm (Euclidean length) of a vector.
 
     ||x||_2 = [SUM(|chi_i|^2)]^(1/2) from i=0 to i=n-1
 
     where chi_i is the ith element of general vector x of length n and ||x||_2 is returned.
 
     Args:
-        x:              2D numpy matrix or ndarray representing vector x
+        x:              2D NumPy matrix or ndarray representing vector x
         inc_x:          stride of x (increment for the elements of x)
 
     Returns:
         The 2-norm of vector x.
+
+    Raises:
+        TypeError:  if x is not a 2D NumPy matrix or ndarray
+        ValueError: if x does not have a dtype that is not supported
     """
 
     try:

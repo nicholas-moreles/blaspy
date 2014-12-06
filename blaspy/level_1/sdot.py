@@ -36,6 +36,12 @@ def sdot(x, y, inc_x=1, inc_y=1, output='float64'):
 
     Returns:
         rho, the result of the dot product between x and y.
+
+    Raises:
+        TypeError:  if x  or y is not a 2D NumPy matrix or ndarray
+        ValueError: if any of the following conditions occur:
+                    - x or y are not of dtype 'float32'
+                    - x and y do not have the same length
     """
 
     try:
