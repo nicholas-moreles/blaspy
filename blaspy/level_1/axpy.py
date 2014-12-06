@@ -32,6 +32,9 @@ def axpy(alpha, x, y, inc_x=1, inc_y=1):
         inc_x:  stride of x (increment for the elements of x)
         inc_y:  stride of y (increment for the elements of y)
 
+    Returns:
+        Vector y (which is also overridden)
+
     Raises:
         TypeError:  if x  or y is not a 2D NumPy matrix or ndarray
         ValueError: if any of the following conditions occur:
@@ -59,6 +62,8 @@ def axpy(alpha, x, y, inc_x=1, inc_y=1):
         cblas_func.restype = None
         cblas_func(x_length, alpha, x.ctypes.data_as(ctype_x), inc_x,
                   y.ctypes.data_as(ctype_y), inc_y)
+
+        return y
 
     except (AttributeError, TypeError):
         raise_generic_type_error()
