@@ -69,7 +69,7 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
         # if y is not given, create a zero vector with same orientation and type as x
         if y is None:
             check_strides_equal_one(inc_x, inc_y)
-            y = create_similar_zero_vector(x, dim_A)
+            y = create_similar_zero_vector(x)
 
         # continue getting dimensions of the parameters
         m_y, n_y, y_length = get_vector_dimensions('y', y, inc_y)

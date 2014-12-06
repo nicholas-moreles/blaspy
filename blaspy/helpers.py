@@ -211,23 +211,27 @@ def check_strides_equal_one(*args):
         raise_strides_not_one()
 
 
-def create_similar_zero_vector(other_vector, length):
+def create_similar_zero_vector(other_vector, length=None):
     """
-    Create and return a zero vector of the given length with the same dtype and orientation as
-    other_vector.
+    Create and return a zero vector with the same dtype, length, and orientation as other_vector.
 
     Args:
-        other_vector:    vector whose dtype and orientation to copy
-        length:          length of the new zero vector
+        other_vector:   vector whose dtype, length, and orientation to copy
+
+        --optional arguments--
+
+        length:         length of zero vector, default is length of other_vector
 
     Returns:
-        A new NumPy ndarray or matrix filled with zeros of specified length with the same
-        characteristics as other_vector.
+        A new NumPy ndarray or matrix filled with zeros with the same characteristics as
+        other_vector.
     """
 
     if other_vector.shape[0] == 1:
+        length = other_vector.shape[1] if length is None else length
         new_vector = zeros((1, length), dtype=other_vector.dtype)
     else:
+        length = other_vector.shape[0] if length is None else length
         new_vector = zeros((length, 1), dtype=other_vector.dtype)
 
     if type(other_vector) is np_matrix:
