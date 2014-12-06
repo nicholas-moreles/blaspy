@@ -25,11 +25,20 @@ def scal(alpha, x, inc_x=1):
     Args:
         alpha:          scalar alpha
         x:              2D NumPy matrix or ndarray representing vector x
+
+        --optional arguments--
+
         inc_x           stride of x (increment for the elements of x)
+                            - defaults to 1
+
+    Returns:
+        Vector x
 
     Raises:
         TypeError:  if x is not a 2D NumPy matrix or ndarray
-        ValueError: if x does not have a dtype that is not supported
+        ValueError: if any of the following conditions occur:
+                        - if x has a dtype that is not supported
+                        - x is not a vector
     """
 
     try:
@@ -46,6 +55,8 @@ def scal(alpha, x, inc_x=1):
         cblas_func.argtypes = [c_int, ctype_dtype, ctype_x, c_int]
         cblas_func.restype = None
         cblas_func(x_length, alpha, x.ctypes.data_as(ctype_x), inc_x)
+
+        return x
 
     except (AttributeError, TypeError):
         raise_generic_type_error()

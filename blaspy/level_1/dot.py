@@ -28,8 +28,13 @@ def dot(x, y, inc_x=1, inc_y=1):
     Args:
         x:      2D NumPy matrix or ndarray representing vector x
         y:      2D NumPy matrix or ndarray representing vector y
+
+        --optional arguments--
+
         inc_x:  stride of x (increment for the elements of x)
+                    - defaults to 1
         inc_y:  stride of y (increment for the elements of y)
+                    - defaults to 1
 
     Returns:
         rho, the result of the dot product between x and y.
@@ -37,8 +42,9 @@ def dot(x, y, inc_x=1, inc_y=1):
     Raises:
         TypeError:  if x  or y is not a 2D NumPy matrix or ndarray
         ValueError: if any of the following conditions occur:
-                    - x or y do not have the same dtype or that dtype is not supported
-                    - x and y do not have the same length
+                        - x or y do not have the same dtype or that dtype is not supported
+                        - x or y is not a vector
+                        - x and y do not have the same length
     """
 
     try:

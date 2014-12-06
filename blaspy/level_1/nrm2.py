@@ -23,14 +23,20 @@ def nrm2(x, inc_x=1):
 
     Args:
         x:              2D NumPy matrix or ndarray representing vector x
+
+        --optional arguments--
+
         inc_x:          stride of x (increment for the elements of x)
+                            - defaults to 1
 
     Returns:
         The 2-norm of vector x.
 
     Raises:
         TypeError:  if x is not a 2D NumPy matrix or ndarray
-        ValueError: if x does not have a dtype that is not supported
+        ValueError: if any of the following conditions occur:
+                        - if x has a dtype that is not supported
+                        - x is not a vector
     """
 
     try:

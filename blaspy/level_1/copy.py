@@ -25,19 +25,22 @@ def copy(x, y=None, inc_x=1, inc_y=1):
         --optional arguments--
 
         y:      2D NumPy matrix or ndarray representing vector y
+                    - defaults to a newly created zero vector of the same dtype and size
         inc_x:  stride of x (increment for the elements of x)
+                    - defaults to 1
         inc_y:  stride of y (increment for the elements of y)
+                    - defaults to 1
 
     Returns:
-        Vector y (which is also overridden)
+        Vector y (which is also overwritten)
 
     Raises:
         TypeError:  if x or y is not a 2D NumPy matrix or ndarray
         ValueError: if any of the following conditions occur:
-                    - x or y do not have the same dtype or that dtype is not supported
-                    - x or y is not a vector
-                    - x and y do not have the same length
-                    - y is not provided and the stride of either x or y does not equal one
+                        - x or y do not have the same dtype or that dtype is not supported
+                        - x or y is not a vector
+                        - x and y do not have the same length
+                        - y is not provided and the stride of either x or y does not equal one
     """
 
     try:

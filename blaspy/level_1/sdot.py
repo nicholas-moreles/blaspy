@@ -30,18 +30,25 @@ def sdot(x, y, inc_x=1, inc_y=1, output='float64'):
     Args:
         x:         2D numpy matrix or ndarray representing vector x
         y:         2D numpy matrix or ndarray representing vector y
+
+        --optional arguments--
+
         inc_x:     stride of x (increment for the elements of x)
+                        - defaults to 1
         inc_y:     stride of y (increment for the elements of y)
+                        - defaults to 1
         output:    precision of the returned value rho, either 'float64' or 'float32'
+                        - defaults to 'float64'
 
     Returns:
         rho, the result of the dot product between x and y.
 
     Raises:
-        TypeError:  if x  or y is not a 2D NumPy matrix or ndarray
+        TypeError:  if x or y is not a 2D NumPy matrix or ndarray
         ValueError: if any of the following conditions occur:
-                    - x or y are not of dtype 'float32'
-                    - x and y do not have the same length
+                        - x or y is not of dtype 'float32'
+                        - x or y is not a vector
+                        - x and y do not have the same length
     """
 
     try:
