@@ -9,31 +9,46 @@
 
 """
 
-from ..helpers import get_vector_dimensions, check_equal_sizes, get_cblas_info
+from ..helpers import (get_vector_dimensions, check_equal_sizes, get_cblas_info,
+                       create_similar_zero_vector, check_strides_equal_one)
 from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
 
-def copy(x, y, inc_x=1, inc_y=1):
+def copy(x, y=None, inc_x=1, inc_y=1):
     """
     Copy the numerical contents of vector x to vector y.
 
     Args:
         x:      2D NumPy matrix or ndarray representing vector x
+
+        --optional arguments--
+
         y:      2D NumPy matrix or ndarray representing vector y
         inc_x:  stride of x (increment for the elements of x)
         inc_y:  stride of y (increment for the elements of y)
 
+    Returns:
+        Vector y (which is also overridden)
+
     Raises:
-        TypeError:  if x  or y is not a 2D NumPy matrix or ndarray
+        TypeError:  if x or y is not a 2D NumPy matrix or ndarray
         ValueError: if any of the following conditions occur:
                     - x or y do not have the same dtype or that dtype is not supported
+                    - x or y is not a vector
                     - x and y do not have the same length
+                    - y is not provided and the stride of either x or y does not equal one
     """
 
     try:
         # get the dimensions of the parameters
         m_x, n_x, x_length = get_vector_dimensions('x', x, inc_x)
+
+        # if y is not given, create zero vector with same orientation and type as x
+        if y is None:
+            check_strides_equal_one(inc_x, inc_y)
+            y = create_similar_zero_vector(x)
+
         m_y, n_y, y_length = get_vector_dimensions('y', y, inc_y)
 
         # ensure the parameters are appropriate for the operation
@@ -50,6 +65,8 @@ def copy(x, y, inc_x=1, inc_y=1):
         cblas_func.argtypes = [c_int, ctype_x, c_int, ctype_y, c_int]
         cblas_func.restype = None
         cblas_func(x_length, x.ctypes.data_as(ctype_x), inc_x, y.ctypes.data_as(ctype_y), inc_y)
+
+        return y
 
     except (AttributeError, TypeError):
         raise_generic_type_error()
