@@ -16,7 +16,7 @@ from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
 
-def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
+def symv(A, x, y=None, uplo='u', alpha=1.0, beta=1.0, lda=None, inc_x=1, inc_y=1):
     """
     Perform a symmetric matrix-vector multiplication operation.
 
@@ -35,30 +35,39 @@ def symv(A, x, y=None, uplo='u', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
     provided; however, the strides of x and y must be one if vector y is not provided.
 
     Args:
-        A:        2D numpy matrix or ndarray representing matrix A
-        x:        2D numpy matrix or ndarray representing vector x
-        y:        2D numpy matrix or ndarray representing vector y
+        A:        2D NumPy matrix or ndarray representing matrix A
+        x:        2D NumPy matrix or ndarray representing vector x
+
+        --optional arguments--
+
+        y:        2D NumPy matrix or ndarray representing vector y
+                      < default is zero vector >
         uplo:     'u'  if the upper triangular part of A is to be used
                   'l'  if the lower triangular part of A is to be used
+                      < default is 'u' >
         alpha:    scalar alpha
+                      < default is 1.0 >
         beta:     scalar beta
-        lda:      leading dimension of A (must be >= # of cols in A)
+                      < default is 1.0 >
+        lda:      leading dimension of A (must be >= # of columns in A)
+                      < default is # of columns in A >
         inc_x:    stride of x (increment for the elements of x)
+                      < default is 1 >
         inc_y:    stride of y (increment for the elements of y)
+                      < default is 1 >
 
     Returns:
         Vector y, for use in case no vector y was passed into this function.
 
     Raises:
         TypeError:  if A, x, or y is not a 2D NumPy ndarray or NumPy matrix
-
         ValueError: if any of the following conditions occur:
-                    - A, x, and y do not have the same dtype or that dtype is not supported
-                    - A is not a square matrix
-                    - x or y is not a vector
-                    - the effective length of either x or y do not equal the dimension of A
-                    - y is not provided and the stride of either x or y does not equal one
-                    - uplo is not equal to one of the following: 'u', 'U', 'l', 'L'
+                        - A, x, and y do not have the same dtype or that dtype is not supported
+                        - A is not a square matrix
+                        - x or y is not a vector
+                        - the effective length of either x or y do not equal the dimension of A
+                        - y is not provided and the stride of either x or y does not equal one
+                        - uplo is not equal to one of the following: 'u', 'U', 'l', 'L'
     """
 
     try:

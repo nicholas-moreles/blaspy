@@ -32,31 +32,31 @@ def ger(x, y, A=None, alpha=1.0, lda=None, inc_x=1, inc_y=1):
     newly created matrix A.
 
     Args:
-        x:      2D NumPy matrix or ndarray representing vector x
-        y:      2D NumPy matrix or ndarray representing vector y
+        x:        2D NumPy matrix or ndarray representing vector x
+        y:        2D NumPy matrix or ndarray representing vector y
 
         --optional arguments--
 
-        A:      2D numpy matrix or ndarray representing matrix A
-                    < default is the zero matrix >
-        alpha:  scalar alpha
-                    < default is 1.0 >
-        lda:    leading dimension of A (must be >= # of columns in A)
-                    < default is # of columns in A >
-        inc_x:  stride of x (increment for the elements of x)
-                    < default is 1 >
-        inc_y:  stride of y (increment for the elements of y)
-                    < default is 1 >
+        A:        2D numpy matrix or ndarray representing matrix A
+                      < default is the zero matrix >
+        alpha:    scalar alpha
+                      < default is 1.0 >
+        lda:      leading dimension of A (must be >= # of columns in A)
+                      < default is # of columns in A >
+        inc_x:    stride of x (increment for the elements of x)
+                      < default is 1 >
+        inc_y:    stride of y (increment for the elements of y)
+                      < default is 1 >
 
     Returns:
         Matrix A (which is also overwritten)
 
     Raises:
         ValueError: if any of the following conditions occur:
-                    - A, x, or y is not a 2D NumPy ndarray or NumPy matrix
-                    - A, x, and y do not have the same dtype or that dtype is not supported
-                    - x or y is not a vector
-                    - the effective length of either x or y does not conform to the dimensions of A
+                        - A, x, or y is not a 2D NumPy ndarray or NumPy matrix
+                        - A, x, and y do not have the same dtype or that dtype is not supported
+                        - x or y is not a vector
+                        - the effective length of either x or y does not conform to the dimensions of A
     """
 
     try:
