@@ -16,7 +16,7 @@ from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
 
-def gemv(A, x, y=None, trans_a='n', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1):
+def gemv(A, x, y=None, trans_a='n', alpha=1.0, beta=1.0, lda=None, inc_x=1, inc_y=1):
     """
     Perform a general matrix-vector multiplication operation.
 
@@ -24,7 +24,7 @@ def gemv(A, x, y=None, trans_a='n', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1)
 
     where alpha and beta are scalars, A is a general matrix, and x and y are general column vectors.
 
-    The trans argument allows the operation to proceed as if A is transposed.
+    The 'trans' argument allows the operation to proceed as if A is transposed.
 
     Vectors x and y can be passed in as either row or column vectors. If necessary, an implicit
     transposition occurs.
@@ -33,19 +33,29 @@ def gemv(A, x, y=None, trans_a='n', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1)
     provided; however, the strides of x and y must be one if vector y is not provided.
 
     Args:
-        A:          2D numpy matrix or ndarray representing matrix A
-        x:          2D numpy matrix or ndarray representing vector x
-        y:          2D numpy matrix or ndarray representing vector y (default is zero vector)
+        A:          2D NumPy matrix or ndarray representing matrix A
+        x:          2D NumPy matrix or ndarray representing vector x
+
+        --optional arguments--
+
+        y:          2D NumPy matrix or ndarray representing vector y
+                        < default is the zero vector >
         trans_a:    'n'  if the operation is to proceed normally
                     't'  if the operation is to proceed as if A is transposed
+                        < default is 'n' >
         alpha:      scalar alpha
+                        < default is 1.0 >
         beta:       scalar beta
-        lda:        leading dimension of a (must be >= # of cols in A)
+                        < default is 1.0 >
+        lda:        leading dimension of a (must be >= # of columns in A)
+                        < default is # of columns in A >
         inc_x:      stride of x (increment for the elements of x)
+                        < default is 1 >
         inc_y:      stride of y (increment for the elements of y)
+                        < default is 1 >
 
     Returns:
-        Vector y, for use in case no vector y was passed into this function.
+        Vector y (which is also overwritten)
 
     Raises:
         ValueError: if any of the following conditions occur:
@@ -95,10 +105,10 @@ def gemv(A, x, y=None, trans_a='n', alpha=1, beta=1, lda=None, inc_x=1, inc_y=1)
 
         # call CBLAS using ctypes
         cblas_func.argtypes = [c_int, c_int, c_int, c_int, ctype_dtype, ctype_A, c_int,
-                              ctype_x, c_int, ctype_dtype, ctype_y, c_int]
+                               ctype_x, c_int, ctype_dtype, ctype_y, c_int]
         cblas_func.restype = None
         cblas_func(ROW_MAJOR, cblas_trans_a, m_A, n_A, alpha, A.ctypes.data_as(ctype_A), lda,
-                  x.ctypes.data_as(ctype_x), inc_x, beta, y.ctypes.data_as(ctype_y), inc_y)
+                   x.ctypes.data_as(ctype_x), inc_x, beta, y.ctypes.data_as(ctype_y), inc_y)
 
         return y  # y is also overwritten, so only useful if no y was provided
 
