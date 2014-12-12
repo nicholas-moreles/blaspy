@@ -12,7 +12,6 @@
 from ..helpers import (get_matrix_dimensions, get_vector_dimensions, check_strides_equal_one,
                        create_similar_zero_vector, check_equal_sizes, convert_trans,
                        get_cblas_info, ROW_MAJOR)
-from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
 
@@ -48,7 +47,7 @@ def gemv(A, x, y=None, trans_a='n', alpha=1.0, beta=1.0, lda=None, inc_x=1, inc_
         beta:       scalar beta
                         < default is 1.0 >
         lda:        leading dimension of a (must be >= # of columns in A)
-                        < default is # of columns in A >
+                        < default is the number of columns in A >
         inc_x:      stride of x (increment for the elements of x)
                         < default is 1 >
         inc_y:      stride of y (increment for the elements of y)
@@ -67,49 +66,45 @@ def gemv(A, x, y=None, trans_a='n', alpha=1.0, beta=1.0, lda=None, inc_x=1, inc_
                     - trans_a is not equal to one of the following: 'n', 'N', 't', 'T'
     """
 
-    try:
-        # convert to appropriate CBLAS value
-        cblas_trans_a = convert_trans(trans_a)
-        transpose_A = trans_a == 't' or trans_a == 'T'
+    # convert to appropriate CBLAS value
+    cblas_trans_a = convert_trans(trans_a)
+    transpose_A = trans_a == 't' or trans_a == 'T'
 
-        # get the dimensions of the parameters
-        m_A, n_A = get_matrix_dimensions('A', A)
-        m_x, n_x, x_length = get_vector_dimensions('x', x, inc_x)
+    # get the dimensions of the parameters
+    m_A, n_A = get_matrix_dimensions('A', A)
+    m_x, n_x, x_length = get_vector_dimensions('x', x, inc_x)
 
-        # if y is not given, create zero vector with same orientation and type as x
-        if y is None:
-            check_strides_equal_one(inc_x, inc_y)
-            length = n_A if transpose_A else m_A
-            y = create_similar_zero_vector(x, length)
+    # if y is not given, create zero vector with same orientation and type as x
+    if y is None:
+        check_strides_equal_one(inc_x, inc_y)
+        length = n_A if transpose_A else m_A
+        y = create_similar_zero_vector(x, length)
 
-        # continue getting dimensions of the parameters
-        m_y, n_y, y_length = get_vector_dimensions('y', y, inc_y)
+    # continue getting dimensions of the parameters
+    m_y, n_y, y_length = get_vector_dimensions('y', y, inc_y)
 
-        # assign a default value to lda if necessary (assumes row-major order)
-        if lda is None:
-            lda = n_A
+    # assign a default value to lda if necessary (assumes row-major order)
+    if lda is None:
+        lda = n_A
 
-        # ensure the parameters are appropriate for the desired operation
-        x_check, y_check = (n_A, m_A) if not transpose_A else (m_A, n_A)
-        check_equal_sizes('A', x_check, 'x', x_length)
-        check_equal_sizes('A', y_check, 'y', y_length)
+    # ensure the parameters are appropriate for the desired operation
+    x_check, y_check = (n_A, m_A) if not transpose_A else (m_A, n_A)
+    check_equal_sizes('A', x_check, 'x', x_length)
+    check_equal_sizes('A', y_check, 'y', y_length)
 
-        # determine which CBLAS subroutine to call and which ctypes data type to use
-        cblas_func, ctype_dtype = get_cblas_info('gemv', (A.dtype, x.dtype, y.dtype))
+    # determine which CBLAS subroutine to call and which ctypes data type to use
+    cblas_func, ctype_dtype = get_cblas_info('gemv', (A.dtype, x.dtype, y.dtype))
 
-        # create a ctypes POINTER for each vector and matrix
-        ctype_x = POINTER(ctype_dtype * n_x * m_x)
-        ctype_y = POINTER(ctype_dtype * n_y * m_y)
-        ctype_A = POINTER(ctype_dtype * n_A * m_A)
+    # create a ctypes POINTER for each vector and matrix
+    ctype_x = POINTER(ctype_dtype * n_x * m_x)
+    ctype_y = POINTER(ctype_dtype * n_y * m_y)
+    ctype_A = POINTER(ctype_dtype * n_A * m_A)
 
-        # call CBLAS using ctypes
-        cblas_func.argtypes = [c_int, c_int, c_int, c_int, ctype_dtype, ctype_A, c_int,
-                               ctype_x, c_int, ctype_dtype, ctype_y, c_int]
-        cblas_func.restype = None
-        cblas_func(ROW_MAJOR, cblas_trans_a, m_A, n_A, alpha, A.ctypes.data_as(ctype_A), lda,
-                   x.ctypes.data_as(ctype_x), inc_x, beta, y.ctypes.data_as(ctype_y), inc_y)
+    # call CBLAS using ctypes
+    cblas_func.argtypes = [c_int, c_int, c_int, c_int, ctype_dtype, ctype_A, c_int,
+                           ctype_x, c_int, ctype_dtype, ctype_y, c_int]
+    cblas_func.restype = None
+    cblas_func(ROW_MAJOR, cblas_trans_a, m_A, n_A, alpha, A.ctypes.data_as(ctype_A), lda,
+               x.ctypes.data_as(ctype_x), inc_x, beta, y.ctypes.data_as(ctype_y), inc_y)
 
-        return y  # y is also overwritten, so only useful if no y was provided
-
-    except (AttributeError, TypeError):
-        raise_generic_type_error()
+    return y  # y is also overwritten
