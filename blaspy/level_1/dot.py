@@ -10,7 +10,6 @@
 """
 
 from ..helpers import get_vector_dimensions, get_cblas_info, check_equal_sizes
-from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
 
@@ -40,33 +39,28 @@ def dot(x, y, inc_x=1, inc_y=1):
         rho, the result of the dot product between x and y.
 
     Raises:
-        TypeError:  if x  or y is not a 2D NumPy matrix or ndarray
         ValueError: if any of the following conditions occur:
-                        - x or y do not have the same dtype or that dtype is not supported
+                        - x or y is not a 2D NumPy matrix or ndarray
+                        - x and y do not have the same dtype or that dtype is not supported
                         - x or y is not a vector
                         - x and y do not have the same length
     """
 
-    try:
-        # get the dimensions of the parameters
-        m_x, n_x, x_length = get_vector_dimensions('x', x, inc_x)
-        m_y, n_y, y_length = get_vector_dimensions('y', y, inc_y)
+    # get the dimensions of the parameters
+    m_x, n_x, x_length = get_vector_dimensions('x', x, inc_x)
+    m_y, n_y, y_length = get_vector_dimensions('y', y, inc_y)
 
-        # ensure the parameters are appropriate for the operation
-        check_equal_sizes('x', x_length, 'y', y_length)
+    # ensure the parameters are appropriate for the operation
+    check_equal_sizes('x', x_length, 'y', y_length)
 
-        # determine which CBLAS subroutine to call and which ctypes data type to use
-        cblas_func, ctype_dtype = get_cblas_info('dot', (x.dtype,))
+    # determine which CBLAS subroutine to call and which ctypes data type to use
+    cblas_func, ctype_dtype = get_cblas_info('dot', (x.dtype,))
 
-        # create a ctypes POINTER for each vector
-        ctype_x = POINTER(ctype_dtype * n_x * m_x)
-        ctype_y = POINTER(ctype_dtype * n_y * m_y)
+    # create a ctypes POINTER for each vector
+    ctype_x = POINTER(ctype_dtype * n_x * m_x)
+    ctype_y = POINTER(ctype_dtype * n_y * m_y)
 
-        # call CBLAS using ctypes
-        cblas_func.argtypes = [c_int, ctype_x, c_int, ctype_y, c_int]
-        cblas_func.restype = ctype_dtype
-        return cblas_func(x_length, x.ctypes.data_as(ctype_x), inc_x, y.ctypes.data_as(ctype_y),
-                          inc_y)
-
-    except (AttributeError, TypeError):
-        raise_generic_type_error()
+    # call CBLAS using ctypes
+    cblas_func.argtypes = [c_int, ctype_x, c_int, ctype_y, c_int]
+    cblas_func.restype = ctype_dtype
+    return cblas_func(x_length, x.ctypes.data_as(ctype_x), inc_x, y.ctypes.data_as(ctype_y), inc_y)

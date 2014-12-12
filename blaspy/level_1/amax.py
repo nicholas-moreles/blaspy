@@ -10,7 +10,6 @@
 """
 
 from ..helpers import get_vector_dimensions, get_cblas_info
-from ..errors import raise_generic_type_error
 from ctypes import c_int, POINTER
 
 
@@ -32,26 +31,22 @@ def amax(x, inc_x=1):
         The index of the element which has the maximum absolute value in the vector x.
 
     Raises:
-        TypeError:  if x is not a 2D NumPy matrix or ndarray
         ValueError: if any of the following conditions occur:
+                        - x is not a 2D NumPy matrix or ndarray
                         - x has a dtype that is not supported
                         - x is not a vector
     """
 
-    try:
-        # get the dimensions of the parameters
-        m_x, n_x, x_length = get_vector_dimensions('x', x, inc_x)
+    # get the dimensions of the parameters
+    m_x, n_x, x_length = get_vector_dimensions('x', x, inc_x)
 
-        # determine which CBLAS subroutine to call and which ctypes data type to use
-        cblas_func, ctype_dtype = get_cblas_info('amax', (x.dtype,))
+    # determine which CBLAS subroutine to call and which ctypes data type to use
+    cblas_func, ctype_dtype = get_cblas_info('amax', (x.dtype,))
 
-        # create a ctypes POINTER for vector x
-        ctype_x = POINTER(ctype_dtype * n_x * m_x)
+    # create a ctypes POINTER for vector x
+    ctype_x = POINTER(ctype_dtype * n_x * m_x)
 
-        # call CBLAS using ctypes
-        cblas_func.argtypes = [c_int, ctype_x, c_int]
-        cblas_func.restype = c_int
-        return cblas_func(x_length, x.ctypes.data_as(ctype_x), inc_x)
-
-    except (AttributeError, TypeError):
-        raise_generic_type_error()
+    # call CBLAS using ctypes
+    cblas_func.argtypes = [c_int, ctype_x, c_int]
+    cblas_func.restype = c_int
+    return cblas_func(x_length, x.ctypes.data_as(ctype_x), inc_x)

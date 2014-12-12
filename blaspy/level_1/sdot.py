@@ -11,7 +11,7 @@
 
 from ..config import _libblas
 from ..helpers import get_vector_dimensions, check_equal_sizes
-from ..errors import raise_generic_type_error, raise_invalid_dtypes, raise_invalid_parameter
+from ..errors import raise_invalid_dtypes, raise_invalid_parameter
 from ctypes import c_int, c_double, c_float, POINTER
 
 
@@ -38,54 +38,51 @@ def sdot(x, y, inc_x=1, inc_y=1, output='float64'):
         inc_y:     stride of y (increment for the elements of y)
                         < default is 1 >
         output:    precision of the returned value rho, either 'float64' or 'float32'
-                        (default is 'float64')
+                        < default is 'float64' >
 
     Returns:
         rho, the result of the dot product between x and y.
 
     Raises:
-        TypeError:  if x or y is not a 2D NumPy matrix or ndarray
         ValueError: if any of the following conditions occur:
+                        - x or y is not a 2D NumPy matrix or ndarray
                         - x or y is not of dtype 'float32'
                         - x or y is not a vector
                         - x and y do not have the same length
+                        - output is not equal to one of the following:'float64', 'float32'
     """
 
-    try:
-        # get the dimensions of the parameters
-        m_x, n_x, x_length = get_vector_dimensions('x', x, inc_x)
-        m_y, n_y, y_length = get_vector_dimensions('y', y, inc_y)
+    # get the dimensions of the parameters
+    m_x, n_x, x_length = get_vector_dimensions('x', x, inc_x)
+    m_y, n_y, y_length = get_vector_dimensions('y', y, inc_y)
 
-        # ensure the parameters are appropriate for the operation
-        check_equal_sizes('x', x_length, 'y', y_length)
+    # ensure the parameters are appropriate for the operation
+    check_equal_sizes('x', x_length, 'y', y_length)
 
-        # get_cblas_info cannot be used for sdot due to the way input/output data types don't
-        # necessarily match. For now, this is handled in this function, but it may be moved into
-        # helpers.py if it occurs again when implementing other CBLAS subroutines.
+    # get_cblas_info cannot be used for sdot due to the way input/output data types don't
+    # necessarily match. For now, this is handled in this function, but it may be moved into
+    # helpers.py if it occurs again when implementing other CBLAS subroutines.
 
-        # check type of x and y
-        if not (x.dtype == 'float32' and y.dtype == 'float32'):
-            raise_invalid_dtypes('float32')
+    # check type of x and y
+    if not (x.dtype == 'float32' and y.dtype == 'float32'):
+        raise_invalid_dtypes('float32')
 
-        # determine which CBLAS routine to call based on data type, then call CBLAS using ctypes
-        if output == 'float64':
-            cblas_func = _libblas.cblas_dsdot
-            ctype_x = POINTER(c_float * n_x * m_x)
-            ctype_y = POINTER(c_float * n_y * m_y)
-            cblas_func.argtypes = [c_int, ctype_x, c_int, ctype_y, c_int]
-            cblas_func.restype = c_double
-            return cblas_func(x_length, x.ctypes.data_as(ctype_x), inc_x,
-                              y.ctypes.data_as(ctype_y), inc_y)
-        elif output == 'float32':
-            cblas_func = _libblas.cblas_sdsdot
-            ctype_x = POINTER(c_float * n_x * m_x)
-            ctype_y = POINTER(c_float * n_y * m_y)
-            cblas_func.argtypes = [c_int, c_float, ctype_x, c_int, ctype_y, c_int]
-            cblas_func.restype = c_float
-            return cblas_func(x_length, 0, x.ctypes.data_as(ctype_x), inc_x,
-                              y.ctypes.data_as(ctype_y), inc_y)
-        else:
-            raise_invalid_parameter('output', ('float32', 'float64'), output)
-
-    except (AttributeError, TypeError):
-        raise_generic_type_error()
+    # determine which CBLAS routine to call based on data type, then call CBLAS using ctypes
+    if output == 'float64':
+        cblas_func = _libblas.cblas_dsdot
+        ctype_x = POINTER(c_float * n_x * m_x)
+        ctype_y = POINTER(c_float * n_y * m_y)
+        cblas_func.argtypes = [c_int, ctype_x, c_int, ctype_y, c_int]
+        cblas_func.restype = c_double
+        return cblas_func(x_length, x.ctypes.data_as(ctype_x), inc_x,
+                          y.ctypes.data_as(ctype_y), inc_y)
+    elif output == 'float32':
+        cblas_func = _libblas.cblas_sdsdot
+        ctype_x = POINTER(c_float * n_x * m_x)
+        ctype_y = POINTER(c_float * n_y * m_y)
+        cblas_func.argtypes = [c_int, c_float, ctype_x, c_int, ctype_y, c_int]
+        cblas_func.restype = c_float
+        return cblas_func(x_length, 0, x.ctypes.data_as(ctype_x), inc_x,
+                          y.ctypes.data_as(ctype_y), inc_y)
+    else:
+        raise_invalid_parameter('output', ('float32', 'float64'), output)

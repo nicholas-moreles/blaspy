@@ -13,7 +13,7 @@ from .amax import amax
 from .asum import asum
 from .axpy import axpy
 from .copy import copy
-from .dot import dot
+from .dot  import dot
 from .nrm2 import nrm2
 from .scal import scal
 from .sdot import sdot
