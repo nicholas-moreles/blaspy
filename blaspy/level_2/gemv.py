@@ -59,7 +59,6 @@ def gemv(A, x, y=None, trans_a='n', alpha=1.0, beta=1.0, lda=None, inc_x=1, inc_
 
     Raises:
         ValueError: if any of the following conditions occur:
-
                     - A, x, or y is not a 2D NumPy ndarray or NumPy matrix
                     - A, x, and y do not have the same dtype or that dtype is not supported
                     - x or y is not a vector

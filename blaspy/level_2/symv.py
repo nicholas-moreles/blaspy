@@ -57,7 +57,7 @@ def symv(A, x, y=None, uplo='u', alpha=1.0, beta=1.0, lda=None, inc_x=1, inc_y=1
                       < default is 1 >
 
     Returns:
-        Vector y, for use in case no vector y was passed into this function.
+        Vector y (which is also overwrriten)
 
     Raises:
         TypeError:  if A, x, or y is not a 2D NumPy ndarray or NumPy matrix
