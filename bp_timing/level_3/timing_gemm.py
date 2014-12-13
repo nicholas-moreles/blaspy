@@ -34,11 +34,9 @@ def timing_gemm():
     bp_total = 0.0
     np_total = 0.0
 
-    for (k, n) in product(vals, vals, vals):
+    for (k, n) in product(vals, vals):
         # test all combinations of all possible values
         for (dtype, trans_a, trans_b) in product(dtypes, trans_tuple, trans_tuple):
-            variables = ("gemm_", trans_a, "_", trans_b)
-            test_name = "".join(variables)
             bp_time, np_time = timing_test(dtype, trans_a, trans_b, n, k)
             bp_total += bp_time
             np_total += np_time
