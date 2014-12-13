@@ -60,7 +60,7 @@ def trmm(A, B, side='l', uplo='u', trans_a='n', diag='n', alpha=1.0, lda=None, l
                     - A or B is not a 2D NumPy ndarray or NumPy matrix
                     - A and B do not have the same dtype or that dtype is not supported
                     - A is not a square matrix
-                    - The dimensions of A and B do not conform
+                    - the dimensions of A and B do not conform
                     - 'uplo' is not equal to one of the following: 'u', 'U', 'l', 'L'
                     - 'side' is not equal to one of the following: 'l', 'L', 'r', 'R'
                     - 'trans_a' is not equal to one of the following: 'n', 'N', 't', 'T'

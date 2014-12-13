@@ -63,7 +63,7 @@ def syrk(A, C=None, uplo='u', trans='n', alpha=1.0, beta=1.0, lda=None, ldc=None
                     - A or C is not a 2D NumPy ndarray or NumPy matrix
                     - A and C do not have the same dtype or that dtype is not supported
                     - C is not a square matrix
-                    - The dimensions of A and C do not conform
+                    - the dimensions of A and C do not conform
                     - 'uplo' is not equal to one of the following: 'u', 'U', 'l', 'L'
                     - 'trans' is not equal to one of the following: 'n', 'N', 't', 'T'
     """
