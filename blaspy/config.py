@@ -8,9 +8,10 @@
     directory or at http://opensource.org/licenses/BSD-3-Clause
 
 """
+import os
 
 from .errors import raise_blas_os_error
-from ctypes import cdll
+from ctypes import cdll, windll
 from os import path
 from platform import system
 from struct import calcsize
@@ -45,6 +46,7 @@ if BLAS_NAME_OVERRIDE == "":
 else:
     BLAS_NAME = BLAS_NAME_OVERRIDE
 
-# Create the appropriate path to _libblas
-BLAS_PATH = str(path.dirname(__file__))[:-6] + "lib/"
-_libblas = cdll.LoadLibrary((BLAS_PATH + BLAS_NAME) if IN_BLASPY_SUBDIR else BLAS_NAME)
+# Change the directory (required for Windows 64-bit) and load the library
+if IN_BLASPY_SUBDIR:
+    os.chdir(str(path.dirname(__file__))[:-6] + "lib")
+_libblas = cdll.LoadLibrary(BLAS_NAME)
