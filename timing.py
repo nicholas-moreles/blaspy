@@ -11,9 +11,11 @@
 
 from bp_timing import timing_gemm
 
+TRIALS = 10
+K = 1500
 TEST_DICT = {'gemm': timing_gemm}
 
 
 for name, function in sorted(TEST_DICT.iteritems()):
     print("Testing " + name)
-    function()
+    function(TRIALS, K)

@@ -16,16 +16,14 @@ from itertools import product
 from random import uniform
 import time
 
-TRIALS = 20
 SCAL_MIN, SCAL_MAX = -10, 10    # scalar values
 
 
-def timing_gemm():
+def timing_gemm(trials, k):
     """
     Test general matrix-matrix multiplication.
 
-    Returns:
-        A list of strings representing the failed tests.
+    Prints out the average runtime for both BLASpy and NumPy with each matrix size.
     """
     # values to test
     vals = (100, 300, 500, 1000, 1500, 2000, 2500, 3000)
@@ -34,17 +32,17 @@ def timing_gemm():
     bp_total = 0.0
     np_total = 0.0
 
-    for (k, n) in product(vals, vals):
+    for n in vals:
         # test all combinations of all possible values
         for (dtype, trans_a, trans_b) in product(dtypes, trans_tuple, trans_tuple):
-            bp_time, np_time = timing_test(dtype, trans_a, trans_b, n, k)
+            bp_time, np_time = timing_test(dtype, trans_a, trans_b, n, k, trials)
             bp_total += bp_time
             np_total += np_time
 
-        print("\nk: %d, n: %d, BLASpy Average: %.5fs, NumPy Average: %.5f"
+        print("\nk: %d, m=n: %d, BLASpy Average: %.5fs, NumPy Average: %.5fs"
               % (k, n, bp_total / 8, np_total / 8))
 
-def timing_test(dtype, trans_a, trans_b, n, k):
+def timing_test(dtype, trans_a, trans_b, n, k, trials):
     """
     Run one general matrix-matrix multiplication test.
 
@@ -56,15 +54,14 @@ def timing_test(dtype, trans_a, trans_b, n, k):
         trans_b:      BLASpy trans_b parameter to test
 
     Returns:
-        True if the expected result is within the margin of error of the actual result,
-        False otherwise.
+        A tuple of the BLASpy total runtime and NumPy total runtime.
     """
     as_matrix = True
 
     np_time = 0.0
     bp_time = 0.0
 
-    for i in range(TRIALS):
+    for i in range(trials):
 
         # create random scalars and matrices to test
         alpha = uniform(SCAL_MIN, SCAL_MAX)
@@ -106,4 +103,4 @@ def timing_test(dtype, trans_a, trans_b, n, k):
             end = time.time()
             bp_time += end - start
 
-    return bp_time / TRIALS, np_time / TRIALS
+    return bp_time / trials, np_time / trials
