@@ -61,8 +61,8 @@ def gemm(A, B, C=None, trans_a='n', trans_b='n', alpha=1.0, beta=1.0, lda=None, 
         ValueError: if any of the following conditions occur:
                     - A, B, or C is not a 2D NumPy ndarray or NumPy matrix
                     - A, B, and C do not have the same dtype or that dtype is not supported
-                    - The dimensions of A, B, and C do not conform
-                    - Either 'trans_a' or 'trans_b' is not equal to one of the following: 'n', 'N', 't', 'T'
+                    - the dimensions of A, B, and C do not conform
+                    - either 'trans_a' or 'trans_b' is not equal to one of the following: 'n', 'N', 't', 'T'
     """
 
     # convert to appropriate CBLAS value
