@@ -11,7 +11,7 @@
 
 from ..helpers import (get_matrix_dimensions, get_vector_dimensions, check_strides_equal_one,
                        create_similar_zero_vector, check_equal_sizes, convert_trans,
-                       get_cblas_info, ROW_MAJOR)
+                       get_cblas_info, ROW_MAJOR, TRANS)
 from ctypes import c_int, POINTER
 
 
@@ -68,7 +68,7 @@ def gemv(A, x, y=None, trans_a='n', alpha=1.0, beta=1.0, lda=None, inc_x=1, inc_
 
     # convert to appropriate CBLAS value
     cblas_trans_a = convert_trans(trans_a)
-    transpose_A = trans_a == 't' or trans_a == 'T'
+    transpose_A = cblas_trans_a == TRANS
 
     # get the dimensions of the parameters
     m_A, n_A = get_matrix_dimensions('A', A)
