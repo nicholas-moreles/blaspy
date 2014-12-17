@@ -30,26 +30,26 @@ IN_BLASPY_SUBDIRECTORY = True  # default is True
 
 # find the appropriate BLAS to use
 if BLAS_NAME == "":  # try to use included OpenBLAS
+    PREPEND = str(path.dirname(__file__))[:-6] + "lib/"
     if system() == "Windows":
         if calcsize("P") == 8:  # 64-bit
             BLAS_NAME = "libopenblas-0.2.13-win64-int32.dll"
-            SUB_DIRECTORY = "win64"
+            chdir(PREPEND + "win64")
         else:  # 32-bit
             BLAS_NAME = "libopenblas-0.2.13-win32.dll"
-            SUB_DIRECTORY = "win32"
+            chdir(PREPEND + "win32")
+        PREPEND = ""
     elif system() == "Linux":
         if calcsize("P") == 8:  # 64-bit
             BLAS_NAME = "libopenblas-0.2.13-linux64.so"
-            SUB_DIRECTORY = "linux64"
+            PREPEND += "linux64/"
         else:  # 32-bit
             BLAS_NAME = "libopenblas-0.2.13-linux32.so"
-            SUB_DIRECTORY = "linux32"
+            PREPEND += "linux32/"
     else:  # no appropriate OpenBLAS included, BLAS_NAME_OVERRIDE must be used
         raise_blas_os_error()
 else:
-    SUB_DIRECTORY = ""
+   PREPEND = ""
 
 # Change the directory and load the library
-if IN_BLASPY_SUBDIRECTORY:
-    chdir(str(path.dirname(__file__))[:-6] + "lib/" + SUB_DIRECTORY)
-_libblas = cdll.LoadLibrary(BLAS_NAME)
+_libblas = cdll.LoadLibrary(PREPEND + BLAS_NAME)
