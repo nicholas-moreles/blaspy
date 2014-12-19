@@ -20,7 +20,7 @@ SCAL_MIN, SCAL_MAX = -100, 100  # scalar values
 STRIDE_MAX = 1e5                # max vector stride
 
 
-def test_scal():
+def acceptance_test_scal():
     """
     Test vector scaling.
 

@@ -10,19 +10,19 @@
 """
 
 from ..helpers import random_vector
-from blaspy import copy
-from numpy import allclose
-from numpy import copy as np_copy
+from blaspy import dot
+from numpy import dot as np_dot
 from itertools import product
 from random import randint
 
 N_MIN, N_MAX = 2, 1e6           # matrix/vector sizes
 STRIDE_MAX = 1e5                # max vector stride
+EPSILON = 0.001                 # margin of error
 
 
-def test_copy():
+def acceptance_test_dot():
     """
-    Test vector copy.
+    Test dot (inner) product.
 
     Returns:
         A list of strings representing the failed tests.
@@ -36,36 +36,32 @@ def test_copy():
     strides = (1, None)  # None indicates random stride
 
     # test all combinations of all possible values
-    for (dtype, as_matrix, x_is_row, y_is_row, provide_y, stride) in product(dtypes, bools, bools,
-                                                                             bools, bools, strides):
+    for (dtype, as_matrix, x_is_row, y_is_row, stride) \
+            in product(dtypes, bools, bools, bools, strides,):
 
-        # avoid testing cases where y is not provided and stride != 1
-        if provide_y or stride == 1:
-
-            # if a test fails, create a string representation of its name and append it to the list
-            # of failed tests
-            if not passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride):
-                variables = (dtype,
-                             "_matrix" if as_matrix else "_ndarray",
-                             "_row" if x_is_row else "_col",
-                             "_row" if y_is_row else "_col",
-                             "_rand_stride" if stride is None else "")
-                test_name = "".join(variables)
-                tests_failed.append(test_name)
+        # if a test fails, create a string representation of its name and append it to the list
+        # of failed tests
+        if not passed_test(dtype, as_matrix, x_is_row, y_is_row, stride):
+            variables = (dtype,
+                         "_matrix" if as_matrix else "_ndarray",
+                         "_row" if x_is_row else "_col",
+                         "_row" if y_is_row else "_col",
+                         "_rand_stride" if stride is None else "")
+            test_name = "".join(variables)
+            tests_failed.append(test_name)
 
     return tests_failed
 
 
-def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride):
+def passed_test(dtype, as_matrix, x_is_row, y_is_row, stride):
     """
-    Run one vector copy test.
+    Run one dot (inner) product test.
 
     Arguments:
         dtype:        either 'float64' or 'float32', the NumPy dtype to test
         as_matrix:    True to test a NumPy matrix, False to test a NumPy ndarray
         x_is_row:     True to test a row vector as parameter x, False to test a column vector
         y_is_row:     True to test a row vector as parameter y, False to test a column vector
-        provide_y:    True if y is to be provided to the BLASpy function, False otherwise
         stride:       stride of x and y to test; if None, a random stride is assigned
 
     Returns:
@@ -79,26 +75,22 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride):
 
     # create random vectors to test
     x = random_vector(length, x_is_row, dtype, as_matrix)
-    y = random_vector(length, y_is_row, dtype, as_matrix) if provide_y else None
+    y = random_vector(length, y_is_row, dtype, as_matrix)
 
-    # create view of x that can be used to calculate the expected result
-    x_2 = x.T if x_is_row else x
+    # create views of x and y that can be used to calculate the expected result
+    x_2 = x if x_is_row else x.T
+    y_2 = y.T if y_is_row else y
 
     # compute the expected result
     if stride == 1:
-        y_2 = x_2
-    else: # y is provided
-        if provide_y:
-            y_2 = np_copy(y.T) if y_is_row else np_copy(y)
+        expected = np_dot(x_2, y_2)[0][0]
+    else:
+        expected = 0
         for i in range(0, length, stride):
-            y_2[i, 0] = x_2[i, 0]
+            expected += x_2[0, i] * y_2[i, 0]
 
     # get the actual result
-    y = copy(x, y, stride, stride)
-
-    # if y is a row vector, make y_2 a row vector as well
-    if y.shape[0] == 1:
-        y_2 = y_2.T
+    actual = dot(x, y, stride, stride)
 
     # compare the actual result to the expected result and return result of the test
-    return allclose(y, y_2)
+    return abs(actual - expected) / expected < EPSILON

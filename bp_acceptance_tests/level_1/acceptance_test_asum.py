@@ -20,7 +20,7 @@ STRIDE_MAX = 1e5                # max vector stride
 EPSILON = 0.001                 # margin of error
 
 
-def test_asum():
+def acceptance_test_asum():
     """
     Test 1-norm computation.
 

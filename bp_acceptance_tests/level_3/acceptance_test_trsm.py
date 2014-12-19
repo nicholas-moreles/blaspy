@@ -20,7 +20,7 @@ SCAL_MIN, SCAL_MAX = 1, 2    # scalar values
 RTOL, ATOL = 5e-01, 5e-02    # margin of error
 
 
-def test_trsm():
+def acceptance_test_trsm():
     """
     Test triangular solve with multiple right-hand sides.
 

@@ -21,7 +21,7 @@ STRIDE_MAX = 1e2                # max vector stride
 RTOL, ATOL = 5e-01, 5e-02       # margin of error
 
 
-def test_gemv():
+def acceptance_test_gemv():
     """
     Test general matrix-vector multiplication.
 

@@ -19,7 +19,7 @@ N_MIN, N_MAX = 2, 1e6           # matrix/vector sizes
 STRIDE_MAX = 1e5                # max vector stride
 
 
-def test_amax():
+def acceptance_test_amax():
     """
     Test amax.
 

@@ -20,7 +20,7 @@ STRIDE_MAX = 1000            # max vector stride
 RTOL, ATOL = 5e-01, 5e-02    # margin of error
 
 
-def test_trsv():
+def acceptance_test_trsv():
     """
     Test triangular solve.
 

@@ -21,7 +21,7 @@ STRIDE_MAX = 1e2                # max vector stride
 RTOL, ATOL = 5e-01, 5e-02       # margin of error
 
 
-def test_syrk():
+def acceptance_test_syrk():
     """
     Test symmetric rank-k update.
 

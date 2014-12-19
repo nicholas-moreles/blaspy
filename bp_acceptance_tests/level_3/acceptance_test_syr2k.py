@@ -10,8 +10,8 @@
 """
 
 from ..helpers import random_matrix, random_symmetric_matrix
-from blaspy import symm
-from numpy import allclose, copy, dot, zeros
+from blaspy import syr2k
+from numpy import allclose, copy, dot, tril, triu, zeros
 from itertools import product
 from random import randint, uniform
 
@@ -21,9 +21,9 @@ STRIDE_MAX = 1e2                # max vector stride
 RTOL, ATOL = 5e-01, 5e-02       # margin of error
 
 
-def test_symm():
+def acceptance_test_syr2k():
     """
-    Test symmetric matrix-matrix multiplication.
+    Test symmetric rank-2k update.
 
     Returns:
         A list of strings representing the failed tests.
@@ -35,63 +35,77 @@ def test_symm():
     dtypes = ('float64', 'float32')
     bools = (True, False)
     uplos = ('u', 'l')
-    sides = ('l', 'r')
+    trans_tuple = ('n', 't')
 
     # test all combinations of all possible values
-    for (dtype, as_matrix, provide_C, uplo, side) \
-            in product(dtypes, bools, bools, uplos, sides):
+    for (dtype, as_matrix, provide_C, uplo, trans) \
+            in product(dtypes, bools, bools, uplos, trans_tuple):
 
         # if a test fails, create a string representation of its name and append it to the list
         # of failed tests
-        if not passed_test(dtype, as_matrix, provide_C, uplo, side):
+        if not passed_test(dtype, as_matrix, provide_C, uplo, trans):
             variables = (dtype,
                          "_matrix" if as_matrix else "_ndarray",
                          "_" if provide_C else "_no_C_",
                          uplo, "_",
-                         side)
+                         trans)
             test_name = "".join(variables)
             tests_failed.append(test_name)
 
     return tests_failed
 
-def passed_test(dtype, as_matrix, provide_C, uplo, side):
+def passed_test(dtype, as_matrix, provide_C, uplo, trans):
     """
-    Run one symmetric matrix-matrix multiplication test.
+    Run one symmetric rank-2k update test.
 
     Arguments:
         dtype:        either 'float64' or 'float32', the NumPy dtype to test
         as_matrix:    True to test a NumPy matrix, False to test a NumPy ndarray
         provide_C:    True if C is to be provided to the BLASpy function, False otherwise
         uplo:         BLASpy 'uplo' parameter to test
-        side:         BLASpy 'side' parameter to test
+        trans:        BLASpy 'trans' parameter to test
 
     Returns:
         True if the expected result is within the margin of error of the actual result,
         False otherwise.
     """
 
-    side_is_left = side == 'l' or side == 'L'
+    transpose_a = trans == 't' or trans == 'T'
+    upper = uplo == 'u' or uplo == 'U'
 
     # generate random sizes for matrix dimensions
-    m = randint(N_MIN, N_MAX)
-    n = randint(N_MIN, N_MAX)
-    k = m if side_is_left else n
+    m_A = randint(N_MIN, N_MAX)
+    n_A = randint(N_MIN, N_MAX)
+    n = m_A if not transpose_a else n_A
 
     # create random scalars and matrices to test
     alpha = uniform(SCAL_MIN, SCAL_MAX)
     beta = uniform(SCAL_MIN, SCAL_MAX)
-    A = random_symmetric_matrix(k, dtype, as_matrix)
-    B = random_matrix((k if side_is_left else m), (n if side_is_left else k), dtype, as_matrix)
-    C = random_matrix(m, n, dtype, as_matrix) if provide_C else None
+    A = random_matrix(m_A, n_A, dtype, as_matrix)
+    B = random_matrix(m_A, n_A, dtype, as_matrix)
+    C = random_symmetric_matrix(n, dtype, as_matrix) if provide_C else None
 
-    # create copies/views of A, B, and C that can be used to calculate the expected result
-    C_2 = copy(C) if C is not None else zeros((m, n))
+    # create a copy of  C that can be used to calculate the expected result
+    C_2 = copy(C) if C is not None else zeros((n, n))
 
     # compute the expected result
-    C_2 = beta * C_2 + alpha * (dot(A, B) if side_is_left else dot(B, A))
+    if not transpose_a:
+        C_2 = (beta * C_2) + (alpha * dot(A, B.T)) + (alpha * dot(B, A.T))
+    else:
+        C_2 = (beta * C_2) + (alpha * dot(A.T, B)) + (alpha * dot(B.T, A))
+
+    # ensure C and C_2 are upper or lower triangular representations of symmetric matrices
+    if upper:
+        C_2 = triu(C_2)
+        if provide_C:
+            C = triu(C)
+    else:
+        C_2 = tril(C_2)
+        if provide_C:
+            C = tril(C)
 
     # get the actual result
-    C = symm(A, B, C, side, uplo, alpha, beta)
+    C = syr2k(A, B, C, uplo, trans, alpha, beta)
 
     # compare the actual result to the expected result and return result of the test
     return allclose(C, C_2, RTOL, ATOL)

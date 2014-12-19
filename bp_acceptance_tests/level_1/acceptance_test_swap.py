@@ -10,19 +10,18 @@
 """
 
 from ..helpers import random_vector
-from blaspy import dot
-from numpy import dot as np_dot
+from blaspy import swap
+from numpy import allclose, copy
 from itertools import product
-from random import randint
+from random import randint, uniform
 
-N_MIN, N_MAX = 2, 1e6           # matrix/vector sizes
-STRIDE_MAX = 1e5                # max vector stride
-EPSILON = 0.001                 # margin of error
+N_MIN, N_MAX = 2, 1e3           # matrix/vector sizes
+STRIDE_MAX = 1e2                # max vector stride
 
 
-def test_dot():
+def acceptance_test_swap():
     """
-    Test dot (inner) product.
+    Test vector swap.
 
     Returns:
         A list of strings representing the failed tests.
@@ -36,8 +35,8 @@ def test_dot():
     strides = (1, None)  # None indicates random stride
 
     # test all combinations of all possible values
-    for (dtype, as_matrix, x_is_row, y_is_row, stride) \
-            in product(dtypes, bools, bools, bools, strides,):
+    for (dtype, as_matrix, x_is_row, y_is_row, stride) in product(dtypes, bools, bools, bools,
+                                                                  strides):
 
         # if a test fails, create a string representation of its name and append it to the list
         # of failed tests
@@ -55,7 +54,7 @@ def test_dot():
 
 def passed_test(dtype, as_matrix, x_is_row, y_is_row, stride):
     """
-    Run one dot (inner) product test.
+    Run one vector swap test.
 
     Arguments:
         dtype:        either 'float64' or 'float32', the NumPy dtype to test
@@ -77,20 +76,22 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, stride):
     x = random_vector(length, x_is_row, dtype, as_matrix)
     y = random_vector(length, y_is_row, dtype, as_matrix)
 
-    # create views of x and y that can be used to calculate the expected result
-    x_2 = x if x_is_row else x.T
-    y_2 = y.T if y_is_row else y
-
     # compute the expected result
     if stride == 1:
-        expected = np_dot(x_2, y_2)[0][0]
+        x_2 = copy(y.T) if y_is_row else copy(y)
+        y_2 = copy(x.T) if x_is_row else copy(x)
     else:
-        expected = 0
+        x_2 = copy(x.T) if x_is_row else copy(x)
+        y_2 = copy(y.T) if y_is_row else copy(y)
         for i in range(0, length, stride):
-            expected += x_2[0, i] * y_2[i, 0]
+            temp = x_2[i, 0]
+            x_2[i, 0] = y_2[i, 0]
+            y_2[i, 0] = temp
 
     # get the actual result
-    actual = dot(x, y, stride, stride)
+    swap(x, y, stride, stride)
 
     # compare the actual result to the expected result and return result of the test
-    return abs(actual - expected) / expected < EPSILON
+    passed_x = allclose(x.T, x_2) if x_is_row else allclose(x, x_2)
+    passed_y = allclose(y.T, y_2) if y_is_row else allclose(y, y_2)
+    return passed_x and passed_y
