@@ -84,10 +84,10 @@ def passed_test(dtype, as_matrix, x_is_row, stride):
         for i in range(0, length, stride):
             if abs(x_2[i, 0]) > current_max:
                 current_max = abs(x_2[i, 0])
-                expected = i
+                expected = i / stride
 
     # get the actual result
     actual = amax(x, stride)
 
     # compare the actual result to the expected result and return result of the test
-    return actual * stride == expected
+    return actual == expected
