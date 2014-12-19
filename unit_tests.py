@@ -13,7 +13,7 @@ from bp_unit_tests import *
 from unittest import TestLoader, TestSuite, TextTestRunner
 
 TEST_CASES = (TestAmax,
-              )
+              TestAsum)
 
 suite = TestSuite()
 

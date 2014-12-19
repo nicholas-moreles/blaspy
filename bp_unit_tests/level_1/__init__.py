@@ -10,3 +10,4 @@
 """
 
 from .unit_test_amax import TestAmax
+from .unit_test_asum import TestAsum
