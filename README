@@ -1,20 +1,21 @@
 Thank you for your interest in BLASpy!
 
-BLASpy is a linear algebra library for Python that leverages Basic Linear Algebra
-Subprograms (BLAS) to improve performance on common linear algebra computations.
-BLASpy requires minimal setup and allows users to call BLAS functions directly
+BLASpy is a portable, high-performance, linear algebra library for Python that leverages
+Basic Linear Algebra Subprograms (BLAS) to improve performance on common linear algebra
+computations. BLASpy requires no setup and allows users to call BLAS functions directly
 without worrying about data types or overly verbose BLAS function calls.
 
 For more information on BLAS, please see:
 http://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms
 
 BLASpy operates on the NumPy "matrix" and "ndarray" data structures that are already
-in widespread use. Using the BLASpy library in place of NumPy's standard linear
-algebra library results in significantly improved performance.
+in widespread use. As a result, it is required that NumPy be installed in order to run
+BLASpy. Using the BLASpy library instead of NumPy's standard linear algebra results in
+significantly improved performance.
 
-***********************************************************************
-* BLASpy is currently in a development phase and is not yet complete. *
-***********************************************************************
+***********************************************
+* BLASpy is currently in a development phase. *
+***********************************************
 
 Please read the LICENSE file for information on copying and distributing this software.
 
