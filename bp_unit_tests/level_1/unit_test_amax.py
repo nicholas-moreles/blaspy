@@ -24,6 +24,22 @@ class TestAmax(TestCase):
         x = array([[1., 2., 3.]])
         self.assertEqual(amax(x), 2)
 
+    def test_first_element(self):
+        x = x = array([[5., 2., 3.]])
+        self.assertEqual(amax(x), 0)
+
+    def test_middle_element(self):
+        x = x = array([[5., 8., 3.]])
+        self.assertEqual(amax(x), 1)
+
+    def test_last_element(self):
+        x = x = array([[5., 2., 10.]])
+        self.assertEqual(amax(x), 2)
+
+    def test_negative_element(self):
+        x = x = array([[5., -6.5, 3.]])
+        self.assertEqual(amax(x), 1)
+
     def test_column_vector_as_ndarray(self):
         x = array([[1.], [2.], [3.]])
         self.assertEqual(amax(x), 2)
