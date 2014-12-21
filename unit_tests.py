@@ -20,4 +20,4 @@ suite = TestSuite()
 for test_case in TEST_CASES:
     suite.addTest(TestLoader().loadTestsFromTestCase(test_case))
 
-TextTestRunner().run(suite)
+TextTestRunner(verbosity=2).run(suite)
