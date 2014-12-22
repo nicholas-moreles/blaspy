@@ -87,7 +87,7 @@ def passed_test(dtype, as_matrix, x_is_row, y_is_row, provide_y, stride):
     # compute the expected result
     if stride == 1:
         y_2 = x_2
-    else: # y is provided
+    else:  # y is provided
         if provide_y:
             y_2 = np_copy(y.T) if y_is_row else np_copy(y)
         for i in range(0, length, stride):
