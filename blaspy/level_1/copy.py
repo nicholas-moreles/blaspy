@@ -24,7 +24,7 @@ def copy(x, y=None, inc_x=1, inc_y=1):
         --optional arguments--
 
         y:      2D NumPy matrix or ndarray representing vector y
-                    < default is a newly created zero vector of the same dtype and size >
+                    < default is a newly created zero vector of the same dtype and effective length >
         inc_x:  stride of x (increment for the elements of x)
                     < default is 1 >
         inc_y:  stride of y (increment for the elements of y)
@@ -39,7 +39,6 @@ def copy(x, y=None, inc_x=1, inc_y=1):
                         - x and y do not have the same dtype or that dtype is not supported
                         - x or y is not a vector
                         - x and y do not have the same length
-                        - y is not provided and the stride of either x or y does not equal one
     """
 
     # get the dimensions of the parameters
@@ -47,8 +46,8 @@ def copy(x, y=None, inc_x=1, inc_y=1):
 
     # if y is not given, create zero vector with same orientation and type as x
     if y is None:
-        check_strides_equal_one(inc_x, inc_y)
-        y = create_similar_zero_vector(x)
+        inc_y = 1
+        y = create_similar_zero_vector(x, x_length)
 
     m_y, n_y, y_length = get_vector_dimensions('y', y, inc_y)
 
