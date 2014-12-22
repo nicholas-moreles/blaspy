@@ -15,7 +15,8 @@ from unittest import TestLoader, TestSuite, TextTestRunner
 TEST_CASES = (TestAmax,  # level 1
               TestAsum,
               TestAxpy,
-              TestCopy)
+              TestCopy,
+              TestDot)
 
 suite = TestSuite()
 
