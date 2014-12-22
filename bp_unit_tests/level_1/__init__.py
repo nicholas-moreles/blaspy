@@ -14,3 +14,4 @@ from .unit_test_asum import TestAsum
 from .unit_test_axpy import TestAxpy
 from .unit_test_copy import TestCopy
 from .unit_test_dot import TestDot
+from .unit_test_nrm2 import TestNrm2

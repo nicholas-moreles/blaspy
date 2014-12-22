@@ -16,7 +16,8 @@ TEST_CASES = (TestAmax,  # level 1
               TestAsum,
               TestAxpy,
               TestCopy,
-              TestDot)
+              TestDot,
+              TestNrm2)
 
 suite = TestSuite()
 
