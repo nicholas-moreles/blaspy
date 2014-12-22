@@ -12,9 +12,10 @@
 from bp_unit_tests import *
 from unittest import TestLoader, TestSuite, TextTestRunner
 
-TEST_CASES = (TestAmax,
+TEST_CASES = (TestAmax,  # level 1
               TestAsum,
-              TestAxpy)
+              TestAxpy,
+              TestCopy)
 
 suite = TestSuite()
 

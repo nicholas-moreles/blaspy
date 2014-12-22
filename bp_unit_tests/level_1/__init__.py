@@ -12,3 +12,4 @@
 from .unit_test_amax import TestAmax
 from .unit_test_asum import TestAsum
 from .unit_test_axpy import TestAxpy
+from .unit_test_copy import TestCopy
