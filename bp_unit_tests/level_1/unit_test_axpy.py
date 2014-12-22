@@ -201,6 +201,11 @@ class TestAxpy(TestCase):
         y = array([[1., 2.], [3., 4.]])
         self.assertRaises(ValueError, axpy, 1, x, y)
 
+    def test_unequal_vector_length_raises_ValueError(self):
+        x = array([[1., 2., 3.]])
+        y = array([[3., 2.]])
+        self.assertRaises(ValueError, axpy, 1, x, y)
+
     def test_mixed_dtypes_raises_ValueError(self):
         x = array([[1., 2., 3.]], dtype='float32')
         y = array([[3., 2., 1.]], dtype='float64')
