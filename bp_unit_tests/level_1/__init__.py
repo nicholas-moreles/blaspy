@@ -16,3 +16,4 @@ from .unit_test_copy import TestCopy
 from .unit_test_dot import TestDot
 from .unit_test_nrm2 import TestNrm2
 from .unit_test_scal import TestScal
+from .unit_test_sdot import TestSdot
