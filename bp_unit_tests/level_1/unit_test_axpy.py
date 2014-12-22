@@ -156,23 +156,43 @@ class TestAxpy(TestCase):
         self.assertListEqual(axpy(2, x, y).tolist(), expected)
         self.assertListEqual(y.tolist(), expected)
 
-    def test_not_numpy_with_list_raises_ValueError(self):
+    def test_not_numpy_with_list_for_x_raises_ValueError(self):
         x = [[1., 2., 3.]]
+        y = array([[3., 2., 1.]])
+        self.assertRaises(ValueError, axpy, 1, x, y)
+
+    def test_not_numpy_with_list_for_y_raises_ValueError(self):
+        x = array([[1., 2., 3.]])
         y = [[3., 2., 1.]]
         self.assertRaises(ValueError, axpy, 1, x, y)
 
-    def test_not_numpy_with_scalar_raises_ValueError(self):
+    def test_not_numpy_with_scalar_for_x_raises_ValueError(self):
         x = 1.
+        y = array([[3.]])
+        self.assertRaises(ValueError, axpy, 1, x, y)
+
+    def test_not_numpy_with_scalar_for_y_raises_ValueError(self):
+        x = array([[1.]])
         y = 2.
         self.assertRaises(ValueError, axpy, 1, x, y)
 
-    def test_not_2d_numpy_with_1d_raises_ValueError(self):
+    def test_not_2d_numpy_with_1d_for_x_raises_ValueError(self):
         x = array([1., 2., 3.])
+        y = array([[3., 2., 1.]])
+        self.assertRaises(ValueError, axpy, 1, x, y)
+
+    def test_not_2d_numpy_with_1d_for_y_raises_ValueError(self):
+        x = array([[1., 2., 3.]])
         y = array([3., 2., 1.])
         self.assertRaises(ValueError, axpy, 1, x, y)
 
-    def test_not_2d_numpy_with_3d_raises_ValueError(self):
+    def test_not_2d_numpy_with_3d_for_x_raises_ValueError(self):
         x = array([[[1.], [2.], [3.]]], ndmin=3)
+        y = array([[3., 2., 1.]])
+        self.assertRaises(ValueError, axpy, 1, x, y)
+
+    def test_not_2d_numpy_with_3d_for_y_raises_ValueError(self):
+        x = array([[1., 2., 3.]])
         y = array([[[3.], [2.], [1.]]], ndmin=3)
         self.assertRaises(ValueError, axpy, 1, x, y)
 
