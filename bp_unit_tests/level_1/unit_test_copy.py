@@ -80,11 +80,23 @@ class TestCopy(TestCase):
         self.assertEqual(copy(x, y).tolist(), expected)
         self.assertEqual(y.tolist(), expected)
 
-    def test_y_not_provided(self):
+    def test_y_not_provided_with_row_vector(self):
         x = array([[1., -2., 3.]])
 
         expected = x.tolist()
         self.assertEqual(copy(x).tolist(), expected)
+
+    def test_y_not_provided_with_column_vector(self):
+        x = array([[1.], [2.], [3.]])
+
+        expected = x.tolist()
+        self.assertEqual(copy(x).tolist(), expected)
+
+    def test_y_not_provided_with_stride_greater_than_one(self):
+        x = array([[1., -2., 3.]])
+
+        expected = [[1., 3.]]
+        self.assertEqual(copy(x, inc_x=2).tolist(), expected)
 
     def test_strides_less_than_length(self):
         x = array([[1., 2., 3.]])
