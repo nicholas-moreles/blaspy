@@ -218,6 +218,13 @@ class TestAxpy(TestCase):
         self.assertEqual(y.dtype, 'float64')
         self.assertRaises(ValueError, axpy, 1, x, y)
 
+    def test_integer_dtype_for_both_raises_ValueError(self):
+        x = array([[1., 2., 3.]], dtype='int')
+        y = array([[3., 2., 1.]], dtype='int')
+        self.assertEqual(x.dtype, 'int')
+        self.assertEqual(y.dtype, 'int')
+        self.assertRaises(ValueError, axpy, 1, x, y)
+
     def test_integer_dtype_for_x_raises_ValueError(self):
         x = array([[1., 2., 3.]], dtype='int')
         y = array([[3., 2., 1.]], dtype='float64')
@@ -230,6 +237,13 @@ class TestAxpy(TestCase):
         y = array([[3, 2., 1.]], dtype='int')
         self.assertEqual(x.dtype, 'float64')
         self.assertEqual(y.dtype, 'int')
+        self.assertRaises(ValueError, axpy, 1, x, y)
+
+    def test_complex_dtype_for_both_raises_ValueError(self):
+        x = array([[1., 2., 3.]], dtype='complex')
+        y = array([[3., 2., 1.]], dtype='complex')
+        self.assertEqual(x.dtype, 'complex')
+        self.assertEqual(y.dtype, 'complex')
         self.assertRaises(ValueError, axpy, 1, x, y)
 
     def test_complex_dtype_for_x_raises_ValueError(self):
