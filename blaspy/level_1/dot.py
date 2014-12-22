@@ -54,7 +54,7 @@ def dot(x, y, inc_x=1, inc_y=1):
     check_equal_sizes('x', x_length, 'y', y_length)
 
     # determine which CBLAS subroutine to call and which ctypes data type to use
-    cblas_func, ctype_dtype = get_cblas_info('dot', (x.dtype,))
+    cblas_func, ctype_dtype = get_cblas_info('dot', (x.dtype, y.dtype))
 
     # create a ctypes POINTER for each vector
     ctype_x = POINTER(ctype_dtype * n_x * m_x)
