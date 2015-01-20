@@ -28,8 +28,8 @@ def gemv(A, x, y=None, trans_a='n', alpha=1.0, beta=1.0, lda=None, inc_x=1, inc_
     Vectors x and y can be passed in as either row or column vectors. If necessary, an implicit
     transposition occurs.
 
-    Vector y defaults to the zero vector of the appropriate size and type if vector y is not
-    provided; however, the strides of x and y must be one if vector y is not provided.
+    Vector y defaults to the zero vector of the appropriate size, orientation, and type if vector y is not
+    provided; however, the stride of y becomes fixed at 1 and the parameter inc_y is ignored.
 
     Args:
         A:          2D NumPy matrix or ndarray representing matrix A
@@ -62,7 +62,6 @@ def gemv(A, x, y=None, trans_a='n', alpha=1.0, beta=1.0, lda=None, inc_x=1, inc_
                     - A, x, and y do not have the same dtype or that dtype is not supported
                     - x or y is not a vector
                     - the effective length of either x or y does not conform to the dimensions of A
-                    - y is not provided and the stride of either x or y does not equal one
                     - trans_a is not equal to one of the following: 'n', 'N', 't', 'T'
     """
 
@@ -74,9 +73,9 @@ def gemv(A, x, y=None, trans_a='n', alpha=1.0, beta=1.0, lda=None, inc_x=1, inc_
     m_A, n_A = get_matrix_dimensions('A', A)
     m_x, n_x, x_length = get_vector_dimensions('x', x, inc_x)
 
-    # if y is not given, create zero vector with same orientation and type as x
+    # if y is not given, create zero vector with same orientation as x that conforms to matrix A
     if y is None:
-        check_strides_equal_one(inc_x, inc_y)
+        inc_y = 1  # stride of unprovided vector y is set to 1, there is currently no option for the user to provide this
         length = n_A if transpose_A else m_A
         y = create_similar_zero_vector(x, length)
 
