@@ -20,7 +20,8 @@ TEST_CASES = (TestAmax,  # level 1
               TestNrm2,
               TestScal,
               TestSdot,
-              TestSwap)
+              TestSwap,
+              TestGemv)  # level 2
 
 suite = TestSuite()
 
