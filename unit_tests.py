@@ -21,7 +21,8 @@ TEST_CASES = (TestAmax,  # level 1
               TestScal,
               TestSdot,
               TestSwap,
-              TestGemv)  # level 2
+              TestGemv,  # level 2
+              TestGer)
 
 suite = TestSuite()
 
