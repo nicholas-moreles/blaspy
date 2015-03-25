@@ -11,3 +11,4 @@
 
 from .unit_test_gemv import TestGemv
 from .unit_test_ger import TestGer
+from .unit_test_symv import TestSymv
