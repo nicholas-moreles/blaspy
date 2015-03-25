@@ -9,9 +9,8 @@
 
 """
 
-from ..helpers import (get_square_matrix_dimension, get_vector_dimensions, check_strides_equal_one,
-                       create_similar_zero_vector, check_equal_sizes, convert_uplo, get_cblas_info,
-                       ROW_MAJOR)
+from ..helpers import (get_square_matrix_dimension, get_vector_dimensions, create_similar_zero_vector,
+                       check_equal_sizes, convert_uplo, get_cblas_info, ROW_MAJOR)
 from ctypes import c_int, POINTER
 
 
@@ -30,8 +29,8 @@ def symv(A, x, y=None, uplo='u', alpha=1.0, beta=1.0, lda=None, inc_x=1, inc_y=1
     Vectors x and y can be passed in as either row or column vectors. If necessary, an implicit
     transposition occurs.
 
-    Vector y defaults to the zero vector of the appropriate size and type if vector y is not
-    provided; however, the strides of x and y must be one if vector y is not provided.
+    Vector y defaults to the zero vector of the appropriate size, orientation, and type if vector y is not
+    provided; however, the stride of y becomes fixed at 1 and the parameter inc_y is ignored.
 
     Args:
         A:        2D NumPy matrix or ndarray representing matrix A
@@ -75,8 +74,8 @@ def symv(A, x, y=None, uplo='u', alpha=1.0, beta=1.0, lda=None, inc_x=1, inc_y=1
 
     # if y is not given, create a zero vector with same orientation and type as x
     if y is None:
-        check_strides_equal_one(inc_x, inc_y)
-        y = create_similar_zero_vector(x)
+        inc_y = 1
+        y = create_similar_zero_vector(x, dim_A)
 
     # continue getting dimensions of the parameters
     m_y, n_y, y_length = get_vector_dimensions('y', y, inc_y)
