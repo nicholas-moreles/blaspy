@@ -66,7 +66,7 @@ def syr2(x, y, A=None, uplo='u', alpha=1.0, lda=None, inc_x=1, inc_y=1):
 
     # get the dimensions of the parameters
     m_x, n_x, x_length = get_vector_dimensions('x', x, inc_x)
-    m_y, n_y, y_length = get_vector_dimensions('y', x, inc_y)
+    m_y, n_y, y_length = get_vector_dimensions('y', y, inc_y)
 
     # if no matrix A is given, create a zero matrix of appropriate size with the same dtype as x
     if A is None:
