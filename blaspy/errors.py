@@ -26,10 +26,10 @@ def raise_not_square(name, rows, cols):
                      "columns. Number of rows: %i. Number of columns: %i" % (name, rows, cols))
 
 
-def raise_size_mismatch(name1, name2):
-    raise ValueError("There was a size mismatch between '%s' and '%s'. Double check that their "
+def raise_size_mismatch(name1, size_1, name2, size_2):
+    raise ValueError("There was a size mismatch between '%s' (%d) and '%s' (%d). Double check that their "
                      "sizes conform in a manner appropriate for the BLASpy function being "
-                     "called." % (name1, name2))
+                     "called." % (name1, size_1, name2, size_2))
 
 
 def raise_strides_not_one():

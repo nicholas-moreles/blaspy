@@ -203,7 +203,7 @@ def check_equal_sizes(name_1, size_1, name_2, size_2):
     """
 
     if size_1 != size_2:
-        raise_size_mismatch(name_1, name_2)
+        raise_size_mismatch(name_1, size_1, name_2, size_2)
 
 
 def check_strides_equal_one(*args):
