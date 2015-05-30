@@ -1,6 +1,6 @@
 """
 
-    Copyright (c) 2014, The University of Texas at Austin.
+    Copyright (c) 2014-2015, The University of Texas at Austin.
     All rights reserved.
 
     This file is part of BLASpy and is available under the 3-Clause
