@@ -66,6 +66,9 @@ def trsv(A, b, uplo='u', trans_a='n', diag='n', lda=None, inc_b=1):
                     - uplo is not equal to one of the following: 'u', 'U', 'l', 'L'
                     - trans_a is not equal to one of the following: 'n', 'N', 't', 'T'
                     - diag is not equal to one fo the following: 'n', 'N', 'u', 'U'
+
+    Returns:
+        Vector x (which is also written to vector b)
     """
 
     # convert to appropriate CBLAS values
@@ -96,3 +99,5 @@ def trsv(A, b, uplo='u', trans_a='n', diag='n', lda=None, inc_b=1):
     cblas_func.restype = None
     cblas_func(ROW_MAJOR, cblas_uplo, cblas_trans_a, cblas_diag, dim_A,
                A.ctypes.data_as(ctype_A), lda, b.ctypes.data_as(ctype_x), inc_b)
+
+    return b  # contains the value of x (also written to b)
