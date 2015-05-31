@@ -11,6 +11,7 @@
 
 from blaspy import symv
 from numpy import array, asmatrix
+from string import ascii_letters
 from unittest import TestCase
 
 
@@ -558,4 +559,6 @@ class TestSymv(TestCase):
                    [2.]])
         y = array([[3.],
                    [4.]])
-        self.assertRaises(ValueError, symv, A, x, y, 'a')
+        for char in ascii_letters:
+            if char not in ('u', 'U', 'l', 'L'):
+                self.assertRaises(ValueError, symv, A, x, y, char)
