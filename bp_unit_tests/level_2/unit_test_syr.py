@@ -260,7 +260,6 @@ class TestSyr(TestCase):
         A = array([[1., 2.],
                    [2., 3.]])
         x = array([[[1., 2.]]], ndmin=3)
-        y = array([[3., 4.]])
         self.assertRaises(ValueError, syr, x, A)
 
     def test_nonconforming_x_raises_ValueError(self):
