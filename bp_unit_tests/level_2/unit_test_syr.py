@@ -11,6 +11,7 @@
 
 from blaspy import syr
 from numpy import array, asmatrix
+from string import ascii_letters
 from unittest import TestCase
 
 
@@ -333,4 +334,6 @@ class TestSyr(TestCase):
                    [3., 4.]])
         x = array([[1.],
                    [2.]])
-        self.assertRaises(ValueError, syr, x, A, 'a')
+        for char in ascii_letters:
+            if char not in ('u', 'U', 'l', 'L'):
+                self.assertRaises(ValueError, syr, x, A, char)
