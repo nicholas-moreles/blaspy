@@ -254,7 +254,6 @@ class TestSyr(TestCase):
                     [2., 3.]]], ndmin=3)
         x = array([[1.],
                    [2.]])
-        y = array([[3.]])
         self.assertRaises(ValueError, syr, x, A)
 
     def test_not_2d_numpy_with_3d_for_x_raises_ValueError(self):
